@@ -106,33 +106,82 @@ export function StatsOverview({
             </div>
           </div>
 
-          {/* Action Buttons - BIG */}
-          <div className="space-y-3">
-            <Button
-              onClick={() => handleStart('ujian')}
-              className="w-full h-14 bg-red-600 text-white hover:bg-red-700 font-black text-base flex items-center justify-center gap-3 shadow-xl shadow-red-600/20 rounded-xl cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99]"
-            >
-              <Play className="h-5 w-5 fill-current" />
-              <span>MULAI SIMULASI UJIAN CAT</span>
-            </Button>
-            <div className="grid grid-cols-2 gap-3">
+          {/* Mode Cards with Descriptions */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            {/* Mode Ujian CAT */}
+            <div className="md:col-span-3 p-5 rounded-xl bg-red-600/5 border border-red-600/20 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-red-600/15 flex items-center justify-center">
+                  <Play className="h-4 w-4 text-red-500 fill-current" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-white">Mode Ujian (CAT)</h3>
+                  <p className="text-[11px] text-red-400/80 font-semibold">Simulasi penuh seperti ujian asli</p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Simulasi ujian CAT BKN sesungguhnya. Waktu dibatasi <strong className="text-white">130 menit</strong>, 
+                soal ditampilkan satu per satu, jawaban tidak bisa diubah setelah berpindah soal, 
+                dan pembahasan baru muncul setelah ujian selesai. Cocok untuk mengukur kesiapan Anda menghadapi tes seleksi yang sesungguhnya.
+              </p>
+              <Button
+                onClick={() => handleStart('ujian')}
+                className="w-full h-12 bg-red-600 text-white hover:bg-red-700 font-black text-sm flex items-center justify-center gap-2.5 shadow-xl shadow-red-600/20 rounded-xl cursor-pointer transition-all hover:scale-[1.005] active:scale-[0.995]"
+              >
+                <Play className="h-4 w-4 fill-current" />
+                <span>MULAI SIMULASI UJIAN CAT</span>
+              </Button>
+            </div>
+
+            {/* Mode Belajar */}
+            <div className="p-5 rounded-xl bg-blue-500/5 border border-blue-500/15 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
+                  <BookOpen className="h-4 w-4 text-blue-400" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-white">Mode Belajar</h3>
+                  <p className="text-[11px] text-blue-400/80 font-semibold">Tanpa batas waktu</p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Kerjakan soal tanpa tekanan waktu. Pembahasan dan jawaban benar langsung ditampilkan setelah Anda memilih jawaban, sehingga Anda bisa memahami konsep dan logika di balik setiap soal.
+              </p>
               <Button
                 onClick={() => handleStart('belajar')}
                 variant="outline"
-                className="h-11 text-xs font-bold border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 hover:text-blue-400 cursor-pointer rounded-xl flex items-center justify-center gap-2"
+                className="w-full h-10 text-xs font-bold border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/15 hover:text-blue-400 cursor-pointer rounded-xl flex items-center justify-center gap-2"
               >
-                <BookOpen className="h-4 w-4" />
-                <span>Mode Belajar</span>
+                <BookOpen className="h-3.5 w-3.5" />
+                <span>Mulai Mode Belajar</span>
               </Button>
+            </div>
+
+            {/* Mode Latihan */}
+            <div className="p-5 rounded-xl bg-amber-500/5 border border-amber-500/15 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
+                  <Zap className="h-4 w-4 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-white">Mode Latihan</h3>
+                  <p className="text-[11px] text-amber-400/80 font-semibold">Dengan timer, bisa review</p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Gabungan terbaik dari kedua mode. Waktu tetap berjalan seperti ujian sesungguhnya, namun Anda bisa melihat pembahasan di akhir dan mengulang soal yang salah untuk memperkuat pemahaman.
+              </p>
               <Button
                 onClick={() => handleStart('latihan')}
                 variant="outline"
-                className="h-11 text-xs font-bold border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 hover:text-amber-400 cursor-pointer rounded-xl flex items-center justify-center gap-2"
+                className="w-full h-10 text-xs font-bold border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15 hover:text-amber-400 cursor-pointer rounded-xl flex items-center justify-center gap-2"
               >
-                <Zap className="h-4 w-4" />
-                <span>Mode Latihan</span>
+                <Zap className="h-3.5 w-3.5" />
+                <span>Mulai Mode Latihan</span>
               </Button>
             </div>
+
           </div>
         </div>
       </Card>
