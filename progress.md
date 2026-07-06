@@ -1,26 +1,24 @@
 # Laporan Progres & Status Pengembangan: Simulator CAT BKN Sekolah Rakyat - Wali Asrama
 
-Laporan ini memuat kemajuan implementasi fitur, perbaikan bug, integrasi penanggalan bank soal (daily sets), integrasi Supabase Auth & Database Cloud, dan status build produksi terkini.
+Laporan ini memuat kemajuan implementasi fitur, perbaikan bug, integrasi penanggalan bank soal (daily sets), integrasi Supabase Auth & Database Cloud, penyederhanaan antarmuka login, dan status build produksi terkini.
 
 ---
 
 ## 📈 KEMAJUAN UTAMA (TERBARU)
 
-### 1. Sistem Login & Daftar Akun Cloud (Supabase)
-- **Halaman Depan Dinamis**: Mengganti form login sederhana dengan halaman **Login & Register (Masuk/Daftar)** dual tab yang dilindungi validasi input ketat.
-- **Enkripsi Kredensial**: Pendaftaran menggunakan email, password, nama lengkap, nomor peserta, dan instansi asal. Kata sandi dienkripsi secara aman oleh Supabase Auth.
-- **Offline-First & Hybrid Sync**:
-  - Semua nilai riwayat ujian secara otomatis diunggah ke cloud database (`exam_history`) jika user login dan online.
-  - Saat login, sistem mengunduh data riwayat dari cloud dan mensinkronisasikannya ke IndexedDB lokal untuk penggunaan offline.
-  - **Graceful Fallback**: Jika variabel lingkungan Supabase belum diisi, sistem otomatis berpindah ke **Mode Demo Lokal** berbasis browser untuk kenyamanan demo cepat.
+### 1. Penyederhanaan Alur Autentikasi (Masuk Akun)
+- **Halaman Depan Minimalis**: Login card di halaman depan hanya berisi input **Email** dan **Password** untuk masuk. Tab navigasi diubah menjadi **"Masuk Akun"** dan **"Daftar Akun"**.
+- **Formulir Pendaftaran**: Menghapus input "Nomor Peserta Ujian" dan "Instansi Asal" dari formulir pendaftaran, digantikan dengan input **"Lokasi"** (contoh: "Bandung, Jawa Barat").
+- **Tanpa Konfigurasi Awal**: Menghapus pemilihan tanggal bank soal dan mode simulasi dari form login agar proses autentikasi murni hanya untuk mengakses akun pengguna.
 
-### 2. Branding Visual Merah, Putih, Hitam (Sekolah Rakyat)
-- Menyesuaikan variabel warna HSL di [globals.css](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/app/globals.css) agar merepresentasikan identitas logo Sekolah Rakyat.
-- Dominasi visual warna **Hitam Arang (Charcoal Black)** sebagai latar belakang, **Borders Putih Tipis** yang elegan, dan **Merah Crimson (Ruby Red)** sebagai warna penanda aktif (primary branding) untuk tombol, ikon, status, radar chart, dan penunjuk timer.
+### 2. Panel Pemilihan Ujian di Dashboard (StatsOverview)
+- **Konfigurasi sebelum Ujian**: Memindahkan dropdown **Pilih Tanggal Bank Soal** dan tombol pilihan **Mode Simulasi** (Ujian CAT, Belajar, Latihan) ke dalam kartu **StatsOverview** di halaman Dashboard utama.
+- **Tampilan Fleksibel**: Pengguna sekarang masuk terlebih dahulu ke dashboard, lalu dapat mengonfigurasi tanggal set soal harian mana yang ingin dikerjakan secara interaktif. Jumlah komposisi soal akan dihitung dan ditampilkan secara real-time berdasarkan tanggal yang dipilih.
+- **Informasi Lokasi**: Profil kartu peserta kini menampilkan label **Lokasi** pengguna secara elegan.
 
-### 3. Integrasi Soal Harian per Tanggal (145 Soal)
-- Pengguna dapat memilih untuk menguji kompetensinya pada bank soal tanggal tertentu via dropdown pilihan tanggal.
-- Database menyimpan riwayat bank soal per tanggal secara independen sehingga data tidak saling menimpa.
+### 3. Database & Autentikasi Cloud (Supabase)
+- Integrasi aman dengan **Supabase Auth** dan sinkronisasi otomatis riwayat nilai ujian ke cloud database (`exam_history`).
+- **Graceful Fallback**: Mendukung **Mode Demo Lokal** menggunakan IndexedDB secara otomatis jika variabel lingkungan Supabase tidak terdeteksi.
 
 ---
 
@@ -28,13 +26,11 @@ Laporan ini memuat kemajuan implementasi fitur, perbaikan bug, integrasi penangg
 
 | Jalur File | Status | Fungsi / Kegunaan |
 | :--- | :--- | :--- |
-| [`src/app/globals.css`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/app/globals.css) | **Modified** | Penyesuaian tema warna Merah, Putih, Hitam secara global. |
-| [`src/lib/supabase.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/lib/supabase.ts) | **NEW** | Inisialisasi client-side SDK Supabase dengan fallback aman untuk mencegah error kompilasi build. |
-| [`src/store/index.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/store/index.ts) | **Modified** | Integrasi `signUp`, `signIn`, `logout`, `checkSession`, dan background database cloud sync di Zustand store. |
-| [`src/features/auth/LoginView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/auth/LoginView.tsx) | **Modified** | Desain ulang halaman depan menjadi form login/register premium bertema merah-hitam. |
-| [`src/components/shared/AppInitializer.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/components/shared/AppInitializer.tsx) | **Modified** | Memanggil `checkSession()` pada startup aplikasi untuk memulihkan sesi cloud pengguna yang aktif. |
-| [`package.json`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/package.json) | **Modified** | Menambahkan `@supabase/supabase-js` pada dependensi proyek. |
-| [`README.md`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/README.md) | **Modified** | Penambahan dokumentasi pengaturan Supabase, SQL Editor query, dan cara deploy di Vercel. |
+| [`src/store/index.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/store/index.ts) | **Modified** | Penyesuaian antarmuka `signUp` dan status penyimpanan state dengan dukungan parameter `lokasi` menggantikan instansi. |
+| [`src/features/auth/LoginView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/auth/LoginView.tsx) | **Modified** | Penyederhanaan formulir login & register, menghapus input instansi/no peserta dan pilihan mode/tanggal awal. |
+| [`src/features/dashboard/StatsOverview.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/dashboard/StatsOverview.tsx) | **Modified** | Penempatan dropdown pilihan tanggal bank soal harian, tombol mode simulasi, dan tampilan lokasi peserta. |
+| [`src/features/dashboard/DashboardView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/dashboard/DashboardView.tsx) | **Modified** | Sinkronisasi state `availableDates` dan `latestDate` dari database untuk disuplai ke StatsOverview. |
+| [`README.md`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/README.md) | **Modified** | Pembaruan panduan konfigurasi Supabase dan deskripsi fitur alur masuk akun. |
 
 ---
 
@@ -46,12 +42,12 @@ Seluruh kode program di atas telah diverifikasi melalui pengujian kompilasi stat
 ▲ Next.js 16.2.10 (Turbopack)
 
   Creating an optimized production build ...
-✓ Compiled successfully in 11.9s
+✓ Compiled successfully in 17.0s
   Running TypeScript ...
-  Finished TypeScript in 7.1s ...
+  Finished TypeScript in 9.7s ...
   Collecting page data using 3 workers ...
   Generating static pages using 3 workers (4/4) ...
-✓ Generating static pages using 3 workers (4/4) in 402ms
+✓ Generating static pages using 3 workers (4/4) in 434ms
   Finalizing page optimization ...
 ```
-Aplikasi kini sepenuhnya **siap dideploy ke Vercel** dan dijalankan secara aman dengan integrasi database cloud.
+Aplikasi kini sepenuhnya stabil dan siap dideploy langsung ke **Vercel**!
