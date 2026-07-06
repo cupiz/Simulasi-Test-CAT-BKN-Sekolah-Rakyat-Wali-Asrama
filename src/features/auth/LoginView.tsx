@@ -89,26 +89,28 @@ export function LoginView() {
             </div>
             <div className="text-left">
               <span className="text-[10px] tracking-widest font-black uppercase text-red-500 block">SEKOLAH RAKYAT</span>
-              <h1 className="text-2xl font-black text-white leading-none tracking-tight">
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white leading-none tracking-tight">
                 PORTAL BELAJAR CAT
               </h1>
             </div>
           </div>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto mt-2">
+          <p className="text-xs text-slate-600 dark:text-slate-400 max-w-sm mx-auto mt-2">
             Masuk atau daftarkan akun belajar Anda untuk mengakses simulasi seleksi kompetensi dasar dan analisis AI.
           </p>
         </div>
 
         {/* Auth card */}
-        <Card className="glass-panel border-white/10 bg-zinc-950/70 shadow-2xl rounded-2xl overflow-hidden relative">
+        <Card className="glass-panel border-slate-200 dark:border-white/10 shadow-2xl rounded-2xl overflow-hidden relative">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-red-600 via-white to-red-600" />
           
           {/* Segment control tabs */}
-          <div className="grid grid-cols-2 border-b border-white/5 bg-zinc-950/40">
+          <div className="grid grid-cols-2 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-zinc-950/40">
             <button
               onClick={() => { setActiveTab('login'); setErrors({}); }}
               className={`py-3.5 text-xs font-bold uppercase tracking-wider transition-colors relative cursor-pointer ${
-                activeTab === 'login' ? 'text-white' : 'text-slate-500 hover:text-slate-300'
+                activeTab === 'login' 
+                  ? 'text-slate-900 dark:text-white font-black' 
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
               }`}
             >
               <span>Masuk Akun</span>
@@ -119,7 +121,9 @@ export function LoginView() {
             <button
               onClick={() => { setActiveTab('register'); setErrors({}); }}
               className={`py-3.5 text-xs font-bold uppercase tracking-wider transition-colors relative cursor-pointer ${
-                activeTab === 'register' ? 'text-white' : 'text-slate-500 hover:text-slate-300'
+                activeTab === 'register' 
+                  ? 'text-slate-900 dark:text-white font-black' 
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
               }`}
             >
               <span>Daftar Akun</span>
@@ -143,7 +147,7 @@ export function LoginView() {
                   {/* Email & Password */}
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <label className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                         <Mail className="h-3.5 w-3.5 text-slate-500" />
                         <span>Alamat Email</span>
                       </label>
@@ -152,14 +156,14 @@ export function LoginView() {
                         placeholder="nama@email.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full h-10 px-3 rounded-lg border border-white/5 bg-black text-sm text-white placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
+                        className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-black text-sm text-slate-900 dark:text-white placeholder-slate-450 dark:placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
                         required
                       />
                       {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <label className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                         <Lock className="h-3.5 w-3.5 text-slate-500" />
                         <span>Kata Sandi</span>
                       </label>
@@ -169,13 +173,13 @@ export function LoginView() {
                           placeholder="Min. 6 karakter"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="w-full h-10 pl-3 pr-10 rounded-lg border border-white/5 bg-black text-sm text-white placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
+                          className="w-full h-10 pl-3 pr-10 rounded-lg border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-black text-sm text-slate-900 dark:text-white placeholder-slate-450 dark:placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
                           required
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300 cursor-pointer"
+                          className="absolute right-3 top-2.5 text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 cursor-pointer"
                         >
                           {showPassword ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
                         </button>
@@ -190,10 +194,10 @@ export function LoginView() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       transition={{ duration: 0.3 }}
-                      className="space-y-4 pt-2 border-t border-white/5"
+                      className="space-y-4 pt-2 border-t border-slate-200 dark:border-white/5"
                     >
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <label className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                           <User className="h-3.5 w-3.5 text-slate-500" />
                           <span>Nama Lengkap</span>
                         </label>
@@ -202,13 +206,13 @@ export function LoginView() {
                           placeholder="Contoh: Danis Arisandi"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="w-full h-10 px-3 rounded-lg border border-white/5 bg-black text-sm text-white placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-black text-sm text-slate-900 dark:text-white placeholder-slate-450 dark:placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
                         />
                         {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <label className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                           <MapPin className="h-3.5 w-3.5 text-slate-500" />
                           <span>Lokasi</span>
                         </label>
@@ -217,7 +221,7 @@ export function LoginView() {
                           placeholder="Contoh: Bandung, Jawa Barat"
                           value={lokasi}
                           onChange={(e) => setLokasi(e.target.value)}
-                          className="w-full h-10 px-3 rounded-lg border border-white/5 bg-black text-sm text-white placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-black text-sm text-slate-900 dark:text-white placeholder-slate-450 dark:placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
                         />
                         {errors.lokasi && <p className="text-xs text-red-500 mt-1">{errors.lokasi}</p>}
                       </div>
@@ -245,8 +249,8 @@ export function LoginView() {
             </form>
           </CardContent>
 
-          <CardFooter className="justify-center border-t border-white/5 py-4 bg-zinc-950/20">
-            <p className="text-[10px] text-slate-500 text-center font-medium">
+          <CardFooter className="justify-center border-t border-slate-200 dark:border-white/5 py-4 bg-slate-50 dark:bg-zinc-950/20">
+            <p className="text-[10px] text-slate-600 dark:text-slate-500 text-center font-medium">
               {activeTab === 'register' 
                 ? 'Data akun akan diamankan menggunakan enkripsi database cloud.' 
                 : 'Silakan hubungi admin Sekolah Rakyat jika Anda melupakan kredensial akun Anda.'}

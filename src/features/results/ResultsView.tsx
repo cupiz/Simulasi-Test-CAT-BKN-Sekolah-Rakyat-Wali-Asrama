@@ -71,7 +71,7 @@ export function ResultsView() {
             .score-item { text-align: center; }
             .score-num { font-size: 20px; font-weight: bold; color: #10b981; }
             .score-lbl { font-size: 11px; text-transform: uppercase; color: #666; }
-            .stamp { margin-top: 40px; font-size: 12px; color: #888; }
+
             @media print {
               body { padding: 0; }
               .cert-box { page-break-inside: avoid; }
@@ -101,10 +101,7 @@ export function ResultsView() {
                 <div class="score-lbl">Status</div>
               </div>
             </div>
-            <div class="stamp">
-              Verifikasi Sistem ID: BKN-SR-${result.date}<br/>
-              Panitia Seleksi Wali Asrama Sekolah Rakyat
-            </div>
+
           </div>
           <script>
             window.onload = function() { window.print(); window.close(); }
@@ -232,7 +229,7 @@ export function ResultsView() {
                   {result.isPassed ? 'LULUS SELEKSI' : 'TIDAK LULUS'}
                 </span>
                 <p className="text-[10px] text-slate-500 mt-1">
-                  Batas Kelulusan Passing Grade BKN: **65%**
+                  Batas Kelulusan Passing Grade BKN: <strong className="text-slate-900 dark:text-white">65%</strong>
                 </p>
               </div>
             </div>

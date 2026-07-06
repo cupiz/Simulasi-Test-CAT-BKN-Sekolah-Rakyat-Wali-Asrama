@@ -134,7 +134,7 @@ export function AIStudyPlannerCard() {
           <div className="flex flex-col items-center justify-center text-center py-12 space-y-3">
             <Calendar className="h-10 w-10 text-slate-600" />
             <p className="text-xs text-slate-400 max-w-[240px]">
-              Selesaikan minimal **1 Ujian Latihan/CAT** agar AI dapat memetakan kelemahan materi Anda.
+              Selesaikan minimal <strong className="text-slate-900 dark:text-slate-200">1 Ujian Latihan/CAT</strong> agar AI dapat memetakan kelemahan materi Anda.
             </p>
           </div>
         ) : activePlan ? (
