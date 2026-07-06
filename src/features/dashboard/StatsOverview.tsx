@@ -50,10 +50,10 @@ export function StatsOverview({
                   <GraduationCap className="h-5 w-5 text-red-500" />
                 </div>
                 <div>
-                  <h2 className="text-xl md:text-2xl font-black text-white leading-tight tracking-tight">
+                  <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white leading-tight tracking-tight">
                     Simulasi CAT BKN
                   </h2>
-                  <p className="text-[11px] text-red-400 font-bold uppercase tracking-widest">
+                  <p className="text-[11px] text-red-600 dark:text-red-400 font-bold uppercase tracking-widest">
                     Seleksi Wali Asrama — Sekolah Rakyat
                   </p>
                 </div>
@@ -63,14 +63,14 @@ export function StatsOverview({
             {/* Date Selector */}
             <div className="flex items-center gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Bank Soal Tanggal</label>
+                <label className="text-[10px] font-bold text-slate-600 dark:text-slate-500 uppercase tracking-wider block">Bank Soal Tanggal</label>
                 <select
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="h-10 px-3 rounded-lg border border-white/10 bg-black text-sm text-white focus:outline-hidden focus:border-red-500/50 transition-all cursor-pointer min-w-[200px]"
+                  className="h-10 px-3 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-black text-sm text-slate-900 dark:text-white focus:outline-hidden focus:border-red-500/50 transition-all cursor-pointer min-w-[200px]"
                 >
                   {availableDates.map(date => (
-                    <option key={date} value={date} className="bg-zinc-950 text-white">
+                    <option key={date} value={date} className="bg-white dark:bg-zinc-950 text-slate-900 dark:text-white">
                       {date}
                     </option>
                   ))}
@@ -80,28 +80,28 @@ export function StatsOverview({
           </div>
 
           {/* Exam Description */}
-          <div className="bg-black/30 rounded-xl border border-white/5 p-5 space-y-3">
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Ujian Seleksi Kompetensi Bidang (SKB) <strong className="text-white">CAT BKN</strong> untuk posisi{' '}
-              <strong className="text-red-400">Wali Asrama Sekolah Rakyat</strong>. Simulasi ini menguji kemampuan{' '}
+          <div className="bg-slate-100/70 dark:bg-black/30 rounded-xl border border-slate-200 dark:border-white/5 p-5 space-y-3">
+            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+              Ujian Seleksi Kompetensi Bidang (SKB) <strong className="text-slate-950 dark:text-white">CAT BKN</strong> untuk posisi{' '}
+              <strong className="text-red-600 dark:text-red-400">Wali Asrama Sekolah Rakyat</strong>. Simulasi ini menguji kemampuan{' '}
               teknis pengelolaan asrama, manajerial kepemimpinan, sosial kultural, dan wawancara situasional.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="flex items-center gap-2 text-xs text-slate-400">
-                <FileText className="h-3.5 w-3.5 text-blue-400 shrink-0" />
-                <span><strong className="text-white">{questionCount}</strong> Soal</span>
+              <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                <FileText className="h-3.5 w-3.5 text-blue-500 dark:text-blue-400 shrink-0" />
+                <span><strong className="text-slate-950 dark:text-white">{questionCount}</strong> Soal</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-400">
-                <Clock className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                <span><strong className="text-white">130</strong> Menit</span>
+              <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span><strong className="text-slate-950 dark:text-white">130</strong> Menit</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-400">
-                <Target className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                <span>Passing Grade <strong className="text-white">65%</strong></span>
+              <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                <Target className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400 shrink-0" />
+                <span>Passing Grade <strong className="text-slate-950 dark:text-white">65%</strong></span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-400">
-                <Shield className="h-3.5 w-3.5 text-red-400 shrink-0" />
-                <span>Scoring <strong className="text-white">SJT</strong></span>
+              <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                <Shield className="h-3.5 w-3.5 text-red-500 dark:text-red-400 shrink-0" />
+                <span>Scoring <strong className="text-slate-950 dark:text-white">SJT</strong></span>
               </div>
             </div>
           </div>
@@ -110,18 +110,18 @@ export function StatsOverview({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             {/* Mode Ujian CAT */}
-            <div className="md:col-span-2 p-5 rounded-xl bg-red-600/5 border border-red-600/20 space-y-3">
+            <div className="md:col-span-2 p-5 rounded-xl bg-red-600/5 border border-red-600/25 space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-red-600/15 flex items-center justify-center">
                   <Play className="h-4 w-4 text-red-500 fill-current" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-white">Mode Ujian (CAT)</h3>
-                  <p className="text-[11px] text-red-400/80 font-semibold">Simulasi penuh seperti ujian asli</p>
+                  <h3 className="text-sm font-black text-slate-950 dark:text-white">Mode Ujian (CAT)</h3>
+                  <p className="text-[11px] text-red-600 dark:text-red-400/80 font-semibold">Simulasi penuh seperti ujian asli</p>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Simulasi ujian CAT BKN sesungguhnya. Waktu dibatasi <strong className="text-white">130 menit</strong>, 
+              <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
+                Simulasi ujian CAT BKN sesungguhnya. Waktu dibatasi <strong className="text-slate-950 dark:text-white">130 menit</strong>, 
                 soal ditampilkan satu per satu, jawaban tidak bisa diubah setelah berpindah soal, 
                 dan pembahasan baru muncul setelah ujian selesai. Cocok untuk mengukur kesiapan Anda menghadapi tes seleksi yang sesungguhnya.
               </p>
@@ -135,23 +135,23 @@ export function StatsOverview({
             </div>
 
             {/* Mode Belajar */}
-            <div className="p-5 rounded-xl bg-blue-500/5 border border-blue-500/15 space-y-3">
+            <div className="p-5 rounded-xl bg-blue-500/5 border border-blue-500/25 space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
-                  <BookOpen className="h-4 w-4 text-blue-400" />
+                  <BookOpen className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-white">Mode Belajar</h3>
-                  <p className="text-[11px] text-blue-400/80 font-semibold">Tanpa batas waktu</p>
+                  <h3 className="text-sm font-black text-slate-950 dark:text-white">Mode Belajar</h3>
+                  <p className="text-[11px] text-blue-600 dark:text-blue-400/80 font-semibold">Tanpa batas waktu</p>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
                 Kerjakan soal tanpa tekanan waktu. Pembahasan dan jawaban benar langsung ditampilkan setelah Anda memilih jawaban, sehingga Anda bisa memahami konsep dan logika di balik setiap soal.
               </p>
               <Button
                 onClick={() => handleStart('belajar')}
                 variant="outline"
-                className="w-full h-10 text-xs font-bold border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/15 hover:text-blue-400 cursor-pointer rounded-xl flex items-center justify-center gap-2"
+                className="w-full h-10 text-xs font-bold border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/15 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer rounded-xl flex items-center justify-center gap-2"
               >
                 <BookOpen className="h-3.5 w-3.5" />
                 <span>Mulai Mode Belajar</span>
@@ -159,23 +159,23 @@ export function StatsOverview({
             </div>
 
             {/* Mode Latihan */}
-            <div className="p-5 rounded-xl bg-amber-500/5 border border-amber-500/15 space-y-3">
+            <div className="p-5 rounded-xl bg-amber-500/5 border border-amber-500/25 space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
-                  <Zap className="h-4 w-4 text-amber-400" />
+                  <Zap className="h-4 w-4 text-amber-500 dark:text-amber-400" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-white">Mode Latihan</h3>
-                  <p className="text-[11px] text-amber-400/80 font-semibold">Dengan timer, bisa review</p>
+                  <h3 className="text-sm font-black text-slate-950 dark:text-white">Mode Latihan</h3>
+                  <p className="text-[11px] text-amber-600 dark:text-amber-400/80 font-semibold">Dengan timer, bisa review</p>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
                 Gabungan terbaik dari kedua mode. Waktu tetap berjalan seperti ujian sesungguhnya, namun Anda bisa melihat pembahasan di akhir dan mengulang soal yang salah untuk memperkuat pemahaman.
               </p>
               <Button
                 onClick={() => handleStart('latihan')}
                 variant="outline"
-                className="w-full h-10 text-xs font-bold border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15 hover:text-amber-400 cursor-pointer rounded-xl flex items-center justify-center gap-2"
+                className="w-full h-10 text-xs font-bold border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 cursor-pointer rounded-xl flex items-center justify-center gap-2"
               >
                 <Zap className="h-3.5 w-3.5" />
                 <span>Mulai Mode Latihan</span>
