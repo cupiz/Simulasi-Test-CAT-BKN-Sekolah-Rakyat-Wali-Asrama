@@ -306,80 +306,10 @@ function generateOptions(category, student, problem) {
     ];
   }
 }
-
 function generateDaily(dateStr) {
   const result = [];
   const rand = getSeededRandom(dateStr);
 
-  const ref1 = {
-    category: 'teknis',
-    topic: 'Homesick & Peer Support',
-    questionText: '[SKB CAT BKN Wali Asrama] Sebagai Wali Asrama Sekolah Rakyat, Anda mendapati bahwa Danis sering terlambat mengikuti apel pagi karena ia kerap terjaga hingga larut malam demi menemani dan menenangkan teman sekamarnya yang sedang mengalami kecemasan hebat akibat rindu rumah (homesick). Di sisi lain, anggota kamar yang lain mulai merasa kurang nyaman karena poin kedisiplinan kamar mereka menurun akibat keterlambatan Danis yang berulang. Langkah pembinaan karakter dan penataan operasional yang paling bijaksana untuk menyelesaikan dinamika tersebut adalah...',
-    options: [
-      { key: 'A', text: 'Memberikan penghargaan kepada kamar lain yang selalu tepat waktu agar menjadi contoh nyata bagi Danis dan teman kamarnya untuk memperbaiki manajemen waktu.', score: 2 },
-      { key: 'B', text: 'Mengadakan kelas manajemen waktu dan regulasi emosi bagi seluruh penghuni asrama agar setiap individu mampu menyeimbangkan empati dan kedisiplinan.', score: 3 },
-      { key: 'C', text: 'Melakukan pemindahan Danis ke kamar khusus yang diisi oleh para pengurus asrama agar ia mendapatkan bimbingan intensif mengenai pembagian skala prioritas.', score: 1 },
-      { key: 'D', text: 'Memfasilitasi diskusi kamar untuk mengapresiasi empati Danis, sekaligus merancang bersama sistem dukungan bergantian bagi siswa yang cemas agar tanggung jawab kepedulian dipikul bersama.', score: 5 },
-      { key: 'E', text: 'Menjadwalkan sesi konseling personal bagi Danis dan siswa yang cemas tersebut guna menguatkan ketahanan mental serta kemandirian mereka selama di asrama.', score: 4 }
-    ],
-    correctAnswer: 'D',
-    explanation: 'Pilihan D adalah solusi terbaik karena mengedepankan pendekatan kolaboratif dan gotong royong yang menjadi ciri khas Sekolah Rakyat. Di asrama, kebersamaan dan empati adalah nilai luhur yang perlu ditumbuhkan, namun tidak boleh mengorbankan kedisiplinan kelompok. Dengan memfasilitasi diskusi kamar untuk mengapresiasi empati Danis, asisten/wali asrama mengakui tindakan baik tersebut, sekaligus memberdayakan anggota kamar lainnya untuk ikut peduli dengan membuat jadwal dukungan bergantian (peer-support system). Hal ini memecah beban agar tidak menumpuk di Danis saja, mengembalikan kedisiplinan kamar, dan mengajarkan tanggung jawab sosial kepada semua siswa.',
-    competency: 'SOP Asrama, Resolusi Konflik, dan Karakter Kebangsaan (Gotong Royong).',
-    berakhlak: 'Harmonis & Kolaboratif',
-    psychologyBasis: 'Social Support Theory (Teori Dukungan Sosial) dan Peer-Assisted Learning/Support Systems. Tekanan emosional homesick diatasi secara komunal guna membangun resiliensi kelompok.',
-    catTips: 'Cari jawaban yang tidak sekadar menerapkan sanksi atau memisahkan siswa, melainkan jawaban yang memberdayakan ekosistem asrama untuk menyelesaikan masalah secara bersama-sama.',
-    dateStr,
-    number: 1
-  };
-
-  const ref2 = {
-    category: 'teknis',
-    topic: 'SOP Asrama',
-    questionText: '[SKB CAT BKN Wali Asrama] Pada saat kegiatan kerja bakti berkala membersihkan lingkungan asrama Sekolah Rakyat, Anda melihat Galih sedang membaca buku di sudut gazebo yang tenang. Ketika Anda mendekatinya, Galih menjelaskan dengan sangat sopan bahwa ia ingin memaksimalkan waktu luangnya untuk mempersiapkan diri menghadapi kompetisi sains tingkat nasional yang akan berlangsung minggu depan. Teman-teman sebayanya mulai menggerutu, namun mereka tetap melanjutkan pekerjaan mereka. Tindakan pembinaan yang paling tepat untuk mengarahkan perilaku Galih adalah...',
-    options: [
-      { key: 'A', text: 'Meminta Galih untuk memimpin doa dan memberikan evaluasi di akhir kegiatan kerja bakti sebagai wujud kontribusi kepemimpinan bagi asrama.', score: 2 },
-      { key: 'B', text: 'Mengajak Galih berdialog mengenai esensi keseimbangan antara prestasi akademis dan kontribusi sosial, lalu membimbingnya meluangkan waktu sejenak untuk membantu teman-temannya.', score: 5 },
-      { key: 'C', text: 'Memfasilitasi forum musyawarah asrama untuk merumuskan dispensasi khusus yang legal bagi siswa yang sedang bersiap menghadapi kompetisi penting.', score: 3 },
-      { key: 'D', text: 'Memberikan apresiasi atas kegigihan belajar Galih di depan umum, serta memotivasi siswa lain untuk meniru semangat belajarnya di waktu yang tepat.', score: 1 },
-      { key: 'E', text: 'Mengarahkan Galih untuk mengganti kontribusi fisiknya dengan membuat rangkuman materi pelajaran yang bermanfaat bagi seluruh penghuni asrama.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Pilihan B adalah yang terbaik karena menyentuh ranah kognitif dan afektif melalui dialog empatik. Sebagai Wali Asrama, penting untuk membina pemahaman Galih tentang pentingnya keseimbangan (balance) antara kesuksesan akademik individu dan kepedulian terhadap lingkungan sosial (komunitas asrama). Dengan mengajaknya berdialog, Galih dibimbing menyadari bahwa kebersamaan dan kerja bakti adalah nilai integritas sosial, lalu ia secara sadar didorong untuk meluangkan sedikit waktu guna membantu temannya. Ini menjaga harmoni asrama dan mencegah kecemburuan sosial.',
-    competency: 'Budaya Sekolah, Pembinaan Karakter Disiplin, dan Manajemen Konflik.',
-    berakhlak: 'Harmonis & Akuntabel',
-    psychologyBasis: 'Social Identity Theory (Teori Identitas Sosial) dan perkembangan moral Kohlberg pada tahap pasca-konvensional, di mana individu menyadari pentingnya kontrak sosial dan kontribusi bagi kesejahteraan bersama.',
-    catTips: 'Pilihlah opsi yang mendidik karakter siswa secara personal melalui dialog dua arah, bukan dengan hukuman langsung atau dispensasi yang merusak kebersamaan kelompok.',
-    dateStr,
-    number: 2
-  };
-
-  const ref3 = {
-    category: 'teknis',
-    topic: 'Leadership',
-    questionText: '[SKB CAT BKN Wali Asrama] Panji adalah seorang ketua organisasi siswa di asrama Sekolah Rakyat yang dikenal sangat disiplin. Namun, Anda memperhatikan bahwa dalam beberapa minggu terakhir, Panji cenderung menggunakan intonasi suara yang tinggi dan instruksi yang kaku saat menegakkan tata krama makan di aula asrama kepada para siswa junior. Meskipun para junior patuh, suasana makan menjadi tegang. Rekan sesama pengurus menyatakan bahwa metode Panji efektif untuk menjaga keteraturan. Sikap Anda sebagai Wali Asrama untuk membina karakter kepemimpinan Panji adalah...',
-    options: [
-      { key: 'A', text: 'Melakukan rotasi berkala posisi pengurus asrama agar terjadi penyegaran gaya komunikasi di lingkungan ruang makan.', score: 2 },
-      { key: 'B', text: 'Mengadakan pelatihan etika komunikasi publik bagi seluruh pengurus asrama guna meningkatkan kompetensi berbicara mereka.', score: 3 },
-      { key: 'C', text: 'Memberikan pujian kepada Panji atas kedisplinannya, disertai saran tertulis mengenai variasi metode penegakan aturan yang lebih persuasif.', score: 4 },
-      { key: 'D', text: 'Menghadiri setiap sesi makan malam secara langsung untuk memberikan teladan nyata mengenai cara menegur yang ramah dan menyejukkan.', score: 1 },
-      { key: 'E', text: 'Membimbing Panji melalui bimbingan personal mengenai konsep kepemimpinan yang mengayomi, serta mengajaknya merancang metode penegakan tata krama berbasis keteladan bersama.', score: 5 }
-    ],
-    correctAnswer: 'E',
-    explanation: 'Pilihan E adalah solusi pembinaan kepemimpinan yang paling utuh. Panji memiliki niat baik (disiplin) tetapi menggunakan metode kepemimpinan yang otoriter dan menciptakan atmosfer ketakutan. Sebagai Wali Asrama, pembinaan kepemimpinan terbaik dilakukan lewat bimbingan personal (one-on-one coaching) untuk menanamkan esensi kepemimpinan yang mengayomi (servant leadership). Mengajak Panji merancang tata krama asrama berbasis keteladanan (role modeling) mengajarkannya bahwa kepatuhan sejati lahir dari rasa hormat dan inspirasi, bukan intimidasi.',
-    competency: 'Kepemimpinan (Leadership), Etika Komunikasi, dan Pembinaan Karakter.',
-    berakhlak: 'Berorientasi Pelayanan & Harmonis',
-    psychologyBasis: 'Servant Leadership Theory (Greenleaf) dan Transformational Leadership, di mana pemimpin menginspirasi pengikut untuk mencapai tujuan bersama dalam suasana saling menghargai.',
-    catTips: 'Carilah opsi yang memberikan bimbingan langsung kepada pelaku (coaching) serta berfokus pada kolaborasi jangka panjang untuk mengubah metode penegakan aturan yang kaku menjadi persuasif.',
-    dateStr,
-    number: 3
-  };
-
-  const ref4 = {
-    category: 'sosial',
-    topic: 'Budaya',
-    questionText: '[SKB CAT BKN Wali Asrama] Dalam rapat persiapan festival budaya asrama Sekolah Rakyat, suasana menjadi hangat dan menjurus pada perdebatan sengit. Kelompok siswa yang berasal dari wilayah Sumatera, Jawa, dan Indonesia Timur bersikeras bahwa kebudayaan asli daerah merekalah yang harus menjadi tema utama dan pementasan pembuka festival. Masing-masing pihak merasa daerahnya memiliki nilai filosofis yang paling tinggi. Langkah Anda selaku Wali Asrama untuk menanamkan karakter kebangsaan dan menghargai sesama adalah...',
-    options: [
-      { key: 'A', text: 'Merancang kolaborasi pertunjukan drama musikal yang memadukan unsur-unsur cerita rakyat dari seluruh daerah tersebut ke dalam satu kesatuan pentas yang utuh.', score: 5 },
       { key: 'B', text: 'Menetapkan tema festival secara mandiri dari pihak pengelola asrama untuk menjaga netralitas dan kedamaian di antara kelompok siswa.', score: 2 },
       { key: 'C', text: 'Memberikan waktu tambahan bagi setiap kelompok untuk berlatih secara terpisah demi menampilkan performa terbaik mereka masing-masing.', score: 3 },
       { key: 'D', text: 'Mengundang tokoh budayawan nasional untuk memberikan ceramah intensif mengenai indahnya keberagaman dan persatuan bangsa kepada seluruh siswa.', score: 4 },

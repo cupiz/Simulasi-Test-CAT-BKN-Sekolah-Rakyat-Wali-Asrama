@@ -407,22 +407,8 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   const result: Question[] = [];
   const rand = getSeededRandom(dateStr);
 
-  // References are dynamically integrated with dateStr
-  const ref1 = { ...REFERENCE_QUESTIONS[0], dateStr, number: 1 };
-  delete ref1.id;
-  const ref2 = { ...REFERENCE_QUESTIONS[1], dateStr, number: 2 };
-  delete ref2.id;
-  const ref3 = { ...REFERENCE_QUESTIONS[2], dateStr, number: 3 };
-  delete ref3.id;
-  const ref4 = { ...REFERENCE_QUESTIONS[3], dateStr, number: 116 };
-  delete ref4.id;
-  const ref5 = { ...REFERENCE_QUESTIONS[4], dateStr, number: 136 };
-  delete ref5.id;
-
   // 1. Technical: 90 Questions
-  result.push(ref1, ref2, ref3);
-
-  for (let num = 4; num <= 90; num++) {
+  for (let num = 1; num <= 90; num++) {
     const qRand = getSeededRandom(`${dateStr}-teknis-v4-${num}`);
     
     // Choose template based on seeded random to prevent sequential repetition
@@ -529,9 +515,7 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   }
 
   // 3. Sosial: 20 Questions
-  result.push(ref4);
-
-  for (let num = 117; num <= 135; num++) {
+  for (let num = 116; num <= 135; num++) {
     const qRand = getSeededRandom(`${dateStr}-sosial-v4-${num}`);
     
     const tIdx = Math.floor(qRand() * SOCIAL_TEMPLATES.length);
@@ -582,9 +566,7 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   }
 
   // 4. Wawancara: 10 Questions
-  result.push(ref5);
-
-  for (let num = 137; num <= 145; num++) {
+  for (let num = 136; num <= 145; num++) {
     const qRand = getSeededRandom(`${dateStr}-wawancara-v4-${num}`);
     
     const tIdx = Math.floor(qRand() * INTERVIEW_TEMPLATES.length);

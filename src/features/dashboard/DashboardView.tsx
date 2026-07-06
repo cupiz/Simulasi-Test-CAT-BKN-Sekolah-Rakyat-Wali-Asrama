@@ -78,21 +78,29 @@ export function DashboardView() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-100 flex flex-col font-sans select-none pb-12">
+    <div className={`min-h-screen flex flex-col font-sans select-none pb-12 transition-colors duration-300 ${
+      theme === 'light' 
+        ? 'bg-slate-50 text-slate-900' 
+        : 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-100'
+    }`}>
       
       {/* Background blobs */}
       <div className="absolute top-0 left-[25%] w-[400px] h-[400px] rounded-full bg-blue-500/5 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 right-[25%] w-[400px] h-[400px] rounded-full bg-emerald-500/5 blur-[100px] pointer-events-none" />
 
       {/* Header / Navbar */}
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/60 backdrop-blur-md">
+      <header className={`sticky top-0 z-40 border-b backdrop-blur-md transition-colors duration-300 ${
+        theme === 'light' 
+          ? 'border-slate-200 bg-white/80' 
+          : 'border-white/5 bg-slate-950/60'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-base">
               SR
             </div>
             <div>
-              <span className="text-sm font-black text-white tracking-tight">Sekolah Rakyat</span>
+              <span className={`text-sm font-black tracking-tight ${theme === 'light' ? 'text-slate-900' : 'text-white'}`}>Sekolah Rakyat</span>
               <span className="text-[10px] text-slate-500 block leading-none font-semibold uppercase tracking-wider">Simulasi CAT BKN v1.0</span>
             </div>
           </div>
@@ -110,8 +118,12 @@ export function DashboardView() {
                   }}
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                     isActive
-                      ? 'bg-white/10 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? theme === 'light'
+                        ? 'bg-slate-200 text-slate-900 shadow-xs'
+                        : 'bg-white/10 text-white shadow-sm'
+                      : theme === 'light'
+                        ? 'text-slate-600 hover:text-slate-950'
+                        : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   {tab === 'dashboard' && 'Dashboard'}
@@ -126,12 +138,16 @@ export function DashboardView() {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg border border-white/5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+                theme === 'light'
+                  ? 'border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900'
+                  : 'border-white/5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white'
+              }`}
             >
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
             <div className="hidden sm:block text-right">
-              <span className="text-xs font-bold text-slate-200 block leading-tight">{auth.name}</span>
+              <span className={`text-xs font-bold block leading-tight ${theme === 'light' ? 'text-slate-900' : 'text-slate-200'}`}>{auth.name}</span>
               <span className="text-[10px] text-slate-500 font-semibold">{auth.lokasi || auth.instansi}</span>
             </div>
           </div>
@@ -142,7 +158,7 @@ export function DashboardView() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex-1 w-full space-y-8 relative z-10">
         
         {/* Mobile Tabs */}
-        <div className="flex md:hidden border-b border-white/5 pb-2 justify-around">
+        <div className={`flex md:hidden border-b pb-2 justify-around ${theme === 'light' ? 'border-slate-200' : 'border-white/5'}`}>
           {(['dashboard', 'history', 'admin'] as const).map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -152,8 +168,12 @@ export function DashboardView() {
                   setActiveTab(tab);
                   setSelectedHistoryItem(null);
                 }}
-                className={`pb-1 text-xs font-bold ${
-                  isActive ? 'border-b-2 border-primary text-primary' : 'text-slate-400'
+                className={`pb-1 text-xs font-bold transition-all cursor-pointer ${
+                  isActive 
+                    ? 'border-b-2 border-primary text-primary' 
+                    : theme === 'light'
+                      ? 'text-slate-600'
+                      : 'text-slate-400'
                 }`}
               >
                 {tab === 'dashboard' && 'Dashboard'}
