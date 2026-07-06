@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Simulator CAT BKN Sekolah Rakyat - Wali Asrama
 
-## Getting Started
+Aplikasi Simulasi CAT BKN Sekolah Rakyat kualitas produksi siap latihan intensif bagi Wali Asrama. Dibangun dengan standar keandalan tinggi dan visual estetik premium yang terinspirasi oleh Stripe dan Linear.
 
-First, run the development server:
+---
 
+## 🌟 FITUR UTAMA
+
+1. **Login Kredensial Peserta**: Registrasi nama, nomor peserta, instansi, dan pemilihan mode pengerjaan secara mudah.
+2. **Sistem CAT BKN Standar**:
+   - 145 Soal (90 Teknis, 25 Manajerial, 20 Sosial, 10 Wawancara).
+   - Hard timer 130 menit dengan auto-submit ketika waktu habis.
+   - Autosave real-time menggunakan IndexedDB (Dexie.js), sehingga jawaban tidak hilang jika halaman direfresh.
+3. **Analisis AI & Psikologi**: Menampilkan radar kompetensi psikologi (Leadership, Empathy, Integrity, dll.) serta rekomendasi materi belajar mingguan berdasarkan tingkat kesalahan pengerjaan.
+4. **PWA & Offline Mode**: Dapat diinstal di desktop atau ponsel dan berjalan sepenuhnya secara lokal offline.
+5. **Admin CRUD Panel**: Memungkinkan penambahan, penyuntingan, dan penghapusan soal secara real-time tanpa mengubah source code. Mendukung ekspor/impor bank soal via berkas JSON.
+6. **Statistik Interaktif**: Grafis Recharts lengkap (Radar, Line, Bar, Pie) dan Heatmap Latihan Harian mirip visual kontribusi GitHub.
+7. **Pencapaian (Achievements) & Leaderboard Lokal**: Gamifikasi pencapaian lencana dan persaingan ketat dengan rival simulasi lokal.
+
+---
+
+## 🛠️ TECH STACK
+
+- **Framework**: Next.js 15 (App Router) + React 19 + TypeScript
+- **State & Database**: Zustand + Dexie.js (IndexedDB)
+- **Styling & Motion**: Tailwind CSS v4 + Framer Motion
+- **Form & Validation**: React Hook Form + Zod
+- **Charts & Utilities**: Recharts + date-fns + sonner + Lucide Icons
+- **Testing**: Vitest + Playwright
+
+---
+
+## 🚀 MEMULAI PROYEK
+
+### Prasyarat
+Pastikan Anda memiliki **Node.js (LTS)** terinstal di sistem Anda.
+
+### 1. Instalasi Dependensi
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Jalankan Mode Development
+Jalankan server pengembangan lokal di `http://localhost:3000`:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Kompilasi & Build Produksi
+Untuk melakukan kompilasi bundel optimasi produksi:
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🧪 PENGUJIAN (TESTING)
 
-To learn more about Next.js, take a look at the following resources:
+### Unit & Integration Tests (Vitest)
+Jalankan tes logika scoring, database seeder, dan pembagian kategori soal:
+```bash
+npx vitest run
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### E2E Tests (Playwright)
+Jalankan otomatisasi pengetesan integrasi browser:
+```bash
+# Instalasi browser Playwright jika pertama kali
+npx playwright install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Jalankan tes
+npx playwright test
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📦 DEPLOYMENT
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Deploy ke Vercel (Rekomendasi)
+Proyek ini sepenuhnya kompatibel dengan infrastruktur Vercel. Untuk mendeploy melalui Vercel CLI:
+```bash
+npm install -g vercel
+vercel
+```
+
+### Deploy menggunakan Docker
+Kami menyediakan konfigurasi `Dockerfile` untuk deployment berbasis kontainer.
+
+#### 1. Bangun Image Docker
+```bash
+docker build -t cat-sekolah-rakyat .
+```
+
+#### 2. Jalankan Kontainer
+```bash
+docker run -p 3000:3000 cat-sekolah-rakyat
+```
+
+---
+
+## 📄 SKEMA IMPOR BANK SOAL (JSON)
+Berikut adalah format JSON yang kompatibel untuk ditambahkan melalui Admin Panel:
+```json
+[
+  {
+    "id": 1,
+    "category": "teknis",
+    "topic": "Homesick",
+    "questionText": "Pertanyaan studi kasus Anda...",
+    "options": [
+      { "key": "A", "text": "Opsi A", "score": 2 },
+      { "key": "B", "text": "Opsi B", "score": 3 },
+      { "key": "C", "text": "Opsi C", "score": 1 },
+      { "key": "D", "text": "Opsi D", "score": 5 },
+      { "key": "E", "text": "Opsi E", "score": 4 }
+    ],
+    "correctAnswer": "D",
+    "explanation": "Pembahasan lengkap minimal 300 kata...",
+    "competency": "Kategori kompetensi",
+    "berakhlak": "Nilai BerAKHLAK terkait",
+    "psychologyBasis": "Landasan psikologis",
+    "catTips": "Tips CAT khusus"
+  }
+]
+```
+Jika berkas JSON Anda tidak menyertakan skema ini secara persis, Admin Panel akan menolak impor demi mencegah kerusakan data.

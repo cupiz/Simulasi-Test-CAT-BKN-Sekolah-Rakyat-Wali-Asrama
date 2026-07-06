@@ -1,0 +1,79 @@
+import { db } from '../lib/db';
+import { getInitialQuestions } from '../data/questions';
+import { Achievement } from '../types';
+
+const INITIAL_ACHIEVEMENTS: Achievement[] = [
+  {
+    id: 'first_exam',
+    title: 'Percobaan Pertama',
+    description: 'Menyelesaikan simulasi ujian atau latihan pertama Anda di asrama.',
+    icon: 'Flame',
+    unlockedAt: null
+  },
+  {
+    id: 'passed_exam',
+    title: 'Lulus Batas Kelulusan',
+    description: 'Mendapatkan persentase skor kelulusan minimal 65% dalam simulasi.',
+    icon: 'Award',
+    unlockedAt: null
+  },
+  {
+    id: 'score_600',
+    title: 'Master Wali Asrama',
+    description: 'Mencapai skor luar biasa minimal 600 poin dalam ujian CAT.',
+    icon: 'ShieldAlert',
+    unlockedAt: null
+  },
+  {
+    id: 'speed_run',
+    title: 'Speed Demon',
+    description: 'Menyelesaikan seluruh soal simulasi ujian dalam waktu kurang dari 30 menit.',
+    icon: 'Zap',
+    unlockedAt: null
+  },
+  {
+    id: 'daily_done',
+    title: 'Konsistensi Harian',
+    description: 'Berhasil menjawab tantangan harian (Daily Challenge) pertama Anda.',
+    icon: 'Calendar',
+    unlockedAt: null
+  }
+];
+
+export async function seedDatabase() {
+  try {
+    // 1. Seed Questions if empty
+    const questionCount = await db.questions.count();
+    if (questionCount === 0) {
+      console.log('Seeding questions database...');
+      const questions = getInitialQuestions();
+      await db.questions.bulkPut(questions);
+      console.log(`Seeded ${questions.length} questions successfully.`);
+    }
+
+    // 2. Seed Achievements if empty
+    const achievementCount = await db.achievements.count();
+    if (achievementCount === 0) {
+      console.log('Seeding achievements...');
+      await db.achievements.bulkPut(INITIAL_ACHIEVEMENTS);
+      console.log('Seeded initial achievements.');
+    }
+
+    // 3. Seed Mock Leaderboard data for a realistic competitive feel
+    const leaderboardCount = await db.leaderboard.count();
+    if (leaderboardCount === 0) {
+      console.log('Seeding mock competitors on leaderboard...');
+      const mockCompetitors = [
+        { id: 'c1', name: 'Andi Wijaya', instansi: 'Sekolah Rakyat Sumut', score: 685, timeSpent: 5400, rank: 1 },
+        { id: 'c2', name: 'Siti Rahma', instansi: 'Sekolah Rakyat Jabar', score: 650, timeSpent: 6200, rank: 2 },
+        { id: 'c3', name: 'Budi Santoso', instansi: 'Sekolah Rakyat Jatim', score: 620, timeSpent: 4800, rank: 3 },
+        { id: 'c4', name: 'Dewi Lestari', instansi: 'Sekolah Rakyat Bali', score: 580, timeSpent: 6900, rank: 4 },
+        { id: 'c5', name: 'Faisal Haris', instansi: 'Sekolah Rakyat Sulsel', score: 545, timeSpent: 7300, rank: 5 }
+      ];
+      await db.leaderboard.bulkPut(mockCompetitors);
+      console.log('Seeded mock competitors.');
+    }
+  } catch (err) {
+    console.error('Failed to seed IndexedDB:', err);
+  }
+}
