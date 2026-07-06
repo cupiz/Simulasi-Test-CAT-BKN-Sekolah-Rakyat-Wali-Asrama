@@ -4,7 +4,7 @@ import React from 'react';
 import { useAuthStore } from '../../store';
 import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { GraduationCap, LogOut, Play, Calendar, User, FileText, MapPin } from 'lucide-react';
+import { GraduationCap, LogOut, Play, Calendar, User, FileText, MapPin, Clock, Target, Shield, BookOpen, Zap } from 'lucide-react';
 import { ExamMode } from '../../types';
 import { toast } from 'sonner';
 
@@ -31,142 +31,199 @@ export function StatsOverview({
   };
 
   return (
-    <Card className="glass-panel border-white/5 overflow-hidden">
-      <div className="p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-linear-to-r from-primary/10 via-transparent to-transparent">
-        
-        {/* User profile */}
-        <div className="space-y-2 flex-1">
-          <div className="flex items-center gap-2 text-primary font-extrabold text-xs tracking-wider uppercase">
-            <User className="h-4 w-4" />
-            <span>Kartu Peserta CAT BKN</span>
-          </div>
-          <h2 className="text-2xl font-extrabold text-white leading-tight">
-            {auth.name || 'Peserta Ujian'}
-          </h2>
-          <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-400">
-            <div className="flex items-center gap-1">
-              <MapPin className="h-3.5 w-3.5 text-slate-500" />
-              <span className="text-slate-500 font-medium">Lokasi:</span>{' '}
-              <span className="text-slate-300 font-bold">{auth.lokasi || auth.instansi || '-'}</span>
+    <div className="space-y-6">
+
+      {/* ═══════════════════════════════════════════════════════════════
+          HERO: Mulai Simulasi Ujian - BESAR & PALING ATAS
+          ═══════════════════════════════════════════════════════════════ */}
+      <Card className="glass-panel border-red-600/20 overflow-hidden relative">
+        {/* Gradient Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 via-transparent to-red-900/5 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 rounded-full blur-[80px] pointer-events-none" />
+
+        <div className="relative p-6 md:p-10 space-y-8">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="h-10 w-10 rounded-xl bg-red-600/15 border border-red-600/25 flex items-center justify-center">
+                  <GraduationCap className="h-5 w-5 text-red-500" />
+                </div>
+                <div>
+                  <h2 className="text-xl md:text-2xl font-black text-white leading-tight tracking-tight">
+                    Simulasi CAT BKN
+                  </h2>
+                  <p className="text-[11px] text-red-400 font-bold uppercase tracking-widest">
+                    Seleksi Wali Asrama — Sekolah Rakyat
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Date Selector */}
+            <div className="flex items-center gap-3">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Bank Soal Tanggal</label>
+                <select
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="h-10 px-3 rounded-lg border border-white/10 bg-black text-sm text-white focus:outline-hidden focus:border-red-500/50 transition-all cursor-pointer min-w-[200px]"
+                >
+                  {availableDates.map(date => (
+                    <option key={date} value={date} className="bg-zinc-950 text-white">
+                      {date}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Quick actions */}
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={() => {
-              logout();
-              toast.info('Keluar dari portal peserta.');
-            }}
-            variant="outline"
-            className="text-xs h-9 cursor-pointer"
-          >
-            <LogOut className="h-3.5 w-3.5 mr-1.5" />
-            <span>Ganti Akun</span>
-          </Button>
-        </div>
-
-      </div>
-
-      <CardContent className="p-6 md:p-8 border-t border-white/5 grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {/* Composition Info */}
-        <div className="space-y-4">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-            <FileText className="h-4 w-4 text-primary" />
-            <span>Komposisi Soal CAT ({questionCount})</span>
-          </h3>
-          <ul className="text-xs text-slate-300 space-y-2 font-medium">
-            <li className="flex justify-between p-2 rounded-lg bg-slate-950/20 border border-white/5">
-              <span className="text-slate-400">Kompetensi Teknis:</span>
-              <span className="text-blue-400 font-extrabold">90 Soal</span>
-            </li>
-            <li className="flex justify-between p-2 rounded-lg bg-slate-950/20 border border-white/5">
-              <span className="text-slate-400">Kompetensi Manajerial:</span>
-              <span className="text-amber-400 font-extrabold">25 Soal</span>
-            </li>
-            <li className="flex justify-between p-2 rounded-lg bg-slate-950/20 border border-white/5">
-              <span className="text-slate-400">Kompetensi Sosial:</span>
-              <span className="text-emerald-400 font-extrabold">20 Soal</span>
-            </li>
-            <li className="flex justify-between p-2 rounded-lg bg-slate-950/20 border border-white/5">
-              <span className="text-slate-400">Kompetensi Wawancara:</span>
-              <span className="text-red-400 font-extrabold">10 Soal</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* Exam stats */}
-        <div className="space-y-4">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-            <Calendar className="h-4 w-4 text-primary" />
-            <span>Ketentuan Kelulusan</span>
-          </h3>
-          <div className="p-4 rounded-xl bg-slate-950/20 border border-white/5 text-xs text-slate-300 space-y-3 leading-relaxed">
-            <p>
-              Durasi pengerjaan resmi adalah <strong className="text-white">130 menit</strong> (7.800 detik) untuk seluruh mode Ujian.
+          {/* Exam Description */}
+          <div className="bg-black/30 rounded-xl border border-white/5 p-5 space-y-3">
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Ujian Seleksi Kompetensi Bidang (SKB) <strong className="text-white">CAT BKN</strong> untuk posisi{' '}
+              <strong className="text-red-400">Wali Asrama Sekolah Rakyat</strong>. Simulasi ini menguji kemampuan{' '}
+              teknis pengelolaan asrama, manajerial kepemimpinan, sosial kultural, dan wawancara situasional.
             </p>
-            <p>
-              Passing grade standar kelulusan simulasi disetel pada persentase kelulusan minimal <strong className="text-success font-extrabold">65%</strong> dari total akumulasi skor SJT.
-            </p>
-            <p className="text-[11px] text-slate-500 font-medium">
-              Sistem CAT mendukung autosave realtime dan keyboard navigasi (←, →, 1, 2, 3, 4, 5).
-            </p>
-          </div>
-        </div>
-
-        {/* Launcher Panel */}
-        <div className="space-y-3 flex flex-col justify-between">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-            <GraduationCap className="h-4 w-4 text-primary" />
-            <span>Mulai Ujian Simulasi</span>
-          </h3>
-          
-          {/* Date Selector */}
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Pilih Tanggal Bank Soal</label>
-            <select
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full h-9 px-2 rounded-lg border border-white/5 bg-black text-xs text-white focus:outline-hidden focus:border-red-500/50 transition-all cursor-pointer"
-            >
-              {availableDates.map(date => (
-                <option key={date} value={date} className="bg-zinc-950 text-white text-xs">
-                  Ujian Set: {date}
-                </option>
-              ))}
-            </select>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <FileText className="h-3.5 w-3.5 text-blue-400 shrink-0" />
+                <span><strong className="text-white">{questionCount}</strong> Soal</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <Clock className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                <span><strong className="text-white">130</strong> Menit</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <Target className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                <span>Passing Grade <strong className="text-white">65%</strong></span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <Shield className="h-3.5 w-3.5 text-red-400 shrink-0" />
+                <span>Scoring <strong className="text-white">SJT</strong></span>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2">
+          {/* Action Buttons - BIG */}
+          <div className="space-y-3">
             <Button
               onClick={() => handleStart('ujian')}
-              className="w-full h-10 bg-success text-success-foreground hover:bg-success/90 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-success/10 cursor-pointer"
+              className="w-full h-14 bg-red-600 text-white hover:bg-red-700 font-black text-base flex items-center justify-center gap-3 shadow-xl shadow-red-600/20 rounded-xl cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99]"
             >
-              <Play className="h-3.5 w-3.5 fill-current" />
-              <span>Luncurkan Mode Ujian (CAT)</span>
+              <Play className="h-5 w-5 fill-current" />
+              <span>MULAI SIMULASI UJIAN CAT</span>
             </Button>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <Button
                 onClick={() => handleStart('belajar')}
                 variant="outline"
-                className="h-9 text-[11px] font-bold border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-400 cursor-pointer"
+                className="h-11 text-xs font-bold border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 hover:text-blue-400 cursor-pointer rounded-xl flex items-center justify-center gap-2"
               >
-                Mode Belajar
+                <BookOpen className="h-4 w-4" />
+                <span>Mode Belajar</span>
               </Button>
               <Button
                 onClick={() => handleStart('latihan')}
                 variant="outline"
-                className="h-9 text-[11px] font-bold border-amber-500/30 hover:bg-amber-500/10 hover:text-amber-400 cursor-pointer"
+                className="h-11 text-xs font-bold border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 hover:text-amber-400 cursor-pointer rounded-xl flex items-center justify-center gap-2"
               >
-                Mode Latihan
+                <Zap className="h-4 w-4" />
+                <span>Mode Latihan</span>
               </Button>
             </div>
           </div>
         </div>
+      </Card>
 
-      </CardContent>
-    </Card>
+      {/* ═══════════════════════════════════════════════════════════════
+          ROW 2: Profil Peserta + Komposisi Soal + Ketentuan Kelulusan
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        {/* Profil Peserta */}
+        <Card className="glass-panel border-white/5">
+          <CardContent className="p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-primary font-extrabold text-[10px] tracking-wider uppercase">
+                <User className="h-3.5 w-3.5" />
+                <span>Kartu Peserta</span>
+              </div>
+              <Button
+                onClick={() => {
+                  logout();
+                  toast.info('Keluar dari portal peserta.');
+                }}
+                variant="ghost"
+                size="sm"
+                className="h-7 text-[10px] text-slate-500 hover:text-red-400 cursor-pointer"
+              >
+                <LogOut className="h-3 w-3 mr-1" />
+                Keluar
+              </Button>
+            </div>
+            <h3 className="text-lg font-black text-white leading-tight">
+              {auth.name || 'Peserta Ujian'}
+            </h3>
+            <div className="flex items-center gap-1.5 text-xs text-slate-400">
+              <MapPin className="h-3.5 w-3.5 text-slate-500" />
+              <span className="text-slate-500 font-medium">Lokasi:</span>
+              <span className="text-slate-300 font-bold">{auth.lokasi || auth.instansi || '-'}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Komposisi Soal */}
+        <Card className="glass-panel border-white/5">
+          <CardContent className="p-5 space-y-3">
+            <div className="flex items-center gap-2 text-primary font-extrabold text-[10px] tracking-wider uppercase">
+              <FileText className="h-3.5 w-3.5" />
+              <span>Komposisi Soal ({questionCount})</span>
+            </div>
+            <ul className="text-xs text-slate-300 space-y-1.5 font-medium">
+              <li className="flex justify-between p-2 rounded-lg bg-slate-950/20 border border-white/5">
+                <span className="text-slate-400">Teknis:</span>
+                <span className="text-blue-400 font-extrabold">90 Soal</span>
+              </li>
+              <li className="flex justify-between p-2 rounded-lg bg-slate-950/20 border border-white/5">
+                <span className="text-slate-400">Manajerial:</span>
+                <span className="text-amber-400 font-extrabold">25 Soal</span>
+              </li>
+              <li className="flex justify-between p-2 rounded-lg bg-slate-950/20 border border-white/5">
+                <span className="text-slate-400">Sosial:</span>
+                <span className="text-emerald-400 font-extrabold">20 Soal</span>
+              </li>
+              <li className="flex justify-between p-2 rounded-lg bg-slate-950/20 border border-white/5">
+                <span className="text-slate-400">Wawancara:</span>
+                <span className="text-red-400 font-extrabold">10 Soal</span>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+
+        {/* Ketentuan Kelulusan */}
+        <Card className="glass-panel border-white/5">
+          <CardContent className="p-5 space-y-3">
+            <div className="flex items-center gap-2 text-primary font-extrabold text-[10px] tracking-wider uppercase">
+              <Calendar className="h-3.5 w-3.5" />
+              <span>Ketentuan Kelulusan</span>
+            </div>
+            <div className="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+              <p>
+                Durasi pengerjaan: <strong className="text-white">130 menit</strong> (7.800 detik) untuk seluruh mode.
+              </p>
+              <p>
+                Passing grade minimal: <strong className="text-emerald-400 font-extrabold">65%</strong> dari total skor SJT.
+              </p>
+              <p className="text-[11px] text-slate-500 font-medium">
+                Mendukung autosave realtime &amp; navigasi keyboard (←, →, 1-5).
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+      </div>
+    </div>
   );
 }
