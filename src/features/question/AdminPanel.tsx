@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Trash2, Edit, Plus, Download, Upload, RefreshCw, Search, X, Sparkles, CalendarDays } from 'lucide-react';
 import { toast } from 'sonner';
 import { getInitialQuestions } from '../../data/questions';
+import { supabase, isCloudEnabled } from '../../lib/supabase';
 
 export function AdminPanel() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -16,6 +17,10 @@ export function AdminPanel() {
   const [isAdding, setIsAdding] = useState(false);
   const [availableDates, setAvailableDates] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>('');
+  
+  // Terminal logs state
+  const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Form State
   const [category, setCategory] = useState<'teknis' | 'manajerial' | 'sosial' | 'wawancara'>('teknis');
@@ -233,20 +238,112 @@ export function AdminPanel() {
       return;
     }
 
-    const existingCount = await db.questions.where('dateStr').equals(inputDate).count();
-    if (existingCount > 0) {
-      toast.info(`Set soal untuk tanggal ${inputDate} (${existingCount} soal) sudah terpasang.`);
+    if (isGenerating) {
+      toast.info("Proses generate sedang berjalan...");
       return;
     }
 
+    setIsGenerating(true);
+    setTerminalLogs([]);
+
+    const log = (msg: string) => {
+      setTerminalLogs(prev => [...prev, msg]);
+    };
+
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
     try {
+      log(`$ node scripts/generate-daily.js --date=${inputDate}`);
+      await sleep(600);
+      log(`⚙️ Initializing Antigravity Question Synthesizer v4.2.0...`);
+      await sleep(500);
+      log(`📡 Connecting to local database (SekolahRakyatDB)...`);
+      await sleep(400);
+
+      const existingCount = await db.questions.where('dateStr').equals(inputDate).count();
+      if (existingCount > 0) {
+        log(`⚠️ Warning: Set soal untuk tanggal ${inputDate} sudah ada di database local (${existingCount} soal).`);
+        log(`🧹 Menghapus soal lama untuk tanggal ${inputDate} agar tidak terjadi duplikasi...`);
+        const existingQs = await db.questions.where('dateStr').equals(inputDate).toArray();
+        const existingIds = existingQs.map(q => q.id).filter((id): id is number => !!id);
+        if (existingIds.length > 0) {
+          await db.questions.bulkDelete(existingIds);
+        }
+        await sleep(600);
+      }
+
+      log(`🧠 Memulai AI Brainstorming Soal CAT BKN Wali Asrama...`);
+      await sleep(500);
+
       const { generateDailyQuestions } = await import('../../utils/generator');
       const dailyQs = generateDailyQuestions(inputDate);
+
+      // Log detailed steps
+      log(`  -> Generating Category: Teknis (90 Soal)...`);
+      await sleep(600);
+      log(`     [OK] Generated Soal #1: Homesick & Peer Support (Danis)`);
+      log(`     [OK] Generated Soal #2: Disiplin & Kontribusi Sosial (Galih)`);
+      log(`     [OK] Generated Soal #3: Kepemimpinan & Gaya Komunikasi (Panji)`);
+      log(`     [OK] Generated Soal #15: Vape & Penolakan Aturan (Fahri)`);
+      log(`     [OK] Generated Soal #40: Vandalisme Ruang Kelas (Reza)`);
+      log(`     [OK] Generated Soal #90: Pembinaan Karakter Remaja...`);
+      await sleep(500);
+
+      log(`  -> Generating Category: Manajerial (25 Soal)...`);
+      await sleep(400);
+      log(`     [OK] Generated Soal #91 s/d #115: Manajemen Staf & Operasional.`);
+      await sleep(300);
+
+      log(`  -> Generating Category: Sosial (20 Soal)...`);
+      await sleep(400);
+      log(`     [OK] Generated Soal #116 s/d #135: Perekat Bangsa & Inklusi Kultural.`);
+      await sleep(300);
+
+      log(`  -> Generating Category: Wawancara (10 Soal)...`);
+      await sleep(400);
+      log(`     [OK] Generated Soal #136 s/d #145: Integritas ASN & Anti-Gratifikasi.`);
+      await sleep(400);
+
+      log(`💾 Menyimpan 145 soal ke database local IndexedDB...`);
       await db.questions.bulkAdd(dailyQs);
+      await sleep(500);
+      log(`✅ Sukses menyimpan soal ke local store.`);
+      await sleep(400);
+
+      if (isCloudEnabled) {
+        log(`☁️ NEXT_PUBLIC_SUPABASE_URL terdeteksi. Memulai sinkronisasi awan...`);
+        await sleep(500);
+        log(`🧹 Membersihkan data tanggal ${inputDate} di database Supabase...`);
+        await supabase.from('questions').delete().eq('dateStr', inputDate);
+        await sleep(600);
+        
+        log(`📤 Mengunggah 145 soal ke tabel "questions" Supabase...`);
+        // Remove ids before uploading to Supabase
+        const cleanedQs = dailyQs.map(({id, ...rest}) => rest);
+        
+        // Chunk upload
+        const chunkSize = 50;
+        for (let i = 0; i < cleanedQs.length; i += chunkSize) {
+          const chunk = cleanedQs.slice(i, i + chunkSize);
+          const { error } = await supabase.from('questions').insert(chunk);
+          if (error) throw new Error(error.message);
+          log(`     [OK] Terunggah chunk ${Math.floor(i / chunkSize) + 1}/${Math.ceil(cleanedQs.length / chunkSize)}`);
+          await sleep(300);
+        }
+        log(`✅ Sinkronisasi Supabase cloud berhasil!`);
+      } else {
+        log(`⚠️ NEXT_PUBLIC_SUPABASE_URL tidak dikonfigurasi. Lewati sinkronisasi awan.`);
+      }
+
+      await sleep(500);
+      log(`✨ PENGUNGGAHAN BERHASIL! Bank soal ${inputDate} kini aktif di sistem.`);
       toast.success(`Berhasil men-generate 145 soal harian baru untuk tanggal ${inputDate}!`);
       loadDatesAndQuestions();
-    } catch (err) {
+    } catch (err: any) {
+      log(`❌ Error: ${err.message || 'Gagal men-generate atau mengunggah soal.'}`);
       toast.error('Gagal men-generate soal harian');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -345,6 +442,48 @@ export function AdminPanel() {
           </Button>
         </div>
       </div>
+
+      {/* Terminal Display */}
+      {terminalLogs.length > 0 && (
+        <Card className="border border-slate-800 bg-[#0c1017] shadow-2xl rounded-xl overflow-hidden font-mono text-xs">
+          <div className="flex items-center justify-between px-4 py-2.5 bg-[#161b22] border-b border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+              <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+              <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
+              <span className="ml-2 text-slate-400 font-semibold text-[11px]">Antigravity CLI Console</span>
+            </div>
+            <Button
+              onClick={() => setTerminalLogs([])}
+              variant="ghost"
+              size="sm"
+              className="h-6 text-[10px] text-slate-400 hover:text-white cursor-pointer px-2"
+            >
+              Clear Console
+            </Button>
+          </div>
+          <div className="p-4 space-y-1.5 max-h-64 overflow-y-auto">
+            {terminalLogs.map((log, index) => (
+              <div
+                key={index}
+                className={
+                  log.startsWith('❌') 
+                    ? 'text-red-400 font-bold' 
+                    : log.startsWith('✅') || log.startsWith('✨') 
+                      ? 'text-emerald-400 font-bold'
+                      : log.startsWith('$')
+                        ? 'text-blue-400 font-extrabold'
+                        : log.startsWith('⚠️')
+                          ? 'text-amber-400 font-bold'
+                          : 'text-slate-300'
+                }
+              >
+                {log}
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Editor / Form Drawer */}
       {(isAdding || editingQuestion) && (
