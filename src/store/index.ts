@@ -8,11 +8,12 @@ interface AuthState {
   name: string;
   participantId: string;
   instansi: string;
+  lokasi: string;
   email: string;
   isLoggedIn: boolean;
   isLoading: boolean;
   isCloudEnabled: boolean;
-  signUp: (email: string, password: string, name: string, participantId: string, instansi: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string, lokasi: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   checkSession: () => Promise<void>;
@@ -56,7 +57,7 @@ const syncCloudHistoryToLocal = async (userId: string) => {
 };
 
 export const useAuthStore = create<AuthState>((set) => {
-  let initialAuth = { name: '', participantId: '', instansi: '', email: '', isLoggedIn: false, isLoading: false, isCloudEnabled };
+  let initialAuth = { name: '', participantId: '', instansi: '', lokasi: '', email: '', isLoggedIn: false, isLoading: false, isCloudEnabled };
   
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('sr_auth');
@@ -71,7 +72,7 @@ export const useAuthStore = create<AuthState>((set) => {
 
   return {
     ...initialAuth,
-    signUp: async (email, password, name, participantId, instansi) => {
+    signUp: async (email, password, name, lokasi) => {
       set({ isLoading: true });
       if (!isCloudEnabled) {
         const localUsers = JSON.parse(localStorage.getItem('sr_mock_users') || '[]');
@@ -79,7 +80,7 @@ export const useAuthStore = create<AuthState>((set) => {
           set({ isLoading: false });
           throw new Error('Email sudah terdaftar (mode lokal)');
         }
-        localUsers.push({ email, password, name, participantId, instansi });
+        localUsers.push({ email, password, name, lokasi });
         localStorage.setItem('sr_mock_users', JSON.stringify(localUsers));
         set({ isLoading: false });
         toast.success('Registrasi akun lokal berhasil! Silakan masuk.');
@@ -92,8 +93,7 @@ export const useAuthStore = create<AuthState>((set) => {
         options: {
           data: {
             full_name: name,
-            participant_id: participantId,
-            instansi: instansi
+            lokasi: lokasi
           }
         }
       });
@@ -118,8 +118,9 @@ export const useAuthStore = create<AuthState>((set) => {
         }
         const state = {
           name: user.name,
-          participantId: user.participantId,
-          instansi: user.instansi,
+          participantId: '',
+          instansi: user.lokasi || '',
+          lokasi: user.lokasi || '',
           email: user.email,
           isLoggedIn: true,
           isLoading: false
@@ -144,8 +145,9 @@ export const useAuthStore = create<AuthState>((set) => {
         const meta = data.user.user_metadata;
         const state = {
           name: meta.full_name || '',
-          participantId: meta.participant_id || '',
-          instansi: meta.instansi || '',
+          participantId: '',
+          instansi: meta.lokasi || '',
+          lokasi: meta.lokasi || '',
           email: data.user.email || '',
           isLoggedIn: true,
           isLoading: false
@@ -168,6 +170,7 @@ export const useAuthStore = create<AuthState>((set) => {
         name: '',
         participantId: '',
         instansi: '',
+        lokasi: '',
         email: '',
         isLoggedIn: false,
         isLoading: false
@@ -196,8 +199,9 @@ export const useAuthStore = create<AuthState>((set) => {
           const meta = session.user.user_metadata;
           const state = {
             name: meta.full_name || '',
-            participantId: meta.participant_id || '',
-            instansi: meta.instansi || '',
+            participantId: '',
+            instansi: meta.lokasi || '',
+            lokasi: meta.lokasi || '',
             email: session.user.email || '',
             isLoggedIn: true,
             isLoading: false
@@ -206,7 +210,7 @@ export const useAuthStore = create<AuthState>((set) => {
           set(state);
           syncCloudHistoryToLocal(session.user.id);
         } else {
-          set({ name: '', participantId: '', instansi: '', email: '', isLoggedIn: false, isLoading: false });
+          set({ name: '', participantId: '', instansi: '', lokasi: '', email: '', isLoggedIn: false, isLoading: false });
         }
       } catch (e) {
         set({ isLoading: false });

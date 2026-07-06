@@ -1,24 +1,33 @@
 'use client';
 
 import React from 'react';
-import { useAuthStore, useExamStore } from '../../store';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { useAuthStore } from '../../store';
+import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { GraduationCap, ShieldAlert, LogOut, Play, Calendar, User, FileText } from 'lucide-react';
+import { GraduationCap, LogOut, Play, Calendar, User, FileText, MapPin } from 'lucide-react';
 import { ExamMode } from '../../types';
 import { toast } from 'sonner';
 
 interface StatsOverviewProps {
-  onStartExam: (mode: ExamMode) => void;
+  onStartExam: (mode: ExamMode, date: string) => void;
   questionCount: number;
+  availableDates: string[];
+  selectedDate: string;
+  setSelectedDate: (date: string) => void;
 }
 
-export function StatsOverview({ onStartExam, questionCount }: StatsOverviewProps) {
+export function StatsOverview({
+  onStartExam,
+  questionCount,
+  availableDates,
+  selectedDate,
+  setSelectedDate
+}: StatsOverviewProps) {
   const auth = useAuthStore();
   const { logout } = auth;
 
   const handleStart = (mode: ExamMode) => {
-    onStartExam(mode);
+    onStartExam(mode, selectedDate);
   };
 
   return (
@@ -35,13 +44,10 @@ export function StatsOverview({ onStartExam, questionCount }: StatsOverviewProps
             {auth.name || 'Peserta Ujian'}
           </h2>
           <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-400">
-            <div>
-              <span className="text-slate-500 font-medium">Nomor:</span>{' '}
-              <span className="text-slate-300 font-bold">{auth.participantId || '-'}</span>
-            </div>
-            <div>
-              <span className="text-slate-500 font-medium">Instansi:</span>{' '}
-              <span className="text-slate-300 font-bold">{auth.instansi || '-'}</span>
+            <div className="flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5 text-slate-500" />
+              <span className="text-slate-500 font-medium">Lokasi:</span>{' '}
+              <span className="text-slate-300 font-bold">{auth.lokasi || auth.instansi || '-'}</span>
             </div>
           </div>
         </div>
@@ -54,7 +60,7 @@ export function StatsOverview({ onStartExam, questionCount }: StatsOverviewProps
               toast.info('Keluar dari portal peserta.');
             }}
             variant="outline"
-            className="text-xs h-9"
+            className="text-xs h-9 cursor-pointer"
           >
             <LogOut className="h-3.5 w-3.5 mr-1.5" />
             <span>Ganti Akun</span>
@@ -111,15 +117,32 @@ export function StatsOverview({ onStartExam, questionCount }: StatsOverviewProps
         </div>
 
         {/* Launcher Panel */}
-        <div className="space-y-4 flex flex-col justify-between">
+        <div className="space-y-3 flex flex-col justify-between">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
             <GraduationCap className="h-4 w-4 text-primary" />
             <span>Mulai Ujian Simulasi</span>
           </h3>
-          <div className="space-y-2.5">
+          
+          {/* Date Selector */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Pilih Tanggal Bank Soal</label>
+            <select
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="w-full h-9 px-2 rounded-lg border border-white/5 bg-black text-xs text-white focus:outline-hidden focus:border-red-500/50 transition-all cursor-pointer"
+            >
+              {availableDates.map(date => (
+                <option key={date} value={date} className="bg-zinc-950 text-white text-xs">
+                  Ujian Set: {date}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
             <Button
               onClick={() => handleStart('ujian')}
-              className="w-full h-10 bg-success text-success-foreground hover:bg-success/90 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-success/10"
+              className="w-full h-10 bg-success text-success-foreground hover:bg-success/90 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-success/10 cursor-pointer"
             >
               <Play className="h-3.5 w-3.5 fill-current" />
               <span>Luncurkan Mode Ujian (CAT)</span>
@@ -128,14 +151,14 @@ export function StatsOverview({ onStartExam, questionCount }: StatsOverviewProps
               <Button
                 onClick={() => handleStart('belajar')}
                 variant="outline"
-                className="h-9 text-[11px] font-bold border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-400"
+                className="h-9 text-[11px] font-bold border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-400 cursor-pointer"
               >
                 Mode Belajar
               </Button>
               <Button
                 onClick={() => handleStart('latihan')}
                 variant="outline"
-                className="h-9 text-[11px] font-bold border-amber-500/30 hover:bg-amber-500/10 hover:text-amber-400"
+                className="h-9 text-[11px] font-bold border-amber-500/30 hover:bg-amber-500/10 hover:text-amber-400 cursor-pointer"
               >
                 Mode Latihan
               </Button>

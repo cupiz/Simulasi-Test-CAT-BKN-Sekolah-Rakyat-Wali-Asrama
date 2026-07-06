@@ -1,18 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useAuthStore, useExamStore } from '../../store';
-import { db } from '../../lib/db';
+import React, { useState } from 'react';
+import { useAuthStore } from '../../store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { Shield, Sparkles, BookOpen, GraduationCap, Trophy, Mail, Lock, User, Hash, School, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { Shield, Mail, Lock, User, MapPin, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import { ExamMode } from '../../types';
 
 export function LoginView() {
-  const { signUp, signIn, checkSession, isLoading, isCloudEnabled, isLoggedIn } = useAuthStore();
-  const startExam = useExamStore((state) => state.startExam);
+  const { signUp, signIn, isLoading, isCloudEnabled } = useAuthStore();
 
   // Auth tabs: 'login' | 'register'
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
@@ -21,36 +18,11 @@ export function LoginView() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [participantId, setParticipantId] = useState('');
-  const [instansi, setInstansi] = useState('');
-  const [mode, setMode] = useState<ExamMode>('ujian');
+  const [lokasi, setLokasi] = useState('');
   
   // UI states
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [availableDates, setAvailableDates] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState('2026-07-06');
-
-  // Fetch available dates
-  useEffect(() => {
-    async function loadDates() {
-      const allQs = await db.questions.toArray();
-      const dates = [...new Set(allQs.map(q => q.dateStr).filter((d): d is string => !!d))].sort();
-      if (dates.length > 0) {
-        setAvailableDates(dates);
-        const todayStr = new Date().toISOString().split('T')[0];
-        if (dates.includes(todayStr)) {
-          setSelectedDate(todayStr);
-        } else {
-          setSelectedDate(dates[dates.length - 1]);
-        }
-      } else {
-        setAvailableDates(['2026-07-06']);
-        setSelectedDate('2026-07-06');
-      }
-    }
-    loadDates();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,8 +35,7 @@ export function LoginView() {
 
     if (activeTab === 'register') {
       if (!name.trim()) newErrors.name = 'Nama lengkap wajib diisi';
-      if (!participantId.trim()) newErrors.participantId = 'Nomor peserta wajib diisi';
-      if (!instansi.trim()) newErrors.instansi = 'Instansi asal wajib diisi';
+      if (!lokasi.trim()) newErrors.lokasi = 'Lokasi wajib diisi';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -76,41 +47,17 @@ export function LoginView() {
     try {
       if (activeTab === 'register') {
         // 1. Cloud / Local signup
-        await signUp(email, password, name, participantId, instansi);
+        await signUp(email, password, name, lokasi);
         // Switch to login tab automatically
         setActiveTab('login');
         toast.success('Pendaftaran sukses! Silakan masuk menggunakan akun baru Anda.');
       } else {
-        // 2. Cloud / Local signin
+        // 2. Cloud / Local signin (Redirects to Dashboard automatically through HomePage)
         await signIn(email, password);
-        
-        // Load target exam questions
-        toast.success('Masuk berhasil! Menyiapkan sesi simulasi CAT BKN...');
-        await startExam(mode, 130, selectedDate);
+        toast.success('Masuk berhasil! Selamat datang kembali.');
       }
     } catch (err: any) {
       toast.error(err.message || 'Terjadi kesalahan pada sistem autentikasi');
-    }
-  };
-
-  const modeDescriptions = {
-    belajar: {
-      title: 'Mode Belajar',
-      icon: BookOpen,
-      color: 'text-red-500 border-red-500/25 bg-red-500/5',
-      desc: 'Kunci jawaban dan pembahasan detail 300+ kata langsung terbuka saat menjawab. Bebas tanpa timer.'
-    },
-    latihan: {
-      title: 'Mode Latihan',
-      icon: GraduationCap,
-      color: 'text-amber-500 border-amber-500/25 bg-amber-500/5',
-      desc: 'Simulasi mandiri di mana ulasan dan hasil ditampilkan di akhir. Durasi timer fleksibel.'
-    },
-    ujian: {
-      title: 'Mode Ujian (CAT)',
-      icon: Trophy,
-      color: 'text-red-600 border-red-600/25 bg-red-600/5',
-      desc: 'Simulasi CAT BKN standar. Waktu 130 menit penuh, auto-submit, dan terekam di Leaderboard.'
     }
   };
 
@@ -125,7 +72,7 @@ export function LoginView() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="w-full max-w-2xl relative z-10"
+        className="w-full max-w-lg relative z-10"
       >
         {/* Sekolah Rakyat Header & Status Badge */}
         <div className="text-center mb-6">
@@ -143,16 +90,16 @@ export function LoginView() {
             <div className="text-left">
               <span className="text-[10px] tracking-widest font-black uppercase text-red-500 block">SEKOLAH RAKYAT</span>
               <h1 className="text-2xl font-black text-white leading-none tracking-tight">
-                SIMULATOR CAT BKN
+                PORTAL BELAJAR CAT
               </h1>
             </div>
           </div>
-          <p className="text-xs text-slate-400 max-w-md mx-auto mt-2">
-            Sistem simulasi seleksi kompetensi dasar dan wawancara asrama dengan standar kelulusan passing grade 65%.
+          <p className="text-xs text-slate-400 max-w-sm mx-auto mt-2">
+            Masuk atau daftarkan akun belajar Anda untuk mengakses simulasi seleksi kompetensi dasar dan analisis AI.
           </p>
         </div>
 
-        {/* Auth / Exam configuration card */}
+        {/* Auth card */}
         <Card className="glass-panel border-white/10 bg-zinc-950/70 shadow-2xl rounded-2xl overflow-hidden relative">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-red-600 via-white to-red-600" />
           
@@ -164,7 +111,7 @@ export function LoginView() {
                 activeTab === 'login' ? 'text-white' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              <span>Masuk Ujian</span>
+              <span>Masuk Akun</span>
               {activeTab === 'login' && (
                 <motion.div layoutId="activeTabUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />
               )}
@@ -193,8 +140,8 @@ export function LoginView() {
                   transition={{ duration: 0.2 }}
                   className="space-y-4"
                 >
-                  {/* Email & Password (Common for both) */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Email & Password */}
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                         <Mail className="h-3.5 w-3.5 text-slate-500" />
@@ -245,115 +192,41 @@ export function LoginView() {
                       transition={{ duration: 0.3 }}
                       className="space-y-4 pt-2 border-t border-white/5"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <User className="h-3.5 w-3.5 text-slate-500" />
-                            <span>Nama Lengkap</span>
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Contoh: Danis Arisandi"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full h-10 px-3 rounded-lg border border-white/5 bg-black text-sm text-white placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
-                          />
-                          {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <Hash className="h-3.5 w-3.5 text-slate-500" />
-                            <span>Nomor Peserta Ujian</span>
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Contoh: BKN-2026-0912"
-                            value={participantId}
-                            onChange={(e) => setParticipantId(e.target.value)}
-                            className="w-full h-10 px-3 rounded-lg border border-white/5 bg-black text-sm text-white placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
-                          />
-                          {errors.participantId && <p className="text-xs text-red-500 mt-1">{errors.participantId}</p>}
-                        </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                          <User className="h-3.5 w-3.5 text-slate-500" />
+                          <span>Nama Lengkap</span>
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Contoh: Danis Arisandi"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="w-full h-10 px-3 rounded-lg border border-white/5 bg-black text-sm text-white placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
+                        />
+                        {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
                       </div>
 
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                          <School className="h-3.5 w-3.5 text-slate-500" />
-                          <span>Instansi Asal</span>
+                          <MapPin className="h-3.5 w-3.5 text-slate-500" />
+                          <span>Lokasi</span>
                         </label>
                         <input
                           type="text"
-                          placeholder="Contoh: Asrama Sekolah Rakyat Bandung"
-                          value={instansi}
-                          onChange={(e) => setInstansi(e.target.value)}
+                          placeholder="Contoh: Bandung, Jawa Barat"
+                          value={lokasi}
+                          onChange={(e) => setLokasi(e.target.value)}
                           className="w-full h-10 px-3 rounded-lg border border-white/5 bg-black text-sm text-white placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
                         />
-                        {errors.instansi && <p className="text-xs text-red-500 mt-1">{errors.instansi}</p>}
+                        {errors.lokasi && <p className="text-xs text-red-500 mt-1">{errors.lokasi}</p>}
                       </div>
                     </motion.div>
                   )}
                 </motion.div>
               </AnimatePresence>
 
-              {/* Date selection & Mode selections (Only relevant for immediate Ujian initiation on tab 'login') */}
-              {activeTab === 'login' && (
-                <div className="space-y-4 pt-4 border-t border-white/5">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Pilih Tanggal Bank Soal CAT
-                    </label>
-                    <select
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg border border-white/5 bg-black text-xs text-white focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all cursor-pointer"
-                    >
-                      {availableDates.map(date => (
-                        <option key={date} value={date} className="bg-zinc-950 text-white text-xs">
-                          Ujian Set: {date}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Mode selection Cards */}
-                  <div className="space-y-2.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Pilih Mode Simulasi Ujian
-                    </label>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      {(['belajar', 'latihan', 'ujian'] as ExamMode[]).map((m) => {
-                        const info = modeDescriptions[m];
-                        const Icon = info.icon;
-                        const isSelected = mode === m;
-                        return (
-                          <div
-                            key={m}
-                            onClick={() => setMode(m)}
-                            className={`p-3 rounded-xl border cursor-pointer transition-all duration-200 flex flex-col justify-between ${
-                              isSelected
-                                ? 'border-red-600 bg-red-650/10 text-white shadow-md shadow-red-600/5'
-                                : 'border-white/5 hover:border-white/10 bg-black/40 text-slate-400 hover:text-slate-200'
-                            }`}
-                          >
-                            <div className="flex items-center gap-1.5 mb-1.5">
-                              <div className={`p-1 rounded-md border ${info.color}`}>
-                                <Icon className="h-3.5 w-3.5" />
-                              </div>
-                              <span className="text-[11px] font-bold">{info.title}</span>
-                            </div>
-                            <p className="text-[10px] leading-normal text-slate-500">
-                              {info.desc}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Submit buttons */}
+              {/* Submit button */}
               <div className="pt-4">
                 <Button
                   type="submit"
@@ -363,9 +236,9 @@ export function LoginView() {
                   {isLoading ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   ) : activeTab === 'register' ? (
-                    <span>Buat Akun Sekarang</span>
+                    <span>Daftar Akun Baru</span>
                   ) : (
-                    <span>Masuk & Mulai Simulasi</span>
+                    <span>Masuk ke Akun</span>
                   )}
                 </Button>
               </div>
@@ -376,7 +249,7 @@ export function LoginView() {
             <p className="text-[10px] text-slate-500 text-center font-medium">
               {activeTab === 'register' 
                 ? 'Data akun akan diamankan menggunakan enkripsi database cloud.' 
-                : 'Sesi ujian memuat 145 soal resmi (90 Teknis, 25 Manajerial, 20 Sosial, 10 Wawancara).'}
+                : 'Silakan hubungi admin Sekolah Rakyat jika Anda melupakan kredensial akun Anda.'}
             </p>
           </CardFooter>
         </Card>

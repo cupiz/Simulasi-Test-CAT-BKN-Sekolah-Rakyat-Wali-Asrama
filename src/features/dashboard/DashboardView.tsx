@@ -24,6 +24,7 @@ export function DashboardView() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'history' | 'admin'>('dashboard');
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<ExamHistoryItem | null>(null);
   const [questionCount, setQuestionCount] = useState(145);
+  const [availableDates, setAvailableDates] = useState<string[]>(['2026-07-06']);
   const [latestDate, setLatestDate] = useState('2026-07-06');
   
   const startExam = useExamStore((state) => state.startExam);
@@ -34,21 +35,30 @@ export function DashboardView() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    async function updateCount() {
+      const allQs = await db.questions.toArray();
+      setQuestionCount(allQs.filter(q => q.dateStr === latestDate).length);
+    }
+    updateCount();
+  }, [latestDate]);
+
   const loadData = async () => {
     const hist = await db.examHistory.toArray();
     setHistory(hist.sort((a, b) => b.date - a.date));
 
     const allQs = await db.questions.toArray();
     const dates = [...new Set(allQs.map(q => q.dateStr).filter((d): d is string => !!d))].sort();
-    const latest = dates.length > 0 ? dates[dates.length - 1] : '2026-07-06';
-    setLatestDate(latest);
-    setQuestionCount(allQs.filter(q => q.dateStr === latest).length);
+    if (dates.length > 0) {
+      setAvailableDates(dates);
+      setLatestDate(dates[dates.length - 1]);
+    }
   };
 
-  const handleStartExam = async (mode: ExamMode) => {
-    toast.success(`Memulai sesi ujian Baru (${mode}) untuk set tanggal ${latestDate}...`);
+  const handleStartExam = async (mode: ExamMode, date: string) => {
+    toast.success(`Memulai sesi ujian Baru (${mode}) untuk set tanggal ${date}...`);
     // Default exam is 130 minutes
-    await startExam(mode, 130, latestDate);
+    await startExam(mode, 130, date);
   };
 
   const toggleTheme = () => {
@@ -160,7 +170,13 @@ export function DashboardView() {
               className="space-y-8"
             >
               {/* Profile Card & Info */}
-              <StatsOverview onStartExam={handleStartExam} questionCount={questionCount} />
+              <StatsOverview 
+                onStartExam={handleStartExam} 
+                questionCount={questionCount} 
+                availableDates={availableDates}
+                selectedDate={latestDate}
+                setSelectedDate={setLatestDate}
+              />
 
               {/* Heatmap & Analytical Charts */}
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
