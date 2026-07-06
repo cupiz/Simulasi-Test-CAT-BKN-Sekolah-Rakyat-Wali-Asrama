@@ -1,22 +1,26 @@
 # Laporan Progres & Status Pengembangan: Simulator CAT BKN Sekolah Rakyat - Wali Asrama
 
-Laporan ini memuat kemajuan implementasi fitur, perbaikan bug, integrasi penanggalan bank soal (daily sets), dan status build produksi terkini.
+Laporan ini memuat kemajuan implementasi fitur, perbaikan bug, integrasi penanggalan bank soal (daily sets), integrasi Supabase Auth & Database Cloud, dan status build produksi terkini.
 
 ---
 
-## 📈 RINGKASAN INTEGRASI TERBARU: BANK SOAL HARIAN (145 SOAL)
+## 📈 KEMAJUAN UTAMA (TERBARU)
 
-Kami telah meningkatkan arsitektur database lokal (IndexedDB) dan alur ujian agar mendukung pengelompokan **Bank Soal Berdasarkan Tanggal (Daily Sets)**.
+### 1. Sistem Login & Daftar Akun Cloud (Supabase)
+- **Halaman Depan Dinamis**: Mengganti form login sederhana dengan halaman **Login & Register (Masuk/Daftar)** dual tab yang dilindungi validasi input ketat.
+- **Enkripsi Kredensial**: Pendaftaran menggunakan email, password, nama lengkap, nomor peserta, dan instansi asal. Kata sandi dienkripsi secara aman oleh Supabase Auth.
+- **Offline-First & Hybrid Sync**:
+  - Semua nilai riwayat ujian secara otomatis diunggah ke cloud database (`exam_history`) jika user login dan online.
+  - Saat login, sistem mengunduh data riwayat dari cloud dan mensinkronisasikannya ke IndexedDB lokal untuk penggunaan offline.
+  - **Graceful Fallback**: Jika variabel lingkungan Supabase belum diisi, sistem otomatis berpindah ke **Mode Demo Lokal** berbasis browser untuk kenyamanan demo cepat.
 
-1. **Dropdown Pemilihan Tanggal Ujian**:
-   - Halaman **Login Kredensial** sekarang memuat seluruh daftar tanggal ujian yang terdaftar di database secara dinamis.
-   - User dapat memilih tanggal set soal mana yang ingin mereka kerjakan sebelum menekan tombol masuk/memulai ujian.
-2. **Generator Otomatis 145 Soal per Hari**:
-   - **Di Web App (Satu Klik)**: Tombol *Update Soal Harian* di Admin Panel kini meminta input tanggal dari admin, lalu menghasilkan **145 soal simulasi unik** baru (90 Teknis, 25 Manajerial, 20 Sosial, 10 Wawancara) dan menginjeksikannya langsung ke IndexedDB tanpa menghapus data tanggal sebelumnya.
-   - **Di CLI (Terminal)**: Menambahkan skrip generator `npm run generate-daily` untuk memproduksi berkas JSON bank soal 145 butir secara lokal.
-3. **Idempotensi & Keamanan Strict Mode**:
-   - Mengubah skema primary key dari auto-increment `++id` menjadi `id` statis pada seeder inisialisasi awal.
-   - Menggunakan metode `.put()` dan `.bulkPut()` pada seeder bawaan dan tantangan harian (Daily Challenge) untuk menghilangkan risiko error `ConstraintError: Key already exists` akibat Strict Mode double-render di lingkungan pengembangan.
+### 2. Branding Visual Merah, Putih, Hitam (Sekolah Rakyat)
+- Menyesuaikan variabel warna HSL di [globals.css](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/app/globals.css) agar merepresentasikan identitas logo Sekolah Rakyat.
+- Dominasi visual warna **Hitam Arang (Charcoal Black)** sebagai latar belakang, **Borders Putih Tipis** yang elegan, dan **Merah Crimson (Ruby Red)** sebagai warna penanda aktif (primary branding) untuk tombol, ikon, status, radar chart, dan penunjuk timer.
+
+### 3. Integrasi Soal Harian per Tanggal (145 Soal)
+- Pengguna dapat memilih untuk menguji kompetensinya pada bank soal tanggal tertentu via dropdown pilihan tanggal.
+- Database menyimpan riwayat bank soal per tanggal secara independen sehingga data tidak saling menimpa.
 
 ---
 
@@ -24,20 +28,13 @@ Kami telah meningkatkan arsitektur database lokal (IndexedDB) dan alur ujian aga
 
 | Jalur File | Status | Fungsi / Kegunaan |
 | :--- | :--- | :--- |
-| [`src/types/index.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/types/index.ts) | **Modified** | Menambahkan opsional `dateStr` dan `number` pada antarmuka `Question` serta `dateStr` pada `ExamSession`. |
-| [`src/lib/db.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/lib/db.ts) | **Modified** | Meng-upgrade database `SekolahRakyatDB` ke **Versi 2** dengan indeks pencarian `dateStr` pada tabel `questions`. |
-| [`src/store/index.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/store/index.ts) | **Modified** | Modifikasi store Zustand agar memuat set soal secara terisolasi sesuai dengan parameter `dateStr` saat ujian dimulai atau di-resume. |
-| [`src/utils/seed.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/utils/seed.ts) | **Modified** | Pengisian database default 145 soal yang ditandai dengan tanggal awal `"2026-07-06"`. |
-| [`src/utils/generator.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/utils/generator.ts) | **NEW** | Modul generator dinamis untuk memproduksi 145 soal CAT BKN per tanggal secara terarah dan variatif. |
-| [`scripts/generate-daily.js`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/scripts/generate-daily.js) | **NEW** | Script CLI Node untuk mengekspor 145 butir soal harian ke berkas JSON. |
-| [`src/features/auth/LoginView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/auth/LoginView.tsx) | **Modified** | Integrasi dropdown pilihan tanggal ujian CAT BKN. |
-| [`src/features/question/AdminPanel.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/question/AdminPanel.tsx) | **Modified** | Pemasangan tombol "Update Soal Harian" dengan prompt input tanggal dan generator 145 soal terintegrasi. |
-| [`src/features/dashboard/DashboardView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/dashboard/DashboardView.tsx) | **Modified** | Memulai quick exam dengan memuat set soal tanggal terbaru. |
-| [`src/components/shared/AppInitializer.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/components/shared/AppInitializer.tsx) | **Modified** | Memuat set soal tanggal terbaru sebagai data default pada saat inisialisasi awal aplikasi. |
-| [`src/features/results/ResultsView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/results/ResultsView.tsx) | **Modified** | Perbaikan type safety untuk parameter `id` opsional di modul ekspor CSV dan heatmap lembar jawaban. |
-| [`src/features/exam/ExamView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/exam/ExamView.tsx) | **Modified** | Penyelarasan type safety untuk parameter `id` opsional di sistem navigasi keyboard dan penunjuk waktu. |
-| [`package.json`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/package.json) | **Modified** | Mendaftarkan skrip runnable `"generate-daily": "node scripts/generate-daily.js"`. |
-| [`README.md`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/README.md) | **Modified** | Pembaruan dokumentasi panduan fitur Bank Soal Harian per Tanggal dan cara menjalankannya. |
+| [`src/app/globals.css`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/app/globals.css) | **Modified** | Penyesuaian tema warna Merah, Putih, Hitam secara global. |
+| [`src/lib/supabase.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/lib/supabase.ts) | **NEW** | Inisialisasi client-side SDK Supabase dengan fallback aman untuk mencegah error kompilasi build. |
+| [`src/store/index.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/store/index.ts) | **Modified** | Integrasi `signUp`, `signIn`, `logout`, `checkSession`, dan background database cloud sync di Zustand store. |
+| [`src/features/auth/LoginView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/auth/LoginView.tsx) | **Modified** | Desain ulang halaman depan menjadi form login/register premium bertema merah-hitam. |
+| [`src/components/shared/AppInitializer.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/components/shared/AppInitializer.tsx) | **Modified** | Memanggil `checkSession()` pada startup aplikasi untuk memulihkan sesi cloud pengguna yang aktif. |
+| [`package.json`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/package.json) | **Modified** | Menambahkan `@supabase/supabase-js` pada dependensi proyek. |
+| [`README.md`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/README.md) | **Modified** | Penambahan dokumentasi pengaturan Supabase, SQL Editor query, dan cara deploy di Vercel. |
 
 ---
 
@@ -49,13 +46,12 @@ Seluruh kode program di atas telah diverifikasi melalui pengujian kompilasi stat
 ▲ Next.js 16.2.10 (Turbopack)
 
   Creating an optimized production build ...
-✓ Compiled successfully in 12.5s
+✓ Compiled successfully in 11.9s
   Running TypeScript ...
-  Finished TypeScript in 5.7s ...
+  Finished TypeScript in 7.1s ...
   Collecting page data using 3 workers ...
   Generating static pages using 3 workers (4/4) ...
-✓ Generating static pages using 3 workers (4/4) in 561ms
+✓ Generating static pages using 3 workers (4/4) in 402ms
   Finalizing page optimization ...
 ```
-Anda dapat menjalankan server produksi lokal dengan aman menggunakan perintah:
-`npm run start` atau `npm run dev` untuk melanjutkan pengembangan.
+Aplikasi kini sepenuhnya **siap dideploy ke Vercel** dan dijalankan secara aman dengan integrasi database cloud.

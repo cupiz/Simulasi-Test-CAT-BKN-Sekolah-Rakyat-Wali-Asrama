@@ -2,16 +2,20 @@
 
 import React, { useEffect, useState } from 'react';
 import { seedDatabase } from '../../utils/seed';
-import { useExamStore } from '../../store';
+import { useExamStore, useAuthStore } from '../../store';
 import { db } from '../../lib/db';
 import { Loader2 } from 'lucide-react';
 
 export function AppInitializer({ children }: { children: React.ReactNode }) {
   const [initialized, setInitialized] = useState(false);
   const { setQuestions, resumeExam } = useExamStore();
+  const checkSession = useAuthStore((s) => s.checkSession);
 
   useEffect(() => {
     async function init() {
+      // 0. Restore session from cloud / local storage fallback
+      await checkSession();
+
       // 1. Seed IndexedDB with questions, mock leaderboard, achievements
       await seedDatabase();
 
@@ -26,7 +30,7 @@ export function AppInitializer({ children }: { children: React.ReactNode }) {
       try {
         const activeSession = await db.examSessions.get('active_session');
         if (activeSession && !activeSession.isCompleted) {
-          resumeExam(activeSession);
+          await resumeExam(activeSession);
         }
       } catch (err) {
         console.error('Failed to restore active session:', err);
@@ -35,7 +39,7 @@ export function AppInitializer({ children }: { children: React.ReactNode }) {
       setInitialized(true);
     }
     init();
-  }, [setQuestions, resumeExam]);
+  }, [setQuestions, resumeExam, checkSession]);
 
   if (!initialized) {
     return (

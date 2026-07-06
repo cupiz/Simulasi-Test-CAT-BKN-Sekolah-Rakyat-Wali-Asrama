@@ -1,12 +1,15 @@
 # Simulator CAT BKN Sekolah Rakyat - Wali Asrama
 
-Aplikasi Simulasi CAT BKN Sekolah Rakyat kualitas produksi siap latihan intensif bagi Wali Asrama. Dibangun dengan standar keandalan tinggi dan visual estetik premium yang terinspirasi oleh Stripe dan Linear.
+Aplikasi Simulasi CAT BKN Sekolah Rakyat kualitas produksi siap latihan intensif bagi Wali Asrama. Dibangun dengan standar keandalan tinggi dan visual estetik premium menggunakan tema khas **Merah, Putih, dan Hitam** yang terinspirasi oleh Stripe dan Linear.
 
 ---
 
 ## 🌟 FITUR UTAMA
 
-1. **Login Kredensial & Pilihan Set Soal**: Registrasi nama, nomor peserta, instansi, dan pemilihan mode pengerjaan, lengkap dengan **Dropdown Pilihan Tanggal Set Ujian CAT**.
+1. **Sistem Login & Daftar Cloud (Supabase)**:
+   - Halaman depan dilengkapi dengan form **Masuk (Login)** dan **Daftar Akun Baru (Register)**.
+   - Akun peserta dienkripsi secara aman dan disinkronkan ke cloud database sehingga dapat diakses di perangkat mana pun.
+   - Mendukung **Mode Demo Lokal (IndexedDB)** secara otomatis sebagai fallback jika kredensial cloud belum dikonfigurasi, menjamin aplikasi tetap berjalan 100%.
 2. **Sistem CAT BKN Standar**:
    - 145 Soal per Hari/Set (90 Teknis, 25 Manajerial, 20 Sosial, 10 Wawancara).
    - Hard timer 130 menit dengan auto-submit ketika waktu habis.
@@ -28,8 +31,9 @@ Aplikasi Simulasi CAT BKN Sekolah Rakyat kualitas produksi siap latihan intensif
 ## 🛠️ TECH STACK
 
 - **Framework**: Next.js 15 (Next 16.2 App Router) + React 19 + TypeScript
-- **State & Database**: Zustand + Dexie.js (IndexedDB)
-- **Styling & Motion**: Tailwind CSS v4 + Framer Motion
+- **Auth & Database Cloud**: Supabase (Auth & PostgreSQL DB)
+- **Local Storage / Offline Cache**: Dexie.js (IndexedDB)
+- **Styling & Motion**: Tailwind CSS v4 + Framer Motion (Tema Merah, Putih, Hitam)
 - **Form & Validation**: React Hook Form + Zod
 - **Charts & Utilities**: Recharts + date-fns + sonner + Lucide Icons
 - **Testing**: Vitest + Playwright
@@ -41,18 +45,26 @@ Aplikasi Simulasi CAT BKN Sekolah Rakyat kualitas produksi siap latihan intensif
 ### Prasyarat
 Pastikan Anda memiliki **Node.js (LTS)** terinstal di sistem Anda.
 
-### 1. Instalasi Dependensi
+### 1. Konfigurasi Variabel Lingkungan (Env Variables)
+Buat file bernama `.env.local` di direktori utama proyek Anda dan isi dengan kunci API Supabase Anda (buat proyek gratis di [supabase.com](https://supabase.com)):
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+*Catatan: Jika variabel ini kosong, aplikasi akan otomatis berjalan dalam **Mode Demo Lokal** menggunakan IndexedDB lokal.*
+
+### 2. Instalasi Dependensi
 ```bash
 npm install
 ```
 
-### 2. Jalankan Mode Development
+### 3. Jalankan Mode Development
 Jalankan server pengembangan lokal di `http://localhost:3000`:
 ```bash
 npm run dev
 ```
 
-### 3. Kompilasi & Build Produksi
+### 4. Kompilasi & Build Produksi
 Untuk melakukan kompilasi bundel optimasi produksi:
 ```bash
 npm run build
@@ -76,6 +88,41 @@ Gunakan perintah CLI berikut untuk men-generate file JSON set soal harian secara
 npm run generate-daily
 ```
 Perintah ini akan membuat berkas JSON bernama `daily_questions_YYYY-MM-DD.json` di direktori utama proyek. Anda kemudian dapat memuat berkas ini ke dalam database menggunakan tombol **Impor JSON** di Admin Panel.
+
+---
+
+## 🏛️ SKEMA DATABASE CLOUD SUPABASE (SQL)
+Jalankan perintah SQL berikut di dalam **SQL Editor** pada dashboard Supabase Anda untuk membuat tabel penyimpanan riwayat nilai ujian:
+
+```sql
+-- Membuat tabel riwayat nilai ujian
+create table public.exam_history (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users(id) on delete cascade not null,
+  date bigint not null,
+  mode text not null,
+  scores jsonb not null,
+  max_scores jsonb not null,
+  percentage integer not null,
+  is_passed boolean not null,
+  time_spent integer not null,
+  answers jsonb not null,
+  ai_analysis jsonb not null
+);
+
+-- Mengaktifkan Row Level Security (RLS) demi keamanan data
+alter table public.exam_history enable row level security;
+
+-- Membuat policy agar user hanya bisa membaca data miliknya
+create policy "Users can read own history"
+  on public.exam_history for select
+  using ( auth.uid() = user_id );
+
+-- Membuat policy agar user hanya bisa memasukkan data miliknya
+create policy "Users can insert own history"
+  on public.exam_history for insert
+  with check ( auth.uid() = user_id );
+```
 
 ---
 
@@ -103,51 +150,9 @@ npx playwright test
 
 ### Deploy ke Vercel (Rekomendasi)
 Proyek ini sepenuhnya kompatibel dengan infrastruktur Vercel. Untuk mendeploy melalui Vercel CLI:
-```bash
-npm install -g vercel
-vercel
-```
-
-### Deploy menggunakan Docker
-Kami menyediakan konfigurasi `Dockerfile` untuk deployment berbasis kontainer.
-
-#### 1. Bangun Image Docker
-```bash
-docker build -t cat-sekolah-rakyat .
-```
-
-#### 2. Jalankan Kontainer
-```bash
-docker run -p 3000:3000 cat-sekolah-rakyat
-```
-
----
-
-## 📄 SKEMA IMPOR BANK SOAL (JSON)
-Berikut adalah format JSON yang kompatibel untuk ditambahkan melalui Admin Panel:
-```json
-[
-  {
-    "id": 1,
-    "dateStr": "2026-07-06",
-    "number": 1,
-    "category": "teknis",
-    "topic": "Homesick",
-    "questionText": "Pertanyaan studi kasus Anda...",
-    "options": [
-      { "key": "A", "text": "Opsi A", "score": 2 },
-      { "key": "B", "text": "Opsi B", "score": 3 },
-      { "key": "C", "text": "Opsi C", "score": 1 },
-      { "key": "D", "text": "Opsi D", "score": 5 },
-      { "key": "E", "text": "Opsi E", "score": 4 }
-    ],
-    "correctAnswer": "D",
-    "explanation": "Pembahasan lengkap minimal 300 kata...",
-    "competency": "Kategori kompetensi",
-    "berakhlak": "Nilai BerAKHLAK terkait",
-    "psychologyBasis": "Landasan psikologis",
-    "catTips": "Tips CAT khusus"
-  }
-]
-```
-Jika berkas JSON Anda tidak menyertakan skema ini secara persis, Admin Panel akan menolak impor demi mencegah kerusakan data.
+1. Pastikan Anda sudah login ke Vercel CLI (`vercel login`).
+2. Masukkan perintah berikut di terminal:
+   ```bash
+   vercel
+   ```
+3. Setel variabel lingkungan `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` di dashboard Vercel Anda, lalu lakukan re-deploy.

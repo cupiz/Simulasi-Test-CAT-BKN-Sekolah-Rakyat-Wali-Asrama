@@ -2,24 +2,67 @@ import { create } from 'zustand';
 import { db } from '../lib/db';
 import { Question, ExamMode, ExamSession, ExamHistoryItem } from '../types';
 import { toast } from 'sonner';
+import { supabase, isCloudEnabled } from '../lib/supabase';
 
 interface AuthState {
   name: string;
   participantId: string;
   instansi: string;
+  email: string;
   isLoggedIn: boolean;
-  login: (name: string, participantId: string, instansi: string) => void;
-  logout: () => void;
+  isLoading: boolean;
+  isCloudEnabled: boolean;
+  signUp: (email: string, password: string, name: string, participantId: string, instansi: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  checkSession: () => Promise<void>;
 }
 
+const syncCloudHistoryToLocal = async (userId: string) => {
+  if (!isCloudEnabled) return;
+  try {
+    const { data: cloudHistory, error } = await supabase
+      .from('exam_history')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) throw error;
+    if (cloudHistory && cloudHistory.length > 0) {
+      const formattedItems = cloudHistory.map(item => ({
+        date: item.date,
+        mode: item.mode,
+        scores: item.scores,
+        maxScores: item.max_scores,
+        percentage: item.percentage,
+        isPassed: item.is_passed,
+        timeSpent: item.time_spent,
+        answers: item.answers,
+        questionTimeSpent: {},
+        aiAnalysis: item.ai_analysis
+      }));
+      
+      const localHistory = await db.examHistory.toArray();
+      const localDates = new Set(localHistory.map(h => h.date));
+      const newItems = formattedItems.filter(item => !localDates.has(item.date));
+      
+      if (newItems.length > 0) {
+        await db.examHistory.bulkAdd(newItems);
+        toast.info(`Berhasil mensinkronisasi ${newItems.length} riwayat ujian dari Cloud!`);
+      }
+    }
+  } catch (err) {
+    console.error('Gagal melakukan sinkronisasi database awan:', err);
+  }
+};
+
 export const useAuthStore = create<AuthState>((set) => {
-  // Load from localStorage on init (client-side only)
-  let initialAuth = { name: '', participantId: '', instansi: '', isLoggedIn: false };
+  let initialAuth = { name: '', participantId: '', instansi: '', email: '', isLoggedIn: false, isLoading: false, isCloudEnabled };
+  
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('sr_auth');
     if (saved) {
       try {
-        initialAuth = JSON.parse(saved);
+        initialAuth = { ...JSON.parse(saved), isLoading: false, isCloudEnabled };
       } catch (e) {
         // ignore
       }
@@ -28,14 +71,146 @@ export const useAuthStore = create<AuthState>((set) => {
 
   return {
     ...initialAuth,
-    login: (name, participantId, instansi) => {
-      const state = { name, participantId, instansi, isLoggedIn: true };
-      localStorage.setItem('sr_auth', JSON.stringify(state));
-      set(state);
+    signUp: async (email, password, name, participantId, instansi) => {
+      set({ isLoading: true });
+      if (!isCloudEnabled) {
+        const localUsers = JSON.parse(localStorage.getItem('sr_mock_users') || '[]');
+        if (localUsers.some((u: any) => u.email === email)) {
+          set({ isLoading: false });
+          throw new Error('Email sudah terdaftar (mode lokal)');
+        }
+        localUsers.push({ email, password, name, participantId, instansi });
+        localStorage.setItem('sr_mock_users', JSON.stringify(localUsers));
+        set({ isLoading: false });
+        toast.success('Registrasi akun lokal berhasil! Silakan masuk.');
+        return;
+      }
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+            participant_id: participantId,
+            instansi: instansi
+          }
+        }
+      });
+
+      if (error) {
+        set({ isLoading: false });
+        throw error;
+      }
+      
+      set({ isLoading: false });
+      toast.success('Registrasi berhasil! Silakan masuk.');
     },
-    logout: () => {
+
+    signIn: async (email, password) => {
+      set({ isLoading: true });
+      if (!isCloudEnabled) {
+        const localUsers = JSON.parse(localStorage.getItem('sr_mock_users') || '[]');
+        const user = localUsers.find((u: any) => u.email === email && u.password === password);
+        if (!user) {
+          set({ isLoading: false });
+          throw new Error('Email atau kata sandi salah (mode lokal)');
+        }
+        const state = {
+          name: user.name,
+          participantId: user.participantId,
+          instansi: user.instansi,
+          email: user.email,
+          isLoggedIn: true,
+          isLoading: false
+        };
+        localStorage.setItem('sr_auth', JSON.stringify(state));
+        set(state);
+        toast.success(`Selamat datang kembali, ${user.name}!`);
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        set({ isLoading: false });
+        throw error;
+      }
+
+      if (data.user) {
+        const meta = data.user.user_metadata;
+        const state = {
+          name: meta.full_name || '',
+          participantId: meta.participant_id || '',
+          instansi: meta.instansi || '',
+          email: data.user.email || '',
+          isLoggedIn: true,
+          isLoading: false
+        };
+        localStorage.setItem('sr_auth', JSON.stringify(state));
+        set(state);
+        toast.success(`Selamat datang kembali, ${state.name}!`);
+        
+        syncCloudHistoryToLocal(data.user.id);
+      }
+    },
+
+    logout: async () => {
+      set({ isLoading: true });
+      if (isCloudEnabled) {
+        await supabase.auth.signOut();
+      }
       localStorage.removeItem('sr_auth');
-      set({ name: '', participantId: '', instansi: '', isLoggedIn: false });
+      set({
+        name: '',
+        participantId: '',
+        instansi: '',
+        email: '',
+        isLoggedIn: false,
+        isLoading: false
+      });
+      toast.info('Sesi Anda telah berakhir.');
+    },
+
+    checkSession: async () => {
+      if (!isCloudEnabled) {
+        if (typeof window !== 'undefined') {
+          const saved = localStorage.getItem('sr_auth');
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved);
+              set({ ...parsed, isLoading: false });
+            } catch (e) {}
+          }
+        }
+        return;
+      }
+
+      set({ isLoading: true });
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const meta = session.user.user_metadata;
+          const state = {
+            name: meta.full_name || '',
+            participantId: meta.participant_id || '',
+            instansi: meta.instansi || '',
+            email: session.user.email || '',
+            isLoggedIn: true,
+            isLoading: false
+          };
+          localStorage.setItem('sr_auth', JSON.stringify(state));
+          set(state);
+          syncCloudHistoryToLocal(session.user.id);
+        } else {
+          set({ name: '', participantId: '', instansi: '', email: '', isLoggedIn: false, isLoading: false });
+        }
+      } catch (e) {
+        set({ isLoading: false });
+      }
     }
   };
 });
@@ -331,8 +506,34 @@ export const useExamStore = create<ExamState>((set, get) => ({
       aiAnalysis
     };
 
-    // Save history
+    // Save history locally
     const historyId = await db.examHistory.add(historyItem);
+    
+    // Save to Supabase Cloud DB if logged in and cloud is enabled
+    const authState = useAuthStore.getState();
+    if (authState.isLoggedIn && authState.isCloudEnabled) {
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData?.user) {
+          const { error } = await supabase.from('exam_history').insert({
+            user_id: userData.user.id,
+            date: historyItem.date,
+            mode: historyItem.mode,
+            scores: historyItem.scores,
+            max_scores: historyItem.maxScores,
+            percentage: historyItem.percentage,
+            is_passed: historyItem.isPassed,
+            time_spent: historyItem.timeSpent,
+            answers: historyItem.answers,
+            ai_analysis: historyItem.aiAnalysis
+          });
+          if (error) throw error;
+          toast.success('Hasil ujian berhasil disinkronisasi ke Cloud!');
+        }
+      } catch (err) {
+        console.error('Gagal mengunggah riwayat ke Cloud:', err);
+      }
+    }
     
     // Clear active session from DB
     await db.examSessions.delete('active_session');
