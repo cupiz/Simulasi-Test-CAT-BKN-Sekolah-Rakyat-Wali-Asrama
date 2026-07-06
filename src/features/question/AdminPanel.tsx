@@ -5,7 +5,7 @@ import { db } from '../../lib/db';
 import { Question, QuestionOption } from '../../types';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Trash2, Edit, Plus, FileSpreadsheet, Download, Upload, RefreshCw, Search, X, Sparkles } from 'lucide-react';
+import { Trash2, Edit, Plus, Download, Upload, RefreshCw, Search, X, Sparkles, CalendarDays } from 'lucide-react';
 import { toast } from 'sonner';
 import { getInitialQuestions } from '../../data/questions';
 
@@ -14,6 +14,8 @@ export function AdminPanel() {
   const [search, setSearch] = useState('');
   const [editingQuestion, setEditingQuestion] = useState<Partial<Question> | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string>('');
 
   // Form State
   const [category, setCategory] = useState<'teknis' | 'manajerial' | 'sosial' | 'wawancara'>('teknis');
@@ -34,12 +36,33 @@ export function AdminPanel() {
   const [catTips, setCatTips] = useState('');
 
   useEffect(() => {
-    loadQuestions();
+    loadDatesAndQuestions();
   }, []);
 
-  const loadQuestions = async () => {
-    const list = await db.questions.toArray();
-    setQuestions(list.sort((a, b) => (a.id || 0) - (b.id || 0)));
+  useEffect(() => {
+    if (selectedDate) {
+      loadQuestionsByDate(selectedDate);
+    }
+  }, [selectedDate]);
+
+  const loadDatesAndQuestions = async () => {
+    const allQs = await db.questions.toArray();
+    const dates = [...new Set(allQs.map(q => q.dateStr).filter((d): d is string => !!d))].sort();
+    setAvailableDates(dates);
+    
+    if (dates.length > 0) {
+      const latest = dates[dates.length - 1];
+      setSelectedDate(latest);
+      setQuestions(allQs.filter(q => q.dateStr === latest).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0)));
+    } else {
+      setQuestions(allQs.sort((a, b) => (a.id || 0) - (b.id || 0)));
+    }
+  };
+
+  const loadQuestionsByDate = async (dateStr: string) => {
+    const allQs = await db.questions.toArray();
+    const filtered = allQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
+    setQuestions(filtered);
   };
 
   const handleEditClick = (q: Question) => {
@@ -67,7 +90,7 @@ export function AdminPanel() {
       { key: 'B', text: '', score: 2 },
       { key: 'C', text: '', score: 3 },
       { key: 'D', text: '', score: 4 },
-      { key: 'E', text: '', score: 5 } // Standard SJT graded
+      { key: 'E', text: '', score: 5 }
     ]);
     setCorrectAnswer('E');
     setExplanation('');
@@ -87,9 +110,10 @@ export function AdminPanel() {
 
     try {
       if (isAdding) {
-        const count = await db.questions.count();
+        const dateForNew = selectedDate || new Date().toISOString().split('T')[0];
+        const count = await db.questions.where('dateStr').equals(dateForNew).count();
         const newQ: Question = {
-          dateStr: new Date().toISOString().split('T')[0],
+          dateStr: dateForNew,
           number: count + 1,
           category,
           topic,
@@ -107,6 +131,8 @@ export function AdminPanel() {
       } else if (editingQuestion?.id) {
         const updatedQ: Question = {
           id: editingQuestion.id,
+          dateStr: editingQuestion.dateStr,
+          number: editingQuestion.number,
           category,
           topic,
           questionText,
@@ -124,7 +150,7 @@ export function AdminPanel() {
 
       setIsAdding(false);
       setEditingQuestion(null);
-      loadQuestions();
+      loadDatesAndQuestions();
     } catch (err) {
       toast.error('Gagal menyimpan pertanyaan');
     }
@@ -134,7 +160,18 @@ export function AdminPanel() {
     if (confirm(`Apakah Anda yakin ingin menghapus pertanyaan #${id}?`)) {
       await db.questions.delete(id);
       toast.success('Pertanyaan berhasil dihapus');
-      loadQuestions();
+      loadDatesAndQuestions();
+    }
+  };
+
+  const handleDeleteDateSet = async () => {
+    if (!selectedDate) return;
+    const count = questions.length;
+    if (confirm(`Hapus seluruh ${count} soal untuk set tanggal ${selectedDate}?`)) {
+      const ids = questions.map(q => q.id).filter((id): id is number => !!id);
+      await db.questions.bulkDelete(ids);
+      toast.success(`Berhasil menghapus ${count} soal untuk tanggal ${selectedDate}`);
+      loadDatesAndQuestions();
     }
   };
 
@@ -144,7 +181,7 @@ export function AdminPanel() {
       const defaults = getInitialQuestions();
       await db.questions.bulkAdd(defaults);
       toast.success('Bank soal default berhasil dipulihkan!');
-      loadQuestions();
+      loadDatesAndQuestions();
     }
   };
 
@@ -152,11 +189,11 @@ export function AdminPanel() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questions, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `bank_soal_sekolah_rakyat_${Date.now()}.json`);
+    downloadAnchor.setAttribute("download", `bank_soal_${selectedDate || 'semua'}_${Date.now()}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
-    toast.success('Bank soal berhasil diekspor ke JSON');
+    toast.success(`Bank soal tanggal ${selectedDate} berhasil diekspor ke JSON`);
   };
 
   const handleImportJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -167,16 +204,14 @@ export function AdminPanel() {
         try {
           const parsed = JSON.parse(event.target?.result as string);
           if (Array.isArray(parsed)) {
-            // Simple validation of fields
-            const isValid = parsed.every(q => q.id && q.category && q.questionText && Array.isArray(q.options));
+            const isValid = parsed.every(q => q.category && q.questionText && Array.isArray(q.options));
             if (!isValid) {
               toast.error('Format JSON tidak valid. Pastikan struktur data sesuai skema.');
               return;
             }
-            await db.questions.clear();
             await db.questions.bulkAdd(parsed);
             toast.success(`Berhasil mengimpor ${parsed.length} soal ke database!`);
-            loadQuestions();
+            loadDatesAndQuestions();
           } else {
             toast.error('Data JSON harus berupa array objek.');
           }
@@ -209,7 +244,7 @@ export function AdminPanel() {
       const dailyQs = generateDailyQuestions(inputDate);
       await db.questions.bulkAdd(dailyQs);
       toast.success(`Berhasil men-generate 145 soal harian baru untuk tanggal ${inputDate}!`);
-      loadQuestions();
+      loadDatesAndQuestions();
     } catch (err) {
       toast.error('Gagal men-generate soal harian');
     }
@@ -222,17 +257,65 @@ export function AdminPanel() {
       (q.id ?? '').toString() === search
   );
 
+  const categoryStats = {
+    teknis: questions.filter(q => q.category === 'teknis').length,
+    manajerial: questions.filter(q => q.category === 'manajerial').length,
+    sosial: questions.filter(q => q.category === 'sosial').length,
+    wawancara: questions.filter(q => q.category === 'wawancara').length,
+  };
+
   return (
     <div className="space-y-6">
+
+      {/* Date Filter + Stats Bar */}
+      <div className="p-4 rounded-xl bg-slate-950/20 border border-white/5 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <CalendarDays className="h-5 w-5 text-primary" />
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Set Tanggal Soal</label>
+              <select
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="h-9 px-3 rounded-lg border border-white/5 bg-black text-xs text-white focus:outline-hidden focus:border-red-500/50 transition-all cursor-pointer min-w-[180px]"
+              >
+                {availableDates.map(date => (
+                  <option key={date} value={date} className="bg-zinc-950 text-white">
+                    {date}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold">
+              Teknis: {categoryStats.teknis}
+            </span>
+            <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">
+              Manajerial: {categoryStats.manajerial}
+            </span>
+            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
+              Sosial: {categoryStats.sosial}
+            </span>
+            <span className="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 text-[10px] font-bold">
+              Wawancara: {categoryStats.wawancara}
+            </span>
+            <span className="px-2 py-0.5 rounded bg-white/5 text-white border border-white/10 text-[10px] font-extrabold">
+              Total: {questions.length}
+            </span>
+          </div>
+        </div>
+      </div>
       
       {/* Action panel */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-slate-950/20 border border-white/5">
-        <div className="flex items-center gap-2">
-          <Button onClick={handleAddClick} size="sm" className="h-9 font-bold flex items-center gap-1.5 bg-primary text-white">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button onClick={handleAddClick} size="sm" className="h-9 font-bold flex items-center gap-1.5 bg-primary text-white cursor-pointer">
             <Plus className="h-4 w-4" />
             <span>Tambah Soal</span>
           </Button>
-          <Button onClick={handleExportJSON} variant="outline" size="sm" className="h-9 text-slate-300 border-white/5 hover:bg-slate-900">
+          <Button onClick={handleExportJSON} variant="outline" size="sm" className="h-9 text-slate-300 border-white/5 hover:bg-slate-900 cursor-pointer">
             <Download className="h-4 w-4 mr-1.5" />
             <span>Ekspor JSON</span>
           </Button>
@@ -248,13 +331,19 @@ export function AdminPanel() {
           </label>
           <Button onClick={handleGenerateDaily} variant="outline" size="sm" className="h-9 border-primary/30 text-primary hover:bg-primary/5 flex items-center gap-1.5 cursor-pointer">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Update Soal Harian</span>
+            <span>Generate Soal Harian</span>
           </Button>
         </div>
-        <Button onClick={handleRestoreDefaults} variant="outline" size="sm" className="h-9 border-red-500/20 text-red-400 hover:bg-red-500/5">
-          <RefreshCw className="h-4 w-4 mr-1.5" />
-          <span>Reset Soal Default</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={handleDeleteDateSet} variant="outline" size="sm" className="h-9 border-red-500/20 text-red-400 hover:bg-red-500/5 cursor-pointer">
+            <Trash2 className="h-4 w-4 mr-1.5" />
+            <span>Hapus Set Ini</span>
+          </Button>
+          <Button onClick={handleRestoreDefaults} variant="outline" size="sm" className="h-9 border-white/10 text-slate-400 hover:bg-slate-900 cursor-pointer">
+            <RefreshCw className="h-4 w-4 mr-1.5" />
+            <span>Reset Default</span>
+          </Button>
+        </div>
       </div>
 
       {/* Editor / Form Drawer */}
@@ -276,7 +365,7 @@ export function AdminPanel() {
               }}
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-slate-400 hover:text-white"
+              className="h-8 w-8 text-slate-400 hover:text-white cursor-pointer"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -434,11 +523,11 @@ export function AdminPanel() {
                   }}
                   variant="outline"
                   size="sm"
-                  className="border-white/5 hover:bg-slate-900 text-slate-300"
+                  className="border-white/5 hover:bg-slate-900 text-slate-300 cursor-pointer"
                 >
                   Batal
                 </Button>
-                <Button type="submit" size="sm" className="bg-primary text-white">
+                <Button type="submit" size="sm" className="bg-primary text-white cursor-pointer">
                   Simpan Soal
                 </Button>
               </div>
@@ -451,9 +540,11 @@ export function AdminPanel() {
       <Card className="glass-panel border-white/5">
         <CardHeader className="pb-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <CardTitle className="text-white text-sm font-semibold">Bank Soal Terdaftar</CardTitle>
+            <CardTitle className="text-white text-sm font-semibold">
+              Bank Soal — {selectedDate || 'Semua'}
+            </CardTitle>
             <CardDescription className="text-xs">
-              Kelola daftar seluruh soal simulasi CAT dalam database IndexedDB.
+              Menampilkan {filteredQuestions.length} soal untuk tanggal {selectedDate}.
             </CardDescription>
           </div>
           <div className="relative w-full md:w-64">
@@ -472,7 +563,7 @@ export function AdminPanel() {
             <table className="w-full text-xs text-left border-collapse">
               <thead>
                 <tr className="border-b border-white/5 bg-slate-950/20 text-slate-400 font-bold">
-                  <th className="p-3 w-12 text-center">ID</th>
+                  <th className="p-3 w-12 text-center">#</th>
                   <th className="p-3 w-24">Kategori</th>
                   <th className="p-3 w-28">Topik</th>
                   <th className="p-3">Kasus Soal</th>
@@ -481,9 +572,9 @@ export function AdminPanel() {
               </thead>
               <tbody className="divide-y divide-white/5">
                 {filteredQuestions.length > 0 ? (
-                  filteredQuestions.map((q) => (
-                    <tr key={q.id ?? q.number} className="hover:bg-slate-950/20 transition-colors">
-                      <td className="p-3 text-center text-slate-500 font-mono">#{q.id ?? q.number}</td>
+                  filteredQuestions.map((q, idx) => (
+                    <tr key={q.id ?? q.number ?? idx} className="hover:bg-slate-950/20 transition-colors">
+                      <td className="p-3 text-center text-slate-500 font-mono">{q.number || idx + 1}</td>
                       <td className="p-3">
                         <span className={`px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-extrabold text-[9px] ${
                           q.category === 'teknis' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
@@ -521,7 +612,7 @@ export function AdminPanel() {
                 ) : (
                   <tr>
                     <td colSpan={5} className="text-center p-8 text-muted-foreground font-medium">
-                      Tidak ada pertanyaan yang terdaftar.
+                      Tidak ada pertanyaan untuk tanggal {selectedDate}.
                     </td>
                   </tr>
                 )}

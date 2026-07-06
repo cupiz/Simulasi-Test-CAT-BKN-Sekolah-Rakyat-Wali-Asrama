@@ -19,6 +19,8 @@ import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
+const ADMIN_PASSWORD = 'admin2026';
+
 export function DashboardView() {
   const [history, setHistory] = useState<ExamHistoryItem[]>([]);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'history' | 'admin'>('dashboard');
@@ -26,6 +28,9 @@ export function DashboardView() {
   const [questionCount, setQuestionCount] = useState(145);
   const [availableDates, setAvailableDates] = useState<string[]>(['2026-07-06']);
   const [latestDate, setLatestDate] = useState('2026-07-06');
+  const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
+  const [adminPasswordInput, setAdminPasswordInput] = useState('');
+  const [adminPasswordError, setAdminPasswordError] = useState('');
   
   const startExam = useExamStore((state) => state.startExam);
   const auth = useAuthStore();
@@ -127,7 +132,7 @@ export function DashboardView() {
             </button>
             <div className="hidden sm:block text-right">
               <span className="text-xs font-bold text-slate-200 block leading-tight">{auth.name}</span>
-              <span className="text-[10px] text-slate-500 font-semibold">{auth.instansi}</span>
+              <span className="text-[10px] text-slate-500 font-semibold">{auth.lokasi || auth.instansi}</span>
             </div>
           </div>
         </div>
@@ -187,9 +192,11 @@ export function DashboardView() {
                 
                 <div className="space-y-6">
                   <DailyChallengeCard />
-                  <AIStudyPlannerCard />
                 </div>
               </div>
+
+              {/* AI Planner - Full Width */}
+              <AIStudyPlannerCard />
 
               {/* Gamification Panel */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -377,7 +384,51 @@ export function DashboardView() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              <AdminPanel />
+              {isAdminUnlocked ? (
+                <AdminPanel />
+              ) : (
+                <Card className="glass-panel border-white/5 max-w-md mx-auto">
+                  <CardHeader className="text-center">
+                    <div className="mx-auto mb-3 h-12 w-12 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center">
+                      <ShieldAlert className="h-6 w-6 text-red-500" />
+                    </div>
+                    <CardTitle className="text-white text-base">Akses Admin Terbatas</CardTitle>
+                    <CardDescription className="text-xs">
+                      Masukkan kata sandi admin untuk mengakses panel manajemen soal.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (adminPasswordInput === ADMIN_PASSWORD) {
+                          setIsAdminUnlocked(true);
+                          setAdminPasswordError('');
+                          toast.success('Akses admin diberikan!');
+                        } else {
+                          setAdminPasswordError('Kata sandi admin salah');
+                          toast.error('Kata sandi admin salah');
+                        }
+                      }}
+                      className="space-y-4"
+                    >
+                      <div className="space-y-2">
+                        <input
+                          type="password"
+                          placeholder="Masukkan kata sandi admin"
+                          value={adminPasswordInput}
+                          onChange={(e) => { setAdminPasswordInput(e.target.value); setAdminPasswordError(''); }}
+                          className="w-full h-10 px-3 rounded-lg border border-white/5 bg-black text-sm text-white placeholder-slate-600 focus:outline-hidden focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
+                        />
+                        {adminPasswordError && <p className="text-xs text-red-500">{adminPasswordError}</p>}
+                      </div>
+                      <Button type="submit" className="w-full h-10 bg-red-600 text-white hover:bg-red-700 font-bold text-xs cursor-pointer">
+                        Buka Admin Panel
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
