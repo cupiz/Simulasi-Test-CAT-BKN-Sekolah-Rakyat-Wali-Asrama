@@ -55,8 +55,15 @@ export async function seedDatabase() {
 
     for (const dateStr of targetDates) {
       const count = await db.questions.where('dateStr').equals(dateStr).count();
-      if (count === 0) {
-        console.log(`Seeding 145 questions for date ${dateStr}...`);
+      if (count < 145) {
+        console.log(`Seeding 145 questions for date ${dateStr} (current count: ${count})...`);
+        // Clear any existing partial questions for this date to avoid duplicates
+        const existingForDate = await db.questions.where('dateStr').equals(dateStr).toArray();
+        const existingIds = existingForDate.map(q => q.id).filter((id): id is number => !!id);
+        if (existingIds.length > 0) {
+          await db.questions.bulkDelete(existingIds);
+        }
+
         let questions;
         if (dateStr === '2026-07-06') {
           // Keep 2026-07-06 as the reference/default question set
