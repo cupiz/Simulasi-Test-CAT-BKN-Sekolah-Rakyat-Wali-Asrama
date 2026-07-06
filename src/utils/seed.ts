@@ -53,6 +53,14 @@ export async function seedDatabase() {
       '2026-07-06'
     ];
 
+    // Migration: If old style questions exist, clear questions table to force a clean seed
+    const sample = await db.questions.limit(50).toArray();
+    const hasOldFormat = sample.some(q => q.questionText.includes('[Studi Kasus Harian -'));
+    if (hasOldFormat) {
+      console.log('Old style questions detected. Clearing table for clean seed...');
+      await db.questions.clear();
+    }
+
     for (const dateStr of targetDates) {
       const count = await db.questions.where('dateStr').equals(dateStr).count();
       if (count < 145) {
