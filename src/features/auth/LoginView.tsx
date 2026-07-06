@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthStore, useExamStore } from '../../store';
+import { db } from '../../lib/db';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Shield, Sparkles, BookOpen, GraduationCap, Trophy } from 'lucide-react';
@@ -18,6 +19,29 @@ export function LoginView() {
   const [instansi, setInstansi] = useState('');
   const [mode, setMode] = useState<ExamMode>('ujian');
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useState('2026-07-06');
+
+  useEffect(() => {
+    async function loadDates() {
+      const allQs = await db.questions.toArray();
+      const dates = [...new Set(allQs.map(q => q.dateStr).filter((d): d is string => !!d))].sort();
+      if (dates.length > 0) {
+        setAvailableDates(dates);
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (dates.includes(todayStr)) {
+          setSelectedDate(todayStr);
+        } else {
+          setSelectedDate(dates[dates.length - 1]);
+        }
+      } else {
+        setAvailableDates(['2026-07-06']);
+        setSelectedDate('2026-07-06');
+      }
+    }
+    loadDates();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +64,8 @@ export function LoginView() {
     toast.success(`Selamat datang, ${name}! Mempersiapkan sesi ${mode}...`);
     
     // Automatically trigger starting exam in the store
-    // 130 minutes duration
-    await startExam(mode, 130);
+    // 130 minutes duration, passing selectedDate
+    await startExam(mode, 130, selectedDate);
   };
 
   const modeDescriptions = {
@@ -145,22 +169,42 @@ export function LoginView() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="instansi" className="text-xs font-semibold text-slate-300">
-                  Instansi Asal
-                </label>
-                <input
-                  id="instansi"
-                  type="text"
-                  placeholder="Contoh: Asrama Sekolah Rakyat Bandung"
-                  value={instansi}
-                  onChange={(e) => {
-                    setInstansi(e.target.value);
-                    if (errors.instansi) setErrors({ ...errors, instansi: '' });
-                  }}
-                  className="w-full h-10 px-3 rounded-lg border border-white/10 bg-slate-950/40 text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
-                />
-                {errors.instansi && <p className="text-xs text-red-500 mt-1">{errors.instansi}</p>}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="instansi" className="text-xs font-semibold text-slate-300">
+                    Instansi Asal
+                  </label>
+                  <input
+                    id="instansi"
+                    type="text"
+                    placeholder="Contoh: Asrama Sekolah Rakyat Bandung"
+                    value={instansi}
+                    onChange={(e) => {
+                      setInstansi(e.target.value);
+                      if (errors.instansi) setErrors({ ...errors, instansi: '' });
+                    }}
+                    className="w-full h-10 px-3 rounded-lg border border-white/10 bg-slate-950/40 text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+                  />
+                  {errors.instansi && <p className="text-xs text-red-500 mt-1">{errors.instansi}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="examDate" className="text-xs font-semibold text-slate-300">
+                    Pilih Tanggal Soal CAT
+                  </label>
+                  <select
+                    id="examDate"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="w-full h-10 px-3 rounded-lg border border-white/10 bg-slate-950/40 text-sm text-white focus:outline-hidden focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all cursor-pointer"
+                  >
+                    {availableDates.map(date => (
+                      <option key={date} value={date} className="bg-slate-950 text-white">
+                        Ujian Set: {date}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Mode Selection Cards */}

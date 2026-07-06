@@ -244,7 +244,14 @@ export const ALL_QUESTIONS: Question[] = [
   ...generateDummyQuestions()
 ];
 
-// Helper to get questions sorted by id
-export const getInitialQuestions = (): Question[] => {
-  return ALL_QUESTIONS.sort((a, b) => a.id - b.id);
+export const getInitialQuestions = (dateStr: string = '2026-07-06'): Question[] => {
+  const sorted = [...ALL_QUESTIONS].sort((a, b) => (a.id || 0) - (b.id || 0));
+  return sorted.map((q, idx) => {
+    const { id, ...rest } = q;
+    return {
+      ...rest,
+      dateStr,
+      number: idx + 1
+    };
+  });
 };

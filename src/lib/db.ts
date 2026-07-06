@@ -12,8 +12,8 @@ export class SekolahRakyatDatabase extends Dexie {
 
   constructor() {
     super('SekolahRakyatDB');
-    this.version(1).stores({
-      questions: 'id, category, topic',
+    this.version(2).stores({
+      questions: '++id, dateStr, category, topic',
       examSessions: 'id, mode, isCompleted',
       examHistory: '++id, date, mode, percentage',
       leaderboard: 'id, score, rank, name',

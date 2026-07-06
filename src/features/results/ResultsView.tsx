@@ -122,10 +122,11 @@ export function ResultsView() {
     let csvContent = "data:text/csv;charset=utf-8,Nomor Soal,Kategori,Topik,Jawaban Anda,Kunci Jawaban,Correct,Waktu Pengerjaan (detik)\n";
     
     questions.forEach((q, idx) => {
-      const userAns = result.answers[q.id] || "-";
+      const qId = q.id ?? 0;
+      const userAns = result.answers[qId] || "-";
       const correctAns = q.correctAnswer;
       const isCorrect = userAns === correctAns ? "Benar" : "Salah";
-      const timeSpent = result.questionTimeSpent[q.id] || 0;
+      const timeSpent = result.questionTimeSpent[qId] || 0;
       csvContent += `${idx + 1},${q.category},${q.topic},${userAns},${correctAns},${isCorrect},${timeSpent}\n`;
     });
 
@@ -357,7 +358,8 @@ export function ResultsView() {
           <CardContent>
             <div className="grid grid-cols-8 sm:grid-cols-15 md:grid-cols-20 gap-1.5 justify-center">
               {questions.map((q, idx) => {
-                const userAns = result.answers[q.id];
+                const qId = q.id ?? 0;
+                const userAns = result.answers[qId];
                 const isCorrect = userAns === q.correctAnswer;
                 
                 let colorClass = 'bg-slate-900 border-white/5 text-slate-600';
@@ -375,7 +377,7 @@ export function ResultsView() {
 
                 return (
                   <div
-                    key={q.id}
+                    key={qId}
                     title={titleText}
                     className={`h-8 w-full rounded-md border text-[10px] font-bold flex items-center justify-center cursor-help transition-all duration-150 hover:scale-105 ${colorClass}`}
                   >

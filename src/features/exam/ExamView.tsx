@@ -44,7 +44,7 @@ export function ExamView() {
       tickTimer();
       // Record time spent on active question
       if (currentQuestion) {
-        incrementTimeSpent(currentQuestion.id);
+        incrementTimeSpent(currentQuestion.id!);
       }
     }, 1000);
 
@@ -66,13 +66,13 @@ export function ExamView() {
       } else if (['1', '2', '3', '4', '5'].includes(e.key) && currentQuestion) {
         const optionKeys: ('A' | 'B' | 'C' | 'D' | 'E')[] = ['A', 'B', 'C', 'D', 'E'];
         const selected = optionKeys[parseInt(e.key) - 1];
-        setAnswer(currentQuestion.id, selected);
+        setAnswer(currentQuestion.id!, selected);
         toast.success(`Menjawab: Pilihan ${selected}`, { duration: 800 });
       } else if (e.key.toLowerCase() === 'b' && currentQuestion) {
-        toggleFlag(currentQuestion.id);
+        toggleFlag(currentQuestion.id!);
         toast.info('Status Ragu-ragu diperbarui', { duration: 800 });
       } else if (e.key.toLowerCase() === 'f' && currentQuestion) {
-        toggleBookmark(currentQuestion.id);
+        toggleBookmark(currentQuestion.id!);
         toast.info('Bookmark diperbarui', { duration: 800 });
       } else if (e.key === 'Enter' && e.ctrlKey) {
         setShowSubmitConfirm(true);
@@ -98,11 +98,12 @@ export function ExamView() {
       const numMatch = (idx + 1).toString() === navSearch || q.topic.toLowerCase().includes(navSearch.toLowerCase()) || q.questionText.toLowerCase().includes(navSearch.toLowerCase());
       if (navSearch && !numMatch) return false;
 
+      const qId = q.id ?? 0;
       switch (navFilter) {
-        case 'answered': return !!answers[q.id];
-        case 'unanswered': return !answers[q.id];
-        case 'flagged': return flags.includes(q.id);
-        case 'bookmarked': return bookmarks.includes(q.id);
+        case 'answered': return !!answers[qId];
+        case 'unanswered': return !answers[qId];
+        case 'flagged': return flags.includes(qId);
+        case 'bookmarked': return bookmarks.includes(qId);
         case 'teknis': return q.category === 'teknis';
         case 'manajerial': return q.category === 'manajerial';
         case 'sosial': return q.category === 'sosial';
@@ -118,9 +119,9 @@ export function ExamView() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const activeUserAnswer = answers[currentQuestion.id];
-  const isQuestionFlagged = flags.includes(currentQuestion.id);
-  const isQuestionBookmarked = bookmarks.includes(currentQuestion.id);
+  const activeUserAnswer = answers[currentQuestion.id!];
+  const isQuestionFlagged = flags.includes(currentQuestion.id!);
+  const isQuestionBookmarked = bookmarks.includes(currentQuestion.id!);
 
   // 5. Submit Action
   const handleFinalSubmit = async () => {
@@ -210,7 +211,7 @@ export function ExamView() {
                 {/* Flags and bookmarks */}
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => toggleFlag(currentQuestion.id)}
+                    onClick={() => toggleFlag(currentQuestion.id!)}
                     className={`p-2 rounded-lg border transition-colors cursor-pointer ${
                       isQuestionFlagged
                         ? 'bg-amber-500/10 border-amber-500/30 text-amber-500'
@@ -221,7 +222,7 @@ export function ExamView() {
                     <Flag className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => toggleBookmark(currentQuestion.id)}
+                    onClick={() => toggleBookmark(currentQuestion.id!)}
                     className={`p-2 rounded-lg border transition-colors cursor-pointer ${
                       isQuestionBookmarked
                         ? 'bg-primary/10 border-primary/30 text-primary'
@@ -264,7 +265,7 @@ export function ExamView() {
                     return (
                       <button
                         key={opt.key}
-                        onClick={() => setAnswer(currentQuestion.id, opt.key)}
+                        onClick={() => setAnswer(currentQuestion.id!, opt.key)}
                         className={`w-full text-left p-3.5 rounded-xl border text-xs transition-all flex items-start gap-3.5 leading-normal cursor-pointer ${optStyle}`}
                       >
                         <span className="font-extrabold uppercase mt-0.5 text-xs">{opt.key}.</span>
@@ -380,15 +381,18 @@ export function ExamView() {
           {/* Palette Grid */}
           <div className="flex-1">
             <div className="grid grid-cols-5 gap-1.5">
-              {filteredNavIndexes.map(({ q, idx }) => (
-                <button
-                  key={q.id}
-                  onClick={() => selectQuestion(idx)}
-                  className={`h-9 w-full rounded-md border text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${getNodeColor(q.id, idx)}`}
-                >
-                  {(idx + 1).toString().padStart(2, '0')}
-                </button>
-              ))}
+              {filteredNavIndexes.map(({ q, idx }) => {
+                const qId = q.id ?? 0;
+                return (
+                  <button
+                    key={qId}
+                    onClick={() => selectQuestion(idx)}
+                    className={`h-9 w-full rounded-md border text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${getNodeColor(qId, idx)}`}
+                  >
+                    {(idx + 1).toString().padStart(2, '0')}
+                  </button>
+                );
+              })}
             </div>
             {filteredNavIndexes.length === 0 && (
               <div className="text-center py-8 text-xs text-muted-foreground">

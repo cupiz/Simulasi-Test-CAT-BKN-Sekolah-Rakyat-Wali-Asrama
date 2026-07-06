@@ -15,9 +15,12 @@ export function AppInitializer({ children }: { children: React.ReactNode }) {
       // 1. Seed IndexedDB with questions, mock leaderboard, achievements
       await seedDatabase();
 
-      // 2. Load questions from IndexedDB to state
+      // 2. Load questions for the latest date from IndexedDB to state
       const dbQuestions = await db.questions.toArray();
-      setQuestions(dbQuestions);
+      const dates = [...new Set(dbQuestions.map(q => q.dateStr).filter((d): d is string => !!d))].sort();
+      const latestDate = dates.length > 0 ? dates[dates.length - 1] : '2026-07-06';
+      const latestQuestions = dbQuestions.filter(q => q.dateStr === latestDate).sort((a, b) => (a.number || 0) - (b.number || 0));
+      setQuestions(latestQuestions);
 
       // 3. Auto-resume existing active session if available
       try {

@@ -39,7 +39,7 @@ export function AdminPanel() {
 
   const loadQuestions = async () => {
     const list = await db.questions.toArray();
-    setQuestions(list.sort((a, b) => a.id - b.id));
+    setQuestions(list.sort((a, b) => (a.id || 0) - (b.id || 0)));
   };
 
   const handleEditClick = (q: Question) => {
@@ -88,9 +88,9 @@ export function AdminPanel() {
     try {
       if (isAdding) {
         const count = await db.questions.count();
-        const nextId = count > 0 ? (await db.questions.toArray()).sort((a, b) => b.id - a.id)[0].id + 1 : 1;
         const newQ: Question = {
-          id: nextId,
+          dateStr: new Date().toISOString().split('T')[0],
+          number: count + 1,
           category,
           topic,
           questionText,
@@ -189,18 +189,26 @@ export function AdminPanel() {
 
   const handleGenerateDaily = async () => {
     const todayStr = new Date().toISOString().split('T')[0];
-    const todayMatch = questions.some(q => q.questionText.includes(`[Studi Kasus Harian - ${todayStr}]`));
-    if (todayMatch) {
-      toast.info(`Soal harian untuk tanggal ${todayStr} sudah terpasang di database.`);
+    const inputDate = prompt("Masukkan tanggal set soal baru (Format: YYYY-MM-DD):", todayStr);
+    if (!inputDate) return;
+
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(inputDate)) {
+      toast.error("Format tanggal harus YYYY-MM-DD (Contoh: 2026-07-07)");
+      return;
+    }
+
+    const existingCount = await db.questions.where('dateStr').equals(inputDate).count();
+    if (existingCount > 0) {
+      toast.info(`Set soal untuk tanggal ${inputDate} (${existingCount} soal) sudah terpasang.`);
       return;
     }
 
     try {
       const { generateDailyQuestions } = await import('../../utils/generator');
-      const highestId = questions.length > 0 ? Math.max(...questions.map(q => q.id)) : 145;
-      const dailyQs = generateDailyQuestions(todayStr, highestId + 1);
-      await db.questions.bulkPut(dailyQs);
-      toast.success(`Berhasil menambahkan 5 soal harian baru untuk tanggal ${todayStr}!`);
+      const dailyQs = generateDailyQuestions(inputDate);
+      await db.questions.bulkAdd(dailyQs);
+      toast.success(`Berhasil men-generate 145 soal harian baru untuk tanggal ${inputDate}!`);
       loadQuestions();
     } catch (err) {
       toast.error('Gagal men-generate soal harian');
@@ -211,7 +219,7 @@ export function AdminPanel() {
     q =>
       q.questionText.toLowerCase().includes(search.toLowerCase()) ||
       q.topic.toLowerCase().includes(search.toLowerCase()) ||
-      q.id.toString() === search
+      (q.id ?? '').toString() === search
   );
 
   return (
@@ -474,8 +482,8 @@ export function AdminPanel() {
               <tbody className="divide-y divide-white/5">
                 {filteredQuestions.length > 0 ? (
                   filteredQuestions.map((q) => (
-                    <tr key={q.id} className="hover:bg-slate-950/20 transition-colors">
-                      <td className="p-3 text-center text-slate-500 font-mono">#{q.id}</td>
+                    <tr key={q.id ?? q.number} className="hover:bg-slate-950/20 transition-colors">
+                      <td className="p-3 text-center text-slate-500 font-mono">#{q.id ?? q.number}</td>
                       <td className="p-3">
                         <span className={`px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-extrabold text-[9px] ${
                           q.category === 'teknis' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
@@ -500,7 +508,7 @@ export function AdminPanel() {
                             <Edit className="h-3.5 w-3.5" />
                           </button>
                           <button
-                            onClick={() => handleDelete(q.id)}
+                            onClick={() => handleDelete(q.id!)}
                             className="p-1.5 rounded-md hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
                             title="Hapus Soal"
                           >

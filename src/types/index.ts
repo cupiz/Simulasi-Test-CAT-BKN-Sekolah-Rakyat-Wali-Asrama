@@ -7,7 +7,9 @@ export interface QuestionOption {
 }
 
 export interface Question {
-  id: number;
+  id?: number;
+  dateStr?: string; // Date of this question set, e.g. "2026-07-06"
+  number?: number;  // Chronological number within the set, 1 to 145
   category: 'teknis' | 'manajerial' | 'sosial' | 'wawancara';
   topic: string;
   questionText: string;
@@ -23,6 +25,7 @@ export interface Question {
 export interface ExamSession {
   id?: string;
   mode: ExamMode;
+  dateStr: string; // The selected exam date set
   startTime: number;
   timeRemaining: number;
   answers: Record<number, 'A' | 'B' | 'C' | 'D' | 'E'>;

@@ -42,13 +42,13 @@ const INITIAL_ACHIEVEMENTS: Achievement[] = [
 
 export async function seedDatabase() {
   try {
-    // 1. Seed Questions if empty
-    const questionCount = await db.questions.count();
-    if (questionCount === 0) {
-      console.log('Seeding questions database...');
-      const questions = getInitialQuestions();
-      await db.questions.bulkPut(questions);
-      console.log(`Seeded ${questions.length} questions successfully.`);
+    // 1. Seed Questions if empty for default date
+    const defaultDateCount = await db.questions.where('dateStr').equals('2026-07-06').count();
+    if (defaultDateCount === 0) {
+      console.log('Seeding questions database for 2026-07-06...');
+      const questions = getInitialQuestions('2026-07-06');
+      await db.questions.bulkAdd(questions);
+      console.log(`Seeded ${questions.length} questions successfully for 2026-07-06.`);
     }
 
     // 2. Seed Achievements if empty

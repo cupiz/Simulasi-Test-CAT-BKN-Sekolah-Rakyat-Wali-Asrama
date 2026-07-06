@@ -55,8 +55,8 @@ interface ExamState {
   startTime: number;
 
   setQuestions: (questions: Question[]) => void;
-  startExam: (mode: ExamMode, durationMinutes: number) => Promise<void>;
-  resumeExam: (session: ExamSession) => void;
+  startExam: (mode: ExamMode, durationMinutes: number, dateStr: string) => Promise<void>;
+  resumeExam: (session: ExamSession) => Promise<void>;
   selectQuestion: (index: number) => void;
   setAnswer: (questionId: number, optionKey: 'A' | 'B' | 'C' | 'D' | 'E') => Promise<void>;
   toggleFlag: (questionId: number) => Promise<void>;
@@ -83,27 +83,34 @@ export const useExamStore = create<ExamState>((set, get) => ({
 
   setQuestions: (questions) => set({ questions }),
 
-  startExam: async (mode, durationMinutes) => {
+  startExam: async (mode, durationMinutes, dateStr) => {
     set({ isLoading: true });
+    
+    // Fetch only questions for the selected dateStr
+    const dbQuestions = await db.questions.where('dateStr').equals(dateStr).toArray();
+    const sortedQuestions = dbQuestions.sort((a, b) => (a.number || 0) - (b.number || 0));
+    
     const startTime = Date.now();
     const timeRemaining = durationMinutes * 60;
     
     const newSession: ExamSession = {
       id: 'active_session',
       mode,
+      dateStr,
       startTime,
       timeRemaining,
       answers: {},
       flags: [],
       bookmarks: [],
       questionTimeSpent: {},
-      currentQuestionId: get().questions[0]?.id || 1,
+      currentQuestionId: sortedQuestions[0]?.id || 1,
       isCompleted: false
     };
 
     await db.examSessions.put(newSession);
     
     set({
+      questions: sortedQuestions,
       mode,
       startTime,
       timeRemaining,
@@ -118,9 +125,13 @@ export const useExamStore = create<ExamState>((set, get) => ({
     });
   },
 
-  resumeExam: (session) => {
-    const qIndex = get().questions.findIndex(q => q.id === session.currentQuestionId);
+  resumeExam: async (session) => {
+    const dbQuestions = await db.questions.where('dateStr').equals(session.dateStr).toArray();
+    const sortedQuestions = dbQuestions.sort((a, b) => (a.number || 0) - (b.number || 0));
+    
+    const qIndex = sortedQuestions.findIndex(q => q.id === session.currentQuestionId);
     set({
+      questions: sortedQuestions,
       mode: session.mode,
       startTime: session.startTime,
       timeRemaining: session.timeRemaining,
@@ -211,7 +222,8 @@ export const useExamStore = create<ExamState>((set, get) => ({
       maxScores[q.category] += maxQScore;
       maxScores.total += maxQScore;
 
-      const userAns = answers[q.id];
+      const qId = q.id ?? 0;
+      const userAns = answers[qId];
       if (userAns) {
         const option = q.options.find(o => o.key === userAns);
         const score = option ? option.score : 0;

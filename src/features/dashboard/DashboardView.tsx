@@ -24,6 +24,7 @@ export function DashboardView() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'history' | 'admin'>('dashboard');
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<ExamHistoryItem | null>(null);
   const [questionCount, setQuestionCount] = useState(145);
+  const [latestDate, setLatestDate] = useState('2026-07-06');
   
   const startExam = useExamStore((state) => state.startExam);
   const auth = useAuthStore();
@@ -37,14 +38,17 @@ export function DashboardView() {
     const hist = await db.examHistory.toArray();
     setHistory(hist.sort((a, b) => b.date - a.date));
 
-    const count = await db.questions.count();
-    setQuestionCount(count);
+    const allQs = await db.questions.toArray();
+    const dates = [...new Set(allQs.map(q => q.dateStr).filter((d): d is string => !!d))].sort();
+    const latest = dates.length > 0 ? dates[dates.length - 1] : '2026-07-06';
+    setLatestDate(latest);
+    setQuestionCount(allQs.filter(q => q.dateStr === latest).length);
   };
 
   const handleStartExam = async (mode: ExamMode) => {
-    toast.success(`Memulai sesi ujian Baru (${mode})...`);
+    toast.success(`Memulai sesi ujian Baru (${mode}) untuk set tanggal ${latestDate}...`);
     // Default exam is 130 minutes
-    await startExam(mode, 130);
+    await startExam(mode, 130, latestDate);
   };
 
   const toggleTheme = () => {
