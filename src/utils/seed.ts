@@ -53,11 +53,11 @@ export async function seedDatabase() {
       '2026-07-06'
     ];
 
-    // Migration: If old style questions exist, clear questions table to force a clean seed
+    // Migration: If we do not have the new format questions, clear the table to force a clean seed
     const sample = await db.questions.limit(50).toArray();
-    const hasOldFormat = sample.some(q => q.questionText.includes('[Studi Kasus Harian -'));
-    if (hasOldFormat) {
-      console.log('Old style questions detected. Clearing table for clean seed...');
+    const hasNewFormat = sample.some(q => q.questionText.includes('[SKB CAT BKN Wali Asrama]'));
+    if (sample.length > 0 && !hasNewFormat) {
+      console.log('Old style questions detected (missing new prefix). Clearing table for clean seed...');
       await db.questions.clear();
     }
 

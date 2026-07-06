@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { seedDatabase } from '../../utils/seed';
 import { useExamStore, useAuthStore } from '../../store';
 import { db } from '../../lib/db';
+import { supabase, isCloudEnabled } from '../../lib/supabase';
 import { Loader2 } from 'lucide-react';
 
 export function AppInitializer({ children }: { children: React.ReactNode }) {
@@ -15,6 +16,26 @@ export function AppInitializer({ children }: { children: React.ReactNode }) {
     async function init() {
       // 0. Restore session from cloud / local storage fallback
       await checkSession();
+
+      // 0.5. Sync questions from Supabase if cloud is enabled
+      if (isCloudEnabled) {
+        try {
+          console.log('Syncing questions from Supabase...');
+          const { data: cloudQuestions, error } = await supabase
+            .from('questions')
+            .select('*');
+          
+          if (!error && cloudQuestions && cloudQuestions.length > 0) {
+            // Map keys appropriately to match TypeScript definitions if necessary
+            await db.questions.bulkPut(cloudQuestions);
+            console.log(`Successfully synced ${cloudQuestions.length} questions from Supabase.`);
+          } else if (error) {
+            console.warn('Failed to sync questions from Supabase:', error.message);
+          }
+        } catch (syncErr) {
+          console.error('Supabase questions sync error:', syncErr);
+        }
+      }
 
       // 1. Seed IndexedDB with questions, mock leaderboard, achievements
       await seedDatabase();

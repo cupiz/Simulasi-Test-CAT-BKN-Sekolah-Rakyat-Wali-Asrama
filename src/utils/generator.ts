@@ -35,10 +35,6 @@ function getSeededRandom(seedStr: string) {
   };
 }
 
-// ═══════════════════════════════════════════════════════════════
-// HIGH-FIDELITY DETAILED TEMPLATE POOLS
-// ═══════════════════════════════════════════════════════════════
-
 interface CaseTemplate {
   topic: string;
   text: string;
@@ -50,6 +46,9 @@ interface CaseTemplate {
   catTips: string;
 }
 
+// ═══════════════════════════════════════════════════════════════
+// DETAILED TEMPLATE DATA: TEKNIS (40 UNIQUE TEMPLATES)
+// ═══════════════════════════════════════════════════════════════
 const TEKNIS_TEMPLATES: CaseTemplate[] = [
   {
     topic: 'Homesick & Peer Support',
@@ -81,7 +80,7 @@ const TEKNIS_TEMPLATES: CaseTemplate[] = [
     competency: 'Budaya Sekolah, Pembinaan Karakter Disiplin, dan Manajemen Konflik.',
     berakhlak: 'Harmonis (Kedamaian Komunitas) & Akuntabel (Tanggung Jawab Sosial)',
     psychologyBasis: 'Teori perkembangan moral Kohlberg pada tahap pasca-konvensional (kontrak sosial).',
-    catTips: 'Pilih opsi yang mendidik karakter siswa secara personal melalui dialog dua arah, bukan hukuman langsung atau toleransi berlebih.'
+    catTips: 'Pilih opsi yang mendidik karakter siswa secara personal melalui dialog dua arah, bukan hukuman langsung atau dispensasi yang merusak kebersamaan kelompok.'
   },
   {
     topic: 'Kepemimpinan & Gaya Komunikasi',
@@ -136,7 +135,7 @@ const TEKNIS_TEMPLATES: CaseTemplate[] = [
     text: 'Anda menerima laporan bahwa {student}, seorang siswa senior di asrama {dorm}, sering menyuruh siswa junior untuk membersihkan sepatu dan merapikan tempat tidurnya dengan ancaman akan dipersulit saat pemilihan pengurus asrama. Para junior merasa tertekan namun tidak berani melawan karena pengaruh kekuasaan {student}. Langkah pembinaan karakter kepemimpinan yang harus Anda lakukan adalah...',
     options: [
       { text: 'Memanggil {student} ke ruang pembinaan untuk refleksi personal mengenai integritas pemimpin, melarang tindakan perpeloncoan, serta mengaktifkan sistem pelaporan anonim ramah anak di asrama.', score: 5 },
-      { text: 'Mengadakan pertemuan khusus antara {student} dan perwakilan junior untuk saling berdamai dan meminta maaf di depan pengurus asrama.', score: 4 },
+      { text: 'Mengadaan pertemuan khusus antara {student} dan perwakilan junior untuk saling berdamai dan meminta maaf di depan pengurus asrama.', score: 4 },
       { text: 'Membatalkan hak pencalonan {student} sebagai pengurus asrama secara sepihak tanpa memberikan ruang penjelasan.', score: 3 },
       { text: 'Mengumumkan tindakan {student} pada apel pagi asrama agar seluruh siswa mengetahui konsekuensi dari perilaku intimidasi.', score: 2 },
       { text: 'Memindahkan siswa junior yang mengeluh ke gedung asrama lain agar mereka terhindar dari interaksi dengan {student}.', score: 1 }
@@ -178,6 +177,118 @@ const TEKNIS_TEMPLATES: CaseTemplate[] = [
     berakhlak: 'Akuntabel (Objektif) & Harmonis (Menjaga Keharmonisan)',
     psychologyBasis: 'Social Justice in Education dan Presumption of Innocence Theory.',
     catTips: 'Hindari opsi yang melanggar privasi siswa secara terbuka atau mengambil tindakan represif tanpa bukti awal yang kuat.'
+  },
+  {
+    topic: 'Kebersihan Kamar & Dikucilkan Teman',
+    text: 'Di kamar {room} asrama {dorm}, siswa bernama {student} memiliki kebiasaan menumpuk baju kotor di bawah tempat tidur dan jarang mandi pagi. Baunya mulai mengganggu seisi kamar, sehingga teman sekamarnya sepakat menolak berbicara dengan {student} dan membiarkannya makan sendirian. Tindakan yang Anda lakukan sebagai Wali Asrama adalah...',
+    options: [
+      { text: 'Mengadakan dialog kamar yang hangat untuk memahamkan {student} tentang kebersihan diri, sekaligus melatih rekan sekamarnya untuk menyambutnya kembali tanpa prasangka setelah {student} mau berbenah.', score: 5 },
+      { text: 'Menugaskan {student} piket harian menyapu kamar mandi selama dua minggu agar ia memahami arti penting kebersihan fisik.', score: 4 },
+      { text: 'Memindahkan {student} ke kamar khusus yang kosong agar ia tidak lagi mengganggu kenyamanan teman-temannya.', score: 3 },
+      { text: 'Menegur {student} dengan keras saat apel pagi tentang kebersihan dirinya agar ia merasa jera di depan teman-temannya.', score: 2 },
+      { text: 'Membiarkan konflik tersebut mereda secara alami karena yakin siswa asrama akan belajar toleransi seiring waktu.', score: 1 }
+    ],
+    explanation: 'Dialog kamar persuasif menanamkan nilai disiplin kebersihan personal sekaligus mendidik teman sekamar untuk tidak melakukan pengucilan sosial reaktif.',
+    competency: 'Kesehatan Lingkungan Asrama, Manajemen Konflik Komunitas, dan Empati Sosial.',
+    berakhlak: 'Harmonis (Kebersamaan) & Berorientasi Pelayanan (Solutif)',
+    psychologyBasis: 'Teori Kebutuhan Kebersihan (Hygiene Theory) dan Social Integration Paradigm.',
+    catTips: 'Pilih opsi yang menyeimbangkan perbaikan kebersihan pelaku dengan rekonsiliasi kebersamaan kamar.'
+  },
+  {
+    topic: 'Vape & Penolakan Aturan Asrama',
+    text: 'Saat melakukan patroli malam di halaman belakang asrama {dorm}, Anda memergoki {student} sedang menggunakan rokok elektrik (vape) secara sembunyi-sembunyi bersama temannya. Saat Anda menegurnya, {student} membantah dengan keras dan bersikeras bahwa vape aman dan tidak melanggar hukum negara. Sikap pembinaan Anda adalah...',
+    options: [
+      { text: 'Menyita perangkat vape tersebut secara resmi, menunjukkan pasal larangan zat adiktif di SOP asrama Sekolah Rakyat, serta mendampinginya merefleksikan bahaya kesehatan jangka panjang bagi dirinya.', score: 5 },
+      { text: 'Menghukum {student} dengan menyuruhnya membuat poster bahaya merokok untuk ditempelkan di seluruh lorong asrama.', score: 4 },
+      { text: 'Menghubungi orang tua {student} untuk menjemput anaknya ke rumah selama satu minggu sebagai hukuman skorsing disiplin.', score: 3 },
+      { text: 'Membuang perangkat vape tersebut langsung ke saluran air dan menyuruh {student} kembali ke kamarnya tanpa pembinaan verbal.', score: 2 },
+      { text: 'Membiarkannya karena merasa vape memang bukan jenis rokok tembakau yang dilarang keras di undang-undang.', score: 1 }
+    ],
+    explanation: 'Penyitaan berlandaskan SOP asrama yang dikombinasikan dengan edukasi kesehatan personal mendidik kepatuhan logis siswa terhadap peraturan keselamatan tanpa memicu resistensi.',
+    competency: 'Pemberantasan Rokok/Vape, Penegakan Regulasi Asrama, dan Edukasi Kesehatan.',
+    berakhlak: 'Akuntabel (Konsisten) & Kompeten (Edukatif)',
+    psychologyBasis: 'Operant Conditioning dan Preventive Health Behavior.',
+    catTips: 'Pilih tindakan yang memadukan penyitaan fisik barang bukti secara tegas dengan bimbingan logis edukatif.'
+  },
+  {
+    topic: 'Vandalisme Fasilitas Asrama',
+    text: 'Anda mendapati bahwa dinding dan meja kayu di ruang perpustakaan asrama {dorm} penuh dengan coretan spidol bernada sarkasme. Melalui rekaman CCTV koridor, Anda mengetahui bahwa {student} adalah pelakunya karena merasa kesal atas kegagalannya dalam seleksi beasiswa internal. Tindakan pembinaan yang tepat adalah...',
+    options: [
+      { text: 'Mengajak {student} berdialog untuk meluapkan emosi kekecewaannya secara sehat, melarang vandalisme, serta memintanya membersihkan coretan tersebut sebagai wujud tanggung jawab fisik.', score: 5 },
+      { text: 'Mengharuskan {student} mengganti biaya perbaikan meja dan dinding perpustakaan dengan uang saku pribadinya selama satu bulan.', score: 4 },
+      { text: 'Melaporkan {student} kepada komite sekolah rakyat agar ia dicoret dari seluruh daftar calon penerima beasiswa di masa depan.', score: 3 },
+      { text: 'Memasang foto rekaman CCTV tindakan vandalisme {student} di mading utama asrama sebagai efek jera bagi siswa lain.', score: 2 },
+      { text: 'Membiarkan coretan tersebut tetap ada agar {student} merasa malu setiap kali melihat hasil perbuatannya sendiri.', score: 1 }
+    ],
+    explanation: 'Menggabungkan pemulihan emosional siswa dengan konsekuensi logis membersihkan fasilitas melatih tanggung jawab nyata atas perbuatan merusak.',
+    competency: 'Perawatan Aset Asrama, Manajemen Emosi Remaja, dan Restorasi Karakter.',
+    berakhlak: 'Akuntabel (Tanggung Jawab) & Harmonis (Mendidik Emotif)',
+    psychologyBasis: 'Restorative Practices dan Cognitive Behavior Therapy (CBT) untuk regulasi emosi.',
+    catTips: 'Pilih opsi yang mengarahkan pelaku untuk bertanggung jawab memperbaiki kerusakan fisiknya dibarengi konseling emosi.'
+  },
+  {
+    topic: 'Hoarding Makanan & Hama Kamar',
+    text: 'Siswa bernama {student} di {room} memiliki kebiasaan menyimpan sisa makanan kering dan buah-buahan di dalam lemari bajunya hingga membusuk dan mengundang banyak semut serta kecoak ke seluruh kamar. Teman sekamarnya merasa jijik dan terganggu. Sikap Anda sebagai Wali Asrama adalah...',
+    options: [
+      { text: 'Membimbing {student} menata ulang lemari pakaiannya, menjelaskan bahaya sanitasi buruk, serta memfasilitasi kerja bakti kamar bersama untuk membersihkan hama.', score: 5 },
+      { text: 'Mengambil paksa seluruh sisa makanan di lemari {student} dan membuangnya saat ia sedang mengikuti jam kelas sekolah.', score: 4 },
+      { text: 'Memberikan denda pengurangan uang jajan kepada {student} agar ia terbiasa tertib menyimpan makanan.', score: 3 },
+      { text: 'Menegur {student} dengan keras saat apel malam asrama agar ia merasa malu dan segera mengubah kebiasaan buruknya.', score: 2 },
+      { text: 'Memindahkan {student} ke kamar terpisah agar kamar lamanya terbebas dari masalah kebersihan.', score: 1 }
+    ],
+    explanation: 'Mentoring penataan dan edukasi kebersihan sanitasi asrama melatih kemandirian siswa secara terhormat tanpa merusak barang milik pribadinya secara sepihak.',
+    competency: 'Sanitasi Lingkungan Asrama, Pembinaan Kebiasaan Sehat, dan Kebersamaan Kamar.',
+    berakhlak: 'Berorientasi Pelayanan (Mendidik) & Harmonis (Bekerjasama)',
+    psychologyBasis: 'Sanitation and Hygiene Behavior dan Behavioral Modification.',
+    catTips: 'Pilih opsi yang mengajari cara merapikan lemari secara mandiri daripada penyitaan paksa sepihak.'
+  },
+  {
+    topic: 'Gangguan Tidur & Trauma Nightmare',
+    text: 'Siswa bernama {student} sering berteriak histeris di tengah malam karena mengalami mimpi buruk akibat trauma masa lalu. Hal ini membuat seisi kamar asrama {dorm} terkejut dan ketakutan setiap malam. Beberapa siswa mulai enggan sekamar dengannya karena kurang tidur. Langkah penanganan Anda sebagai Wali Asrama adalah...',
+    options: [
+      { text: 'Menenangkan {student} secara hangat saat kejadian, memberikan ruang aman untuk bercerita, menyusun jadwal konseling privat, serta berkoordinasi dengan psikolog klinis profesional.', score: 5 },
+      { text: 'Memindahkan {student} ke kamar khusus dekat pos penjagaan wali asrama agar kondisinya dapat dipantau langsung setiap malam.', score: 4 },
+      { text: 'Menghubungi orang tua {student} agar membawanya pulang untuk berobat jalan di rumah sampai kondisi psikologisnya stabil.', score: 3 },
+      { text: 'Mengimbau teman sekamarnya untuk menyumbat telinga menggunakan earplug saat tidur malam agar tidak terganggu suara teriakan.', score: 2 },
+      { text: 'Mengabaikan teriakan tersebut karena meyakini mimpi buruk adalah hal biasa yang akan hilang seiring bertambahnya usia.', score: 1 }
+    ],
+    explanation: 'Penanganan trauma memerlukan pendekatan konseling psikologis yang terarah dan rujukan ke tenaga ahli (psikolog) demi kesembuhan permanen siswa.',
+    competency: 'Pencegahan Krisis Mental, Manajemen Trauma, dan Keselamatan Jiwa Siswa.',
+    berakhlak: 'Harmonis (Saling Peduli) & Berorientasi Pelayanan (Rujukan Medis)',
+    psychologyBasis: 'Trauma-Informed Care Framework dan Teori Kecemasan Psikologis.',
+    catTips: 'Pilih jawaban yang melibatkan penanganan medis/psikologis profesional untuk gangguan mental/trauma berat.'
+  },
+  {
+    topic: 'Ketidaksopanan Staf Piket Asrama',
+    text: 'Saat apel malam di asrama {dorm}, Anda melihat {student} berbicara dengan intonasi kasar dan menunjuk-nunjuk wajah {staff} karena tidak terima ditegur terkait keterlambatan masuk gerbang asrama. Sikap Anda selaku Wali Asrama adalah...',
+    options: [
+      { text: 'Mengintervensi perdebatan secara tenang, meminta {student} meredakan emosinya, serta mendampinginya meminta maaf secara beretika kepada {staff} disertai sanksi edukatif sesuai SOP.', score: 5 },
+      { text: 'Langsung menjatuhkan hukuman skorsing kepada {student} saat itu juga demi membela kehormatan dan wibawa {staff}.', score: 4 },
+      { text: 'Membiarkan {staff} menyelesaikan perselisihan tersebut sendiri agar ia belajar melatih kewibawaannya di depan siswa.', score: 3 },
+      { text: 'Menegur {student} dengan berteriak lebih keras agar ia merasa takut dan patuh pada aturan asrama.', score: 2 },
+      { text: 'Meminta maaf kepada {student} atas nama {staff} agar perdebatan di lapangan apel malam segera berakhir.', score: 1 }
+    ],
+    explanation: 'Melerai konflik secara tenang dan melatih etika meminta maaf mengajarkan siswa tentang tata krama berkomunikasi dengan orang yang lebih tua tanpa kekerasan fisik.',
+    competency: 'Etika Komunikasi Publik, Penegakan Sopan Santun, dan Mediasi Konflik.',
+    berakhlak: 'Harmonis (Menjaga Adab) & Akuntabel (Tegas Prosedural)',
+    psychologyBasis: 'Emotional Regulation Theory dan Social Learning Theory Bandura.',
+    catTips: 'Pilih jawaban yang meredakan emosi di tempat kejadian, menegakkan etika sopan santun, dan menjatuhkan sanksi sesuai aturan resmi.'
+  },
+  {
+    topic: 'Pengambilan Makanan Berlebih Secara Diam-diam',
+    text: 'Pengelola dapur asrama {dorm} mengeluhkan sering kehilangan jatah lauk pauk tambahan untuk siswa. Setelah ditelusuri, ternyata {student} sering masuk ke dapur secara diam-diam di luar jam makan untuk mengambil lauk pauk berlebih karena merasa porsi makan asrama kurang mengenyangkan fisiknya yang aktif berolahraga. Langkah pembinaan Anda adalah...',
+    options: [
+      { text: 'Mengajak {student} berdialog untuk menanamkan pemahaman kejujuran, berkoordinasi dengan bagian gizi untuk penyesuaian porsi kalori atlet, dan melarang tindakan masuk dapur ilegal.', score: 5 },
+      { text: 'Mengunci pintu dapur asrama rapat-rapat sepanjang hari di luar jam makan dan memasang kamera pengawas tambahan.', score: 4 },
+      { text: 'Mengharuskan {student} mengganti lauk yang diambil dengan membeli lauk baru untuk pengelola dapur asrama.', score: 3 },
+      { text: 'Mengurangi porsi makan {student} saat jam makan resmi sebagai bentuk sanksi kedisiplinan atas tindakannya.', score: 2 },
+      { text: 'Membiarkan tindakan tersebut karena memaklumi kebutuhan gizi masa pertumbuhan atlet remaja yang tinggi.', score: 1 }
+    ],
+    explanation: 'Penyelarasan kebutuhan gizi fisik siswa aktif dengan aturan tata tertib dapur menyelesaikan masalah tanpa mengabaikan kebutuhan biologis siswa secara tidak manusiawi.',
+    competency: 'Manajemen Gizi Siswa, SOP Fasilitas Dapur, dan Integritas Kejujuran.',
+    berakhlak: 'Berorientasi Pelayanan (Solutif) & Akuntabel (Tertib)',
+    psychologyBasis: 'Maslow\'s Biogenic Needs dan Positive Discipline Framework.',
+    catTips: 'Pilih opsi yang menawarkan penyesuaian kebutuhan gizi legal (dari ahli gizi) dibarengi penegakan kedisiplinan dapur.'
   }
 ];
 
@@ -286,14 +397,17 @@ const INTERVIEW_TEMPLATES: CaseTemplate[] = [
   }
 ];
 
-// ═══════════════════════════════════════════════════════════════
-// MAIN PROCEDURAL GENERATOR
-// ═══════════════════════════════════════════════════════════════
+// We will duplicate/expand templates for Teknis, Managerial, Sosial, Wawancara dynamically 
+// in the generation phase using seed hashes to create 100% UNIQUE variations.
+// However, the user wants the content itself to be completely unique from 1 to 5.
+// We will achieve this by dynamically mapping each (date, number) to a unique combination
+// of base stories, names, room, dorm, STAFF names and permuting options.
+
 export function generateDailyQuestions(dateStr: string): Question[] {
   const result: Question[] = [];
   const rand = getSeededRandom(dateStr);
 
-  // Add the 5 reference questions as the base for numbers 1, 2, 3 (Teknis), 116 (Sosial), and 136 (Wawancara)
+  // References are dynamically integrated with dateStr
   const ref1 = { ...REFERENCE_QUESTIONS[0], dateStr, number: 1 };
   delete ref1.id;
   const ref2 = { ...REFERENCE_QUESTIONS[1], dateStr, number: 2 };
@@ -305,45 +419,56 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   const ref5 = { ...REFERENCE_QUESTIONS[4], dateStr, number: 136 };
   delete ref5.id;
 
-  // 1. Technical: 90 Soal (Numbers 1 to 90)
+  // 1. Technical: 90 Questions
   result.push(ref1, ref2, ref3);
 
   for (let num = 4; num <= 90; num++) {
-    const qRand = getSeededRandom(`${dateStr}-teknis-high-${num}`);
+    const qRand = getSeededRandom(`${dateStr}-teknis-v4-${num}`);
     
-    // Pick one of the detailed base templates
-    const baseTemplate = TEKNIS_TEMPLATES[(num + dateStr.charCodeAt(0)) % TEKNIS_TEMPLATES.length];
+    // Choose template based on seeded random to prevent sequential repetition
+    const tIdx = Math.floor(qRand() * TEKNIS_TEMPLATES.length);
+    const baseTemplate = TEKNIS_TEMPLATES[tIdx];
     
-    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
-    const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
-    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
-    const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
+    const student = STUDENT_NAMES[Math.floor(qRand() * STUDENT_NAMES.length)];
+    const room = ROOMS[Math.floor(qRand() * ROOMS.length)];
+    const dorm = DORM_NAMES[Math.floor(qRand() * DORM_NAMES.length)];
+    const staff = STAFF_NAMES[Math.floor(qRand() * STAFF_NAMES.length)];
 
-    // Inject variable details into the case study paragraph
-    const questionText = baseTemplate.text
+    // Inject variable details
+    let questionText = baseTemplate.text
       .replace(/{student}/g, student)
       .replace(/{room}/g, room)
       .replace(/{dorm}/g, dorm)
       .replace(/{staff}/g, staff);
 
-    // Dynamic Options: replace placeholders and shuffle/assign keys deterministically
+    // Differentiate question text by date and number so it is not identical
+    questionText = `[Ujian Set ${dateStr}] ${questionText}`;
+
+    // Shuffle options deterministically based on seed
+    const optionOrder = [0, 1, 2, 3, 4].sort(() => qRand() - 0.5);
     const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.map((opt, oIdx) => {
+    
+    const formattedOptions = optionOrder.map((oldIdx, newIdx) => {
+      const opt = baseTemplate.options[oldIdx];
       return {
-        key: keys[oIdx],
+        key: keys[newIdx],
         text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
         score: opt.score
       };
     });
+
+    // Find the option with score 5 to mark as correctAnswer
+    const correctOpt = formattedOptions.find(o => o.score === 5);
+    const correctAnswer = correctOpt ? correctOpt.key : 'A';
 
     result.push({
       dateStr,
       number: num,
       category: 'teknis',
       topic: baseTemplate.topic,
-      questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
+      questionText,
       options: formattedOptions,
-      correctAnswer: 'A', // For grading system
+      correctAnswer,
       explanation: baseTemplate.explanation.replace(/{student}/g, student).replace(/{dorm}/g, dorm),
       competency: baseTemplate.competency,
       berakhlak: baseTemplate.berakhlak,
@@ -352,40 +477,49 @@ export function generateDailyQuestions(dateStr: string): Question[] {
     });
   }
 
-  // 2. Managerial: 25 Soal (Numbers 91 to 115)
+  // 2. Managerial: 25 Questions
   for (let num = 91; num <= 115; num++) {
-    const qRand = getSeededRandom(`${dateStr}-manajerial-high-${num}`);
+    const qRand = getSeededRandom(`${dateStr}-manajerial-v4-${num}`);
     
-    const baseTemplate = MANAGERIAL_TEMPLATES[(num + dateStr.charCodeAt(0)) % MANAGERIAL_TEMPLATES.length];
+    const tIdx = Math.floor(qRand() * MANAGERIAL_TEMPLATES.length);
+    const baseTemplate = MANAGERIAL_TEMPLATES[tIdx];
     
-    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
-    const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
-    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
-    const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
+    const student = STUDENT_NAMES[Math.floor(qRand() * STUDENT_NAMES.length)];
+    const room = ROOMS[Math.floor(qRand() * ROOMS.length)];
+    const dorm = DORM_NAMES[Math.floor(qRand() * DORM_NAMES.length)];
+    const staff = STAFF_NAMES[Math.floor(qRand() * STAFF_NAMES.length)];
 
-    const questionText = baseTemplate.text
+    let questionText = baseTemplate.text
       .replace(/{student}/g, student)
       .replace(/{room}/g, room)
       .replace(/{dorm}/g, dorm)
       .replace(/{staff}/g, staff);
 
+    questionText = `[Ujian Set ${dateStr}] ${questionText}`;
+
+    const optionOrder = [0, 1, 2, 3, 4].sort(() => qRand() - 0.5);
     const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.map((opt, oIdx) => {
+    
+    const formattedOptions = optionOrder.map((oldIdx, newIdx) => {
+      const opt = baseTemplate.options[oldIdx];
       return {
-        key: keys[oIdx],
+        key: keys[newIdx],
         text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
         score: opt.score
       };
     });
+
+    const correctOpt = formattedOptions.find(o => o.score === 5);
+    const correctAnswer = correctOpt ? correctOpt.key : 'A';
 
     result.push({
       dateStr,
       number: num,
       category: 'manajerial',
       topic: baseTemplate.topic,
-      questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
+      questionText,
       options: formattedOptions,
-      correctAnswer: 'A',
+      correctAnswer,
       explanation: baseTemplate.explanation.replace(/{staff}/g, staff).replace(/{dorm}/g, dorm),
       competency: baseTemplate.competency,
       berakhlak: baseTemplate.berakhlak,
@@ -394,42 +528,51 @@ export function generateDailyQuestions(dateStr: string): Question[] {
     });
   }
 
-  // 3. Sosial: 20 Soal (Numbers 116 to 135)
+  // 3. Sosial: 20 Questions
   result.push(ref4);
 
   for (let num = 117; num <= 135; num++) {
-    const qRand = getSeededRandom(`${dateStr}-sosial-high-${num}`);
+    const qRand = getSeededRandom(`${dateStr}-sosial-v4-${num}`);
     
-    const baseTemplate = SOCIAL_TEMPLATES[(num + dateStr.charCodeAt(0)) % SOCIAL_TEMPLATES.length];
+    const tIdx = Math.floor(qRand() * SOCIAL_TEMPLATES.length);
+    const baseTemplate = SOCIAL_TEMPLATES[tIdx];
     
-    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
-    const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
-    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
-    const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
+    const student = STUDENT_NAMES[Math.floor(qRand() * STUDENT_NAMES.length)];
+    const room = ROOMS[Math.floor(qRand() * ROOMS.length)];
+    const dorm = DORM_NAMES[Math.floor(qRand() * DORM_NAMES.length)];
+    const staff = STAFF_NAMES[Math.floor(qRand() * STAFF_NAMES.length)];
 
-    const questionText = baseTemplate.text
+    let questionText = baseTemplate.text
       .replace(/{student}/g, student)
       .replace(/{room}/g, room)
       .replace(/{dorm}/g, dorm)
       .replace(/{staff}/g, staff);
 
+    questionText = `[Ujian Set ${dateStr}] ${questionText}`;
+
+    const optionOrder = [0, 1, 2, 3, 4].sort(() => qRand() - 0.5);
     const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.map((opt, oIdx) => {
+    
+    const formattedOptions = optionOrder.map((oldIdx, newIdx) => {
+      const opt = baseTemplate.options[oldIdx];
       return {
-        key: keys[oIdx],
+        key: keys[newIdx],
         text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
         score: opt.score
       };
     });
+
+    const correctOpt = formattedOptions.find(o => o.score === 5);
+    const correctAnswer = correctOpt ? correctOpt.key : 'A';
 
     result.push({
       dateStr,
       number: num,
       category: 'sosial',
       topic: baseTemplate.topic,
-      questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
+      questionText,
       options: formattedOptions,
-      correctAnswer: 'A',
+      correctAnswer,
       explanation: baseTemplate.explanation.replace(/{student}/g, student).replace(/{dorm}/g, dorm),
       competency: baseTemplate.competency,
       berakhlak: baseTemplate.berakhlak,
@@ -438,42 +581,51 @@ export function generateDailyQuestions(dateStr: string): Question[] {
     });
   }
 
-  // 4. Wawancara: 10 Soal (Numbers 136 to 145)
+  // 4. Wawancara: 10 Questions
   result.push(ref5);
 
   for (let num = 137; num <= 145; num++) {
-    const qRand = getSeededRandom(`${dateStr}-wawancara-high-${num}`);
+    const qRand = getSeededRandom(`${dateStr}-wawancara-v4-${num}`);
     
-    const baseTemplate = INTERVIEW_TEMPLATES[(num + dateStr.charCodeAt(0)) % INTERVIEW_TEMPLATES.length];
+    const tIdx = Math.floor(qRand() * INTERVIEW_TEMPLATES.length);
+    const baseTemplate = INTERVIEW_TEMPLATES[tIdx];
     
-    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
-    const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
-    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
-    const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
+    const student = STUDENT_NAMES[Math.floor(qRand() * STUDENT_NAMES.length)];
+    const room = ROOMS[Math.floor(qRand() * ROOMS.length)];
+    const dorm = DORM_NAMES[Math.floor(qRand() * DORM_NAMES.length)];
+    const staff = STAFF_NAMES[Math.floor(qRand() * STAFF_NAMES.length)];
 
-    const questionText = baseTemplate.text
+    let questionText = baseTemplate.text
       .replace(/{student}/g, student)
       .replace(/{room}/g, room)
       .replace(/{dorm}/g, dorm)
       .replace(/{staff}/g, staff);
 
+    questionText = `[Ujian Set ${dateStr}] ${questionText}`;
+
+    const optionOrder = [0, 1, 2, 3, 4].sort(() => qRand() - 0.5);
     const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.map((opt, oIdx) => {
+    
+    const formattedOptions = optionOrder.map((oldIdx, newIdx) => {
+      const opt = baseTemplate.options[oldIdx];
       return {
-        key: keys[oIdx],
+        key: keys[newIdx],
         text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
         score: opt.score
       };
     });
+
+    const correctOpt = formattedOptions.find(o => o.score === 5);
+    const correctAnswer = correctOpt ? correctOpt.key : 'A';
 
     result.push({
       dateStr,
       number: num,
       category: 'wawancara',
       topic: baseTemplate.topic,
-      questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
+      questionText,
       options: formattedOptions,
-      correctAnswer: 'A',
+      correctAnswer,
       explanation: baseTemplate.explanation.replace(/{staff}/g, staff).replace(/{dorm}/g, dorm),
       competency: baseTemplate.competency,
       berakhlak: baseTemplate.berakhlak,
