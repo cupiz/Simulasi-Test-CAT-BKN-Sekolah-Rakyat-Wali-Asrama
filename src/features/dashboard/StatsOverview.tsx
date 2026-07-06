@@ -107,10 +107,10 @@ export function StatsOverview({
           </div>
 
           {/* Mode Cards with Descriptions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             {/* Mode Ujian CAT */}
-            <div className="md:col-span-3 p-5 rounded-xl bg-red-600/5 border border-red-600/20 space-y-3">
+            <div className="md:col-span-2 p-5 rounded-xl bg-red-600/5 border border-red-600/20 space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-red-600/15 flex items-center justify-center">
                   <Play className="h-4 w-4 text-red-500 fill-current" />

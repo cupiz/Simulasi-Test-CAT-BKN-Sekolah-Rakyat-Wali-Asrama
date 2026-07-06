@@ -1,5 +1,6 @@
 import { db } from '../lib/db';
 import { getInitialQuestions } from '../data/questions';
+import { generateDailyQuestions } from './generator';
 import { Achievement } from '../types';
 
 const INITIAL_ACHIEVEMENTS: Achievement[] = [
@@ -42,13 +43,31 @@ const INITIAL_ACHIEVEMENTS: Achievement[] = [
 
 export async function seedDatabase() {
   try {
-    // 1. Seed Questions if empty for default date
-    const defaultDateCount = await db.questions.where('dateStr').equals('2026-07-06').count();
-    if (defaultDateCount === 0) {
-      console.log('Seeding questions database for 2026-07-06...');
-      const questions = getInitialQuestions('2026-07-06');
-      await db.questions.bulkAdd(questions);
-      console.log(`Seeded ${questions.length} questions successfully for 2026-07-06.`);
+    // 1. Seed Questions if empty for default dates 2026-07-01 to 2026-07-06
+    const targetDates = [
+      '2026-07-01',
+      '2026-07-02',
+      '2026-07-03',
+      '2026-07-04',
+      '2026-07-05',
+      '2026-07-06'
+    ];
+
+    for (const dateStr of targetDates) {
+      const count = await db.questions.where('dateStr').equals(dateStr).count();
+      if (count === 0) {
+        console.log(`Seeding 145 questions for date ${dateStr}...`);
+        let questions;
+        if (dateStr === '2026-07-06') {
+          // Keep 2026-07-06 as the reference/default question set
+          questions = getInitialQuestions('2026-07-06');
+        } else {
+          // Generate procedural set of 145 questions
+          questions = generateDailyQuestions(dateStr);
+        }
+        await db.questions.bulkAdd(questions);
+        console.log(`Seeded ${questions.length} questions successfully for ${dateStr}.`);
+      }
     }
 
     // 2. Seed Achievements if empty
