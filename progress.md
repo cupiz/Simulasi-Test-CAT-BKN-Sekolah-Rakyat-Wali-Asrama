@@ -6,48 +6,53 @@ Laporan ini memuat kemajuan implementasi fitur, perbaikan bug, integrasi penangg
 
 ## 📈 KEMAJUAN UTAMA (TERBARU)
 
-### 1. Penyederhanaan Alur Autentikasi (Masuk Akun)
-- **Halaman Depan Minimalis**: Login card di halaman depan hanya berisi input **Email** dan **Password** untuk masuk. Tab navigasi diubah menjadi **"Masuk Akun"** dan **"Daftar Akun"**.
-- **Formulir Pendaftaran**: Menghapus input "Nomor Peserta Ujian" dan "Instansi Asal" dari formulir pendaftaran, digantikan dengan input **"Lokasi"** (contoh: "Bandung, Jawa Barat").
-- **Tanpa Konfigurasi Awal**: Menghapus pemilihan tanggal bank soal dan mode simulasi dari form login agar proses autentikasi murni hanya untuk mengakses akun pengguna.
+### 1. Brainstorming Soal Harian Dinamis & Unik (Murni Kasus Asrama)
+- **Hapus Duplikasi Soal Contoh**: Soal contoh Wali Asrama aslinya (seperti kasus Danis, Galih, Panji, Fahri, Reza) kini murni dikhususkan untuk set bawaan (`2026-07-06`). Soal untuk tanggal lainnya (termasuk set tanggal 1 s/d 5) sekarang 100% unik, panjang, detail, dan bervariasi murni dari template acak.
+- **Konsol CLI di Admin Panel**: Menyediakan visualisasi Antigravity CLI Console pada antarmuka admin, sehingga proses log generator soal harian dapat dipantau langsung layaknya proses build sesungguhnya.
+- **Alur CLI Node.js**: Script CLI [scripts/generate-daily.js](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/scripts/generate-daily.js) dan [scripts/upload-questions.js](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/scripts/upload-questions.js) telah diintegrasikan agar bank soal harian bisa di-generate secara lokal dan disinkronkan ke Supabase Cloud secara otomatis.
 
-### 2. Panel Pemilihan Ujian di Dashboard (StatsOverview)
-- **Konfigurasi sebelum Ujian**: Memindahkan dropdown **Pilih Tanggal Bank Soal** dan tombol pilihan **Mode Simulasi** (Ujian CAT, Belajar, Latihan) ke dalam kartu **StatsOverview** di halaman Dashboard utama.
-- **Tampilan Fleksibel**: Pengguna sekarang masuk terlebih dahulu ke dashboard, lalu dapat mengonfigurasi tanggal set soal harian mana yang ingin dikerjakan secara interaktif. Jumlah komposisi soal akan dihitung dan ditampilkan secara real-time berdasarkan tanggal yang dipilih.
-- **Informasi Lokasi**: Profil kartu peserta kini menampilkan label **Lokasi** pengguna secara elegan.
+### 2. Penataan Kontras Light Mode & Dark Mode Global (Aksesibilitas Tinggi)
+- **Aktivasi Custom Dark Variant Tailwind v4**: Mengonfigurasi `@custom-variant dark (&:where(.dark, .dark *))` pada berkas global CSS agar class `.dark` manual yang dikontrol oleh state `next-themes` sinkron dengan utility compiler Tailwind v4.
+- **Teks Hitam Pekat di Light Mode**: Menambahkan CSS override global yang memaksa teks pudar (`text-white`, `text-slate-100/200/300`) menjadi warna hitam pekat (`#0f172a` / slate-900) dan abu-abu gelap (`text-slate-700`) di dalam semua kartu asrama (`glass-panel`) saat mode terang aktif.
+- **Input Adaptif & Dropdown Terbaca**: 
+  - Input field portal Login & Registrasi otomatis menjadi abu-abu terang (`bg-slate-50 border-slate-200 text-slate-900`) di Mode Terang, memecahkan masalah kotak hitam tak terbaca.
+  - Dropdown **Pilih Tanggal Bank Soal** otomatis berwarna putih terang dengan opsi bernilai gelap pada Mode Terang.
+  - Deskripsi panduan ujian diubah latar belakangnya menjadi abu-abu terang transparan (`bg-slate-100/70 border-slate-200`) agar kontras teks optimal.
 
-### 3. Database & Autentikasi Cloud (Supabase)
-- Integrasi aman dengan **Supabase Auth** dan sinkronisasi otomatis riwayat nilai ujian ke cloud database (`exam_history`).
-- **Graceful Fallback**: Mendukung **Mode Demo Lokal** menggunakan IndexedDB secara otomatis jika variabel lingkungan Supabase tidak terdeteksi.
+### 3. Pembersihan Format Sertifikat & Kode
+- **Sertifikat Minimalis**: Menghapus teks "Verifikasi Sistem ID: BKN-SR-..." dan "Panitia Seleksi Wali Asrama Sekolah Rakyat" dari tampilan cetak sertifikat PDF.
+- **Perbaikan Bintang Bold (`**`)**: Memperbaiki parsing tag bintang ganda mentah pada *Riwayat Ujian* dan *AI Study Planner* menjadi tag bold JSX `<strong>` yang sesungguhnya.
 
 ---
 
-## 🛠️ MATRIKS STATUS FILE UTAMA
+## ├─📂 MATRIKS STATUS FILE UTAMA
 
 | Jalur File | Status | Fungsi / Kegunaan |
 | :--- | :--- | :--- |
-| [`src/store/index.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/store/index.ts) | **Modified** | Penyesuaian antarmuka `signUp` dan status penyimpanan state dengan dukungan parameter `lokasi` menggantikan instansi. |
-| [`src/features/auth/LoginView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/auth/LoginView.tsx) | **Modified** | Penyederhanaan formulir login & register, menghapus input instansi/no peserta dan pilihan mode/tanggal awal. |
-| [`src/features/dashboard/StatsOverview.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/dashboard/StatsOverview.tsx) | **Modified** | Penempatan dropdown pilihan tanggal bank soal harian, tombol mode simulasi, dan tampilan lokasi peserta. |
-| [`src/features/dashboard/DashboardView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/dashboard/DashboardView.tsx) | **Modified** | Sinkronisasi state `availableDates` dan `latestDate` dari database untuk disuplai ke StatsOverview. |
-| [`README.md`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/README.md) | **Modified** | Pembaruan panduan konfigurasi Supabase dan deskripsi fitur alur masuk akun. |
+| [`src/app/globals.css`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/app/globals.css) | **Modified** | Penambahan custom variant dark Tailwind v4, override global light-mode untuk warna teks, background card, dan header. |
+| [`src/features/auth/LoginView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/auth/LoginView.tsx) | **Modified** | Modifikasi input pendaftaran & masuk agar adaptif terhadap transisi mode terang-gelap. |
+| [`src/features/dashboard/StatsOverview.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/dashboard/StatsOverview.tsx) | **Modified** | Penataan kontras label judul, subtitle merah, deskripsi latar, dan dropdown tanggal dinamis. |
+| [`src/features/dashboard/AIStudyPlannerCard.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/dashboard/AIStudyPlannerCard.tsx) | **Modified** | Perbaikan parsing tag asterisk ganda (`**`) menjadi tag bold JSX `<strong>` yang ter-typecheck. |
+| [`src/features/results/ResultsView.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/results/ResultsView.tsx) | **Modified** | Penghapusan teks tanda tangan/sertifikasi ID pada sertifikat PDF, dan perbaikan bintang tebal. |
+| [`src/features/question/AdminPanel.tsx`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/features/question/AdminPanel.tsx) | **Modified** | Dukungan kontras light mode pada tabel bank soal, kolom pencarian, and visualisasi konsol log generator. |
+| [`src/utils/generator.ts`](file:///d:/Project/Test%20Sekolah%20Rakyat%20Simulasi/src/utils/generator.ts) | **Modified** | Penghapusan generator statis soal contoh agar bank soal harian lainnya 100% dinamis dan unik. |
 
 ---
 
 ## 📈 STATUS VERIFIKASI BUILD PRODUKSI
 
-Seluruh kode program di atas telah diverifikasi melalui pengujian kompilasi statis (typecheck) TypeScript dan bundling produksi Next.js 16.2 (Turbopack) dengan hasil **100% SUKSES** tanpa ada error:
+Seluruh kode program telah diverifikasi melalui pengujian kompilasi statis (typecheck) TypeScript dan bundling produksi Next.js 16.2 (Turbopack) dengan hasil **100% SUKSES** tanpa ada error:
 
 ```text
 ▲ Next.js 16.2.10 (Turbopack)
 
   Creating an optimized production build ...
-✓ Compiled successfully in 17.0s
+✓ Compiled successfully in 14.9s
   Running TypeScript ...
-  Finished TypeScript in 9.7s ...
+  Finished TypeScript in 8.6s ...
   Collecting page data using 3 workers ...
   Generating static pages using 3 workers (4/4) ...
-✓ Generating static pages using 3 workers (4/4) in 434ms
+✓ Generating static pages using 3 workers (4/4) in 311ms
   Finalizing page optimization ...
 ```
-Aplikasi kini sepenuhnya stabil dan siap dideploy langsung ke **Vercel**!
+Aplikasi kini sepenuhnya stabil, terintegrasi, dan memiliki nilai aksesibilitas tinggi untuk dideploy ke **Vercel**!
