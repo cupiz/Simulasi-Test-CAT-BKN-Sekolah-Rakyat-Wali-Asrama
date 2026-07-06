@@ -1,17 +1,29 @@
 import { Question } from '../types';
 import { REFERENCE_QUESTIONS } from '../data/questions';
 
-// Lists of variables to inject for high-fidelity uniqueness
-const DORM_NAMES = ['Ahmad Dahlan', 'Hasyim Asyari', 'Ki Hajar Dewantara', 'Sudirman', 'Kartini', 'Dewi Sartika'];
+const DORM_NAMES = [
+  'Ahmad Dahlan', 'Hasyim Asyari', 'Ki Hajar Dewantara', 'Sudirman', 'Kartini', 
+  'Dewi Sartika', 'Teuku Umar', 'Diponegoro', 'Cut Nyak Dhien', 'Bung Tomo'
+];
+
 const STUDENT_NAMES = [
   'Danis', 'Galih', 'Panji', 'Satria', 'Rian', 'Bayu', 'Fajar', 'Bintang', 
   'Aji', 'Fahri', 'Dimas', 'Adit', 'Roni', 'Gibran', 'Hafiz', 'Zaki', 
-  'Hendra', 'Tegar', 'Farhan', 'Rendra', 'Yusuf', 'Arif', 'Bagus', 'Irfan'
+  'Hendra', 'Tegar', 'Farhan', 'Rendra', 'Yusuf', 'Arif', 'Bagus', 'Irfan',
+  'Rizky', 'Fian', 'Reza', 'Taufik', 'Iqbal', 'Wahyu', 'Alif', 'Wildan'
 ];
-const ROOMS = ['Kamar 101', 'Kamar 105', 'Kamar 202', 'Kamar 208', 'Kamar 303', 'Kamar 310'];
-const STAFF_NAMES = ['Pak Eko', 'Bu Retno', 'Pak Bambang', 'Bu Sri', 'Pak Gunawan', 'Bu Yuli'];
 
-// Seeded random number generator
+const ROOMS = [
+  'Kamar 101', 'Kamar 105', 'Kamar 202', 'Kamar 208', 'Kamar 303', 'Kamar 310',
+  'Kamar 401', 'Kamar 405', 'Kamar 502', 'Kamar 508'
+];
+
+const STAFF_NAMES = [
+  'Pak Eko', 'Bu Retno', 'Pak Bambang', 'Bu Sri', 'Pak Gunawan', 'Bu Yuli',
+  'Pak Budi', 'Bu Ningsih', 'Pak Rudi', 'Bu Sarah', 'Pak Yudi', 'Bu Irma'
+];
+
+// Seeded random generator helper
 function getSeededRandom(seedStr: string) {
   let hash = 0;
   for (let i = 0; i < seedStr.length; i++) {
@@ -24,225 +36,163 @@ function getSeededRandom(seedStr: string) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PROCEDURAL POOL: TEKNIS (90 QUESTIONS)
+// DYNAMIC COMPONENT POOLS FOR HIGH-QUALITY DETAILED SCENARIOS
 // ═══════════════════════════════════════════════════════════════
-const TEKNIS_SCENARIOS = [
-  {
-    topic: 'Homesick',
-    text: 'Siswa bernama {student} di {room} asrama {dorm} terus menangis dan menolak makan karena rindu rumah (homesick). Hal ini mulai mengganggu konsentrasi belajar rekan sekamarnya. Sebagai Wali Asrama, langkah restoratif Anda adalah...',
-    options: [
-      { text: 'Melaporkan kondisi {student} ke kepala sekolah agar segera diizinkan pulang ke rumah tanpa syarat.', score: 2 },
-      { text: 'Mengajjak {student} berdialog empatik secara privat, lalu melibatkan rekan sekamarnya untuk menyusun jadwal piket hiburan bersama (peer support).', score: 5 },
-      { text: 'Membiarkan {student} sendirian di kamar agar belajar mandiri mengatasi kesedihannya.', score: 1 },
-      { text: 'Memindahkan {student} ke kamar isolasi agar tidak mengganggu ketenangan siswa lainnya.', score: 3 },
-      { text: 'Menghubungi orang tua {student} untuk datang menemani anaknya menginap di asrama.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Konseling individual yang dikombinasikan dengan pembentukan sistem peer support (dukungan sebaya) melatih resiliensi mental siswa sekaligus membangun ikatan kekeluargaan di asrama.',
-    competency: 'SOP Asrama & Pembinaan Resiliensi Remaja',
-    berakhlak: 'Harmonis & Kolaboratif',
-    psychologyBasis: 'Social Support Theory dan Client-Centered Therapy (Carl Rogers).',
-    catTips: 'Pilih opsi yang menyeimbangkan empati individual dengan pelibatan komunitas asrama secara produktif.'
-  },
-  {
-    topic: 'Bullying',
-    text: 'Anda mendengar laporan bahwa {student} menjadi korban ejekan verbal berulang (cyberbullying) oleh beberapa siswa di grup media sosial internal asrama {dorm}. Tindakan awal Anda adalah...',
-    options: [
-      { text: 'Menyita seluruh gadget siswa secara permanen di asrama {dorm}.', score: 2 },
-      { text: 'Memanggil korban dan para pelaku untuk mediasi restoratif, menegakkan sanksi tata tertib, serta memberikan edukasi etika berkomunikasi digital.', score: 5 },
-      { text: 'Mengabaikan karena menganggap candaan grup chat adalah hal biasa bagi anak remaja.', score: 1 },
-      { text: 'Langsung mengeluarkan pelaku bullying dari asrama tanpa klarifikasi.', score: 3 },
-      { text: 'Mengumumkan nama-nama pelaku pada apel pagi agar mereka jera secara sosial.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Mediasi restoratif yang dibarengi penegakan disiplin mengajarkan tanggung jawab moral kepada pelaku tanpa merusak integritas sosial asrama.',
-    competency: 'Resolusi Konflik & Perlindungan Siswa',
-    berakhlak: 'Akuntabel & Harmonis',
-    psychologyBasis: 'Restorative Justice Framework dan Teori Kognitif Sosial Bandura.',
-    catTips: 'Pilihlah jawaban yang menindak tegas perundungan namun tetap mengedepankan aspek edukasi dan pemulihan psikologis.'
-  },
-  {
-    topic: 'SOP Asrama',
-    text: 'Siswa bernama {student} kedapatan menyimpan barang terlarang (seperti rokok atau gadget di luar jam ketentuan) di dalam lemari pakaiannya di asrama {dorm}. Langkah pembinaan Anda adalah...',
-    options: [
-      { text: 'Menyita barang tersebut, memanggil {student} ke ruang pembinaan untuk refleksi personal, dan memberinya tugas menyusun rangkuman SOP asrama.', score: 5 },
-      { text: 'Langsung membuang barang tersebut ke tempat sampah di hadapan {student} tanpa penjelasan.', score: 2 },
-      { text: 'Membiarkannya saja karena lemari adalah privasi pribadi siswa.', score: 1 },
-      { text: 'Melaporkan langsung ke kepolisian daerah untuk penegakan hukum pidana.', score: 3 },
-      { text: 'Menempelkan foto {student} di mading utama sebagai pelaku pelanggaran berat.', score: 4 }
-    ],
-    correctAnswer: 'A',
-    explanation: 'Penyitaan barang yang diikuti bimbingan reflektif membantu siswa memahami pentingnya aturan asrama untuk keselamatan bersama.',
-    competency: 'Penerapan SOP & Kedisiplinan Kognitif',
-    berakhlak: 'Akuntabel & Kompeten',
-    psychologyBasis: 'Operant Conditioning (Skinner) melalui konsekuensi logis positif.',
-    catTips: 'Carilah jawaban yang menegakkan SOP melalui konsekuensi edukatif, bukan hukuman fisik atau penghinaan publik.'
-  },
-  {
-    topic: 'NAPZA / Kesehatan',
-    text: 'Ada laporan kecurigaan bahwa salah satu siswa di asrama {dorm} mulai bergaul dengan lingkungan luar yang mengonsumsi zat terlarang (NAPZA). Langkah preventif Anda sebagai Wali Asrama adalah...',
-    options: [
-      { text: 'Menuduh langsung siswa tersebut di depan kelas dan menuntutnya melakukan tes urine mendadak.', score: 2 },
-      { text: 'Mengadakan sosialisasi pencegahan NAPZA secara komprehensif, melakukan pendekatan personal empatik, dan berkoordinasi dengan tim medis sekolah.', score: 5 },
-      { text: 'Membiarkan laporan tersebut karena belum ada bukti fisik yang nyata.', score: 1 },
-      { text: 'Segera mengusir siswa tersebut dari asrama demi keselamatan nama baik sekolah.', score: 3 },
-      { text: 'Membagikan pamflet bahaya narkoba tanpa melakukan investigasi lebih lanjut.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Pendekatan preventif komprehensif dan deteksi dini melalui konseling personal menjamin perlindungan siswa sebelum jatuh ke dalam bahaya ketergantungan.',
-    competency: 'Mitigasi Risiko & Kesehatan Anak',
-    berakhlak: 'Loyal & Kolaboratif',
-    psychologyBasis: 'Health Belief Model dan Preventive Intervention Paradigm.',
-    catTips: 'Pilih jawaban yang mengedepankan tindakan preventif edukatif, kerahasiaan medis, dan rehabilitasi terarah.'
-  },
-  {
-    topic: 'Keamanan / Kebakaran',
-    text: 'Terjadi korsleting listrik kecil di dapur asrama {dorm} yang memicu asap tebal. Beberapa siswa mulai panik berlarian. Tindakan darurat pertama Anda adalah...',
-    options: [
-      { text: 'Ikut berlari menyelamatkan diri terlebih dahulu agar bisa meminta bantuan dari luar.', score: 2 },
-      { text: 'Memutuskan aliran listrik utama, mengaktifkan APAR (Alat Pemadam Api Ringan), dan mengarahkan siswa ke titik kumpul aman sesuai jalur evakuasi.', score: 5 },
-      { text: 'Menenangkan siswa dengan berteriak keras dari lantai atas asrama.', score: 3 },
-      { text: 'Membiarkan siswa berinisiatif memadamkan api menggunakan ember air biasa.', score: 1 },
-      { text: 'Menghubungi pemadam kebakaran dan menunggu mereka tiba tanpa melakukan tindakan evakuasi.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Pemutusan daya, penanganan api mula-mula dengan APAR, dan panduan evakuasi terstruktur adalah prosedur baku keselamatan kebakaran (K3).',
-    competency: 'Mitigasi Bencana & SOP Keselamatan Kerja',
-    berakhlak: 'Kompeten & Akuntabel',
-    psychologyBasis: 'Crisis Management and Disaster response protocol.',
-    catTips: 'Pilihlah jawaban yang menunjukkan tindakan taktis-prosedural, menenangkan massa, dan mengutamakan keselamatan jiwa.'
-  }
+
+const TEKNIS_PROBLEMS = [
+  "sering terlambat mengikuti apel pagi dan ibadah bersama karena mengalami kesulitan tidur di malam hari",
+  "tertangkap tangan menyembunyikan gawai (smartphone) di bawah kasur di luar jam yang diperbolehkan oleh pengelola",
+  "menolak berpartisipasi dalam kerja bakti asrama dengan alasan ingin fokus belajar mempersiapkan kompetisi akademik",
+  "melakukan tindakan ejekan verbal (cyberbullying) kepada junior melalui grup percakapan media sosial asrama",
+  "mengalami kecemasan hebat akibat rindu rumah (homesick) sehingga sering menangis dan mengurung diri di kamar",
+  "mengabaikan kebersihan area kasur dan lemarinya hingga menimbulkan bau tidak sedap di dalam kamar",
+  "ketahuan menulis surat atau pesan bernada kurang sopan kepada pengurus asrama saat menegurnya",
+  "sering menyelinap keluar area asrama tanpa izin melewati pagar pembatas pada jam istirahat malam",
+  "menghabiskan uang sakunya dalam waktu singkat lalu meminjam uang teman-temannya tanpa pernah mengembalikan",
+  "mengalami penurunan motivasi belajar secara drastis, sering melamun, dan menarik diri dari aktivitas sosial"
 ];
 
-// ═══════════════════════════════════════════════════════════════
-// PROCEDURAL POOL: MANAGERIAL (25 QUESTIONS)
-// ═══════════════════════════════════════════════════════════════
-const MANAGERIAL_SCENARIOS = [
-  {
-    topic: 'Teamwork',
-    text: 'Sebagai Koordinator Wali Asrama, Anda melihat koordinasi antar-staf piket malam asrama kurang sinergis, sering terjadi kekosongan pos jaga karena salah paham. Langkah manajerial Anda adalah...',
-    options: [
-      { text: 'Mengambil alih seluruh piket malam secara mandiri untuk memberi contoh keteladanan.', score: 2 },
-      { text: 'Mengadakan briefing koordinasi berkala, menyusun peta tanggung jawab (RACI matrix), dan menerapkan logbook digital untuk pelaporan realtime.', score: 5 },
-      { text: 'Menjatuhkan denda pemotongan honor kerja kepada staf yang terlambat tanpa verifikasi.', score: 3 },
-      { text: 'Mengabaikan situasi karena yakin masalah koordinasi akan membaik dengan sendirinya.', score: 1 },
-      { text: 'Mengusulkan pergantian total seluruh staf piket lama dengan staf baru yang lebih muda.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Briefing rutin, kejelasan pembagian peran (RACI), dan sistem pelacakan berbasis teknologi memastikan akuntabilitas kerja tim.',
-    competency: 'Perencanaan Staf & Manajemen Operasional',
-    berakhlak: 'Adaptif & Akuntabel',
-    psychologyBasis: 'Organizational Behavior Theory dan Goal-Setting Theory.',
-    catTips: 'Pilih solusi sistemik yang memberdayakan tim melalui struktur yang jelas dan pemanfaatan teknologi.'
-  },
-  {
-    topic: 'Innovation',
-    text: 'Rekan kerja Anda, {staff}, menolak menggunakan sistem pelaporan asrama berbasis aplikasi mobile yang baru karena merasa kesulitan beradaptasi dengan teknologi. Sikap Anda selaku pimpinan adalah...',
-    options: [
-      { text: 'Membebaskan {staff} menggunakan kertas laporan manual demi kenyamanan kerjanya.', score: 2 },
-      { text: 'Memberikan bimbingan teknis tatap muka (mentoring) secara bertahap kepada {staff} dan menjelaskan efisiensi waktu yang didapat dari sistem baru.', score: 5 },
-      { text: 'Melaporkan {staff} ke atasan agar diberikan sanksi mutasi atau penurunan pangkat.', score: 3 },
-      { text: 'Menghapus aplikasi baru tersebut dan kembali ke metode administrasi konvensional.', score: 1 },
-      { text: 'Menyuruh rekan kerja lain yang lebih muda untuk selalu mengetikkan laporan milik {staff}.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Mentoring adaptif membantu mengatasi hambatan psikologis staf terhadap perubahan sistem tanpa meninggalkan prinsip pemanfaatan inovasi.',
-    competency: 'Manajemen Perubahan & Kepemimpinan Digital',
-    berakhlak: 'Adaptif & Kompeten',
-    psychologyBasis: 'Technology Acceptance Model (TAM) dan Teori Difusi Inovasi Rogers.',
-    catTips: 'Pilihlah jawaban yang menyeimbangkan empati terhadap kesulitan staf dengan keharusan transformasi inovatif.'
-  }
+const TEKNIS_COMPLICATIONS = [
+  "karena merasa tertekan oleh tuntutan akademik yang tinggi dari keluarganya yang menuntut prestasi sempurna",
+  "akibat terpengaruh oleh pola pergaulan bebas dari teman di luar sekolah rakyat yang sering dihubunginya secara sembunyi-sembunyi",
+  "karena merasa tidak nyaman dengan perbedaan latar belakang budaya dan dialek komunikasi teman sekamarnya",
+  "karena meluapkan emosi kekesalan akibat kurangnya perhatian dari orang tuanya yang sibuk bekerja di luar kota",
+  "akibat kurangnya pemahaman tentang pentingnya nilai kedisiplinan dan tanggung jawab bersama dalam kehidupan berasrama",
+  "karena merasa diperlakukan tidak adil oleh salah satu pengurus siswa senior dalam pembagian tugas harian",
+  "karena melarikan diri dari konflik pribadi yang sedang dialaminya dengan salah satu anggota keluarganya",
+  "karena ingin membuktikan eksistensi dirinya di mata teman-teman sebayanya agar dianggap pemberani",
+  "karena mengalami kesulitan beradaptasi dengan iklim lingkungan asrama yang baru dimasuki beberapa minggu lalu",
+  "akibat kurangnya keterampilan manajemen waktu dan ketahanan mental dalam menghadapi padatnya jadwal asrama"
 ];
 
-// ═══════════════════════════════════════════════════════════════
-// PROCEDURAL POOL: SOSIAL (20 QUESTIONS)
-// ═══════════════════════════════════════════════════════════════
-const SOCIAL_SCENARIOS = [
-  {
-    topic: 'Budaya',
-    text: 'Siswa asal wilayah timur di asrama {dorm} sering diejek oleh teman-temannya karena logat bicaranya yang keras dan dinilai kasar. Langkah Anda sebagai Wali Asrama untuk menanamkan toleransi adalah...',
-    options: [
-      { text: 'Melarang siswa daerah berbicara dengan dialek khas mereka agar bahasa asrama seragam.', score: 2 },
-      { text: 'Menyelenggarakan pentas seni kebudayaan berkala (malam keakraban) dan memandu diskusi reflektif tentang keragaman dialek nusantara.', score: 5 },
-      { text: 'Meminta siswa korban ejekan tersebut untuk mengubah cara bicaranya agar sesuai kebiasaan mayoritas.', score: 1 },
-      { text: 'Menghukum siswa yang mengejek dengan menyuruh mereka menulis esai bertema kebangsaan.', score: 4 },
-      { text: 'Memindahkan siswa-siswa seagama/suku ke blok asrama yang terpisah.', score: 3 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Ruang kolaboratif kebudayaan mereduksi prasangka sosial antarkelompok melalui pemahaman empati kultural yang mendalam.',
-    competency: 'Pemberdayaan Keberagaman & Toleransi Sosial',
-    berakhlak: 'Harmonis & Loyal',
-    psychologyBasis: 'Contact Hypothesis Allport dan Multicultural Education Framework.',
-    catTips: 'Pilihlah jawaban yang mempromosikan persatuan tanpa menekan identitas budaya khas masing-masing siswa.'
-  },
-  {
-    topic: 'Inklusif',
-    text: 'Di asrama {dorm}, terdapat siswa penyandang disabilitas fisik ringan yang merasa minder karena tidak diajak bermain futsal oleh rekan-rekannya. Tindakan edukatif Anda adalah...',
-    options: [
-      { text: 'Melarang olahraga futsal di asrama agar tidak ada kecemburuan sosial.', score: 2 },
-      { text: 'Mendampingi kelompok siswa untuk merancang variasi permainan olahraga inklusif yang memungkinkan semua siswa ikut berkontribusi.', score: 5 },
-      { text: 'Membiarkan saja karena olahraga futsal memang membutuhkan fisik yang prima.', score: 1 },
-      { text: 'Membelikan konsol game khusus untuk siswa disabilitas tersebut agar bermain di dalam kamar.', score: 3 },
-      { text: 'Menegur siswa mayoritas dengan keras di depan umum agar mereka merasa bersalah.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Mendorong penciptaan aktivitas inklusif melatih empati sosial siswa mayoritas serta memulihkan rasa percaya diri siswa disabilitas.',
-    competency: 'Pembinaan Empati & Inklusi Sosial Kultural',
-    berakhlak: 'Harmonis & Berorientasi Pelayanan',
-    psychologyBasis: 'Inclusive Education Paradigm dan Social Exchange Theory.',
-    catTips: 'Pilih opsi yang mendorong keterlibatan aktif semua anak secara setara tanpa mengisolasi pihak minoritas.'
-  }
+const TEKNIS_REACTIONS = [
+  "Hal ini membuat rekan sekamarnya merasa sangat terganggu karena kenyamanan istirahat mereka berkurang dan poin kedisiplinan kamar mereka menurun akibat keterlambatan yang berulang.",
+  "Teman-teman sebayanya mulai menggerutu secara terang-terangan dan suasana di dalam kamar menjadi tegang serta kurang kondusif untuk belajar bersama.",
+  "Anggota kamar lainnya mulai memprotes pengurus asrama karena merasa beban tanggung jawab harian asrama menjadi tidak merata dan menimbulkan ketidakadilan sosial.",
+  "Tindakan ini memicu bisik-bisik negatif di kalangan siswa lainnya dan berpotensi menurunkan wibawa kedisiplinan yang selama ini ditegakkan di lingkungan asrama.",
+  "Suasana kebersamaan di kamar mulai renggang, bahkan beberapa siswa mulai mengucilkan yang bersangkutan dari aktivitas diskusi kelompok dan makan bersama.",
+  "Beberapa wali murid lain yang mengetahui hal ini mulai menyampaikan kecemasan mereka kepada pengelola asrama terkait iklim pergaulan anak-anak mereka.",
+  "Hal ini memicu ketegangan interpersonal di lingkungan asrama dan mengganggu kelancaran program pembinaan karakter yang sedang berjalan.",
+  "Pengurus siswa asrama merasa kewalahan dalam menegakkan tata tertib karena adanya perlawanan pasif yang ditunjukkan oleh siswa tersebut.",
+  "Hal ini memicu kecemburuan sosial di kalangan siswa lain yang selalu disiplin mematuhi seluruh peraturan operasional asrama.",
+  "Atmosfer kekeluargaan di asrama mulai terganggu dan beberapa siswa junior merasa cemas dengan ketidakpastian situasi tersebut."
 ];
 
-// ═══════════════════════════════════════════════════════════════
-// PROCEDURAL POOL: WAWANCARA (10 QUESTIONS)
-// ═══════════════════════════════════════════════════════════════
-const INTERVIEW_SCENARIOS = [
-  {
-    topic: 'Integritas',
-    text: 'Dalam wawancara seleksi ASN, pewawancara menanyakan sikap Anda jika mengetahui rekan sesama Wali Asrama menerima hadiah mewah dari salah satu orang tua murid agar anaknya mendapat rapor asrama yang bagus. Jawaban berintegritas Anda adalah...',
-    options: [
-      { text: 'Pura-pura tidak melihat demi menjaga hubungan persahabatan antar-rekan kerja.', score: 1 },
-      { text: 'Mengingatkan rekan tersebut secara kekeluargaan tentang kode etik ASN, menolak pembagian gratifikasi, dan melaporkannya ke komite etik jika tidak diindahkan.', score: 5 },
-      { text: 'Melaporkannya langsung ke media sosial agar viral dan segera diproses hukum.', score: 3 },
-      { text: 'Meminta bagian hadiah tersebut agar asas keadilan dan kebersamaan di asrama terjaga.', score: 2 },
-      { text: 'Membicarakan kejelekan rekan kerja tersebut di depan para wali murid lainnya.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Komitmen menolak korupsi/gratifikasi dan melaporkannya sesuai prosedur merupakan wujud integritas moral tertinggi pegawai ASN.',
-    competency: 'Pilar Integritas ASN & Anti Gratifikasi',
-    berakhlak: 'Akuntabel & Loyal',
-    psychologyBasis: 'Teori Perkembangan Moral Kohlberg (Universal Ethical Principle).',
-    catTips: 'Pilih jawaban yang menolak keras korupsi secara tegas, prosedural, berani, dan beretika.'
-  },
-  {
-    topic: 'Loyalitas',
-    text: 'Jika Anda ditugaskan oleh pimpinan asrama {dorm} untuk bertugas darurat pada hari libur nasional guna mendampingi siswa yang sakit mendadak, padahal Anda sudah merencanakan liburan keluarga. Sikap Anda adalah...',
-    options: [
-      { text: 'Menolak tugas tersebut secara kasar karena hari libur adalah hak mutlak staf.', score: 1 },
-      { text: 'Menerima tugas darurat dengan penuh tanggung jawab, mengatur ulang liburan keluarga, dan mendampingi siswa secara prima sebagai bentuk dedikasi.', score: 5 },
-      { text: 'Menerima tugas namun melaksanakannya dengan cemberut dan setengah hati.', score: 3 },
-      { text: 'Membayar orang luar secara pribadi untuk menggantikan posisi Anda tanpa izin pimpinan.', score: 2 },
-      { text: 'Menghubungi pimpinan untuk bernegosiasi meminta bonus uang lembur yang berlipat ganda terlebih dahulu.', score: 4 }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Mengutamakan keselamatan siswa asrama dan menunaikan tugas pelayanan darurat di atas kepentingan pribadi mencerminkan nilai loyalitas aparatur negara.',
-    competency: 'Loyalitas Profesi & Dedikasi Pelayanan Publik',
-    berakhlak: 'Loyal & Berorientasi Pelayanan',
-    psychologyBasis: 'Public Service Motivation (PSM) Framework.',
-    catTips: 'Pilihlah jawaban yang menempatkan tugas pengabdian sosial kemanusiaan di atas kenyamanan pribadi secara ikhlas.'
-  }
+const MANAGERIAL_PROBLEMS = [
+  "terjadi ketidakjelasan pembagian jadwal piket malam dan patroli keamanan asrama Sekolah Rakyat",
+  "ditemukan adanya ketidaksesuaian laporan inventaris logistik makanan dengan kondisi riil di gudang dapur asrama",
+  "beberapa staf wali asrama menolak menggunakan aplikasi digital baru untuk pelacakan perkembangan karakter siswa",
+  "terjadi konflik internal antara staf dapur dan staf kebersihan asrama mengenai kebersihan ruang aula makan",
+  "staf wali asrama senior sering datang terlambat saat rapat koordinasi bulanan dan menolak memberikan masukan"
 ];
 
+const MANAGERIAL_COMPLICATIONS = [
+  "akibat kurangnya komunikasi dua arah dan perbedaan persepsi tentang standar operasional prosedur kerja",
+  "karena adanya indikasi kelalaian administratif serta kurangnya pengawasan berlapis dari koordinator lapangan",
+  "karena merasa kesulitan beradaptasi dengan sistem teknologi informasi yang dinilai rumit bagi generasi senior",
+  "akibat akumulasi rasa lelah dan pembagian beban kerja shift malam yang dinilai kurang adil oleh sebagian staf",
+  "karena merasa gaya kepemimpinan koordinator asrama yang baru terlalu menuntut perubahan instan tanpa diskusi"
+];
+
+const MANAGERIAL_REACTIONS = [
+  "Hal ini menyebabkan suasana kerja menjadi kurang kondusif, beberapa tugas penting terabaikan, dan produktivitas tim menurun.",
+  "Staf lainnya mulai mengeluh secara pasif dan tingkat ketidakdisiplinan tim secara umum mulai meningkat di mata pimpinan.",
+  "Program pembinaan asrama menjadi terhambat dan pimpinan sekolah mulai menyoroti kinerja manajerial unit asrama secara khusus.",
+  "Terjadi keterlambatan pelayanan makan siswa yang memicu komplain dari pengurus organisasi siswa asrama.",
+  "Terjadi miskomunikasi operasional berulang yang membingungkan staf junior dalam mengambil tindakan di lapangan."
+];
+
+const SOCIAL_PROBLEMS = [
+  "beberapa siswa dari kelompok suku mayoritas sering berkumpul eksklusif dan enggan berbaur dengan siswa minoritas",
+  "terjadi perdebatan sengit mengenai penentuan menu makanan khas daerah untuk acara festival budaya asrama",
+  "seorang siswa junior diejek oleh teman-temannya karena logat bicaranya yang dinilai aneh dan kasar",
+  "terjadi friksi antar-siswa mengenai pembagian jam ibadah di ruang serbaguna bersama asrama",
+  "beberapa siswa menunjukkan sikap enggan bekerja sama dengan teman sekamar yang memiliki keterbatasan fisik ringan"
+];
+
+const SOCIAL_COMPLICATIONS = [
+  "karena kuatnya prasangka sosial dan kurangnya ruang interaksi inklusif di antara mereka di asrama",
+  "akibat ego kedaerahan yang tinggi dan keinginan menonjolkan budaya daerah sendiri secara berlebihan",
+  "karena kurangnya pemahaman tentang keberagaman dialek nusantara dan etika pergaulan kebangsaan",
+  "akibat perbedaan tata cara peribadatan dan kurangnya jadwal kesepakatan tertulis yang adil bagi minoritas",
+  "karena ketakutan salah berinteraksi dan minimnya edukasi mengenai empati terhadap penyandang disabilitas"
+];
+
+const SOCIAL_REACTIONS = [
+  "Hal ini menciptakan sekat-sekat eksklusivitas sosial (silo) di asrama dan merusak semangat persatuan Sekolah Rakyat.",
+  "Suasana rapat asrama menjadi tegang dan persiapan festival budaya terancam tertunda akibat kebuntuan diskusi.",
+  "Siswa korban ejekan menjadi minder, menarik diri dari pergaulan, dan sering menyendiri di sudut gazebo asrama.",
+  "Terjadi ketidaknyamanan beribadah secara bersamaan yang berpotensi memicu perselisihan terbuka jika didiamkan.",
+  "Siswa penyandang disabilitas tersebut merasa tersisih dan suasana kekeluargaan di dalam kamar menjadi renggang."
+];
+
+const INTERVIEW_PROBLEMS = [
+  "seorang wali murid menawarkan bingkisan mewah dan sejumlah uang saku tambahan agar anaknya ditempatkan di kamar berfasilitas terbaik",
+  "rekan sejawat sesama wali asrama kedapatan membagikan kisi-kisi lembar penilaian asrama kepada siswa bimbingannya agar mendapat nilai tertinggi",
+  "staf asrama menggunakan mobil operasional jemputan siswa untuk keperluan bisnis pengantaran barang pribadinya",
+  "pimpinan meminta Anda membuat laporan fiktif mengenai penggunaan dana kegiatan asrama untuk menutupi defisit anggaran unit lain",
+  "Anda dituntut tetap bekerja mendampingi siswa yang sakit darurat saat hari raya keagamaan besar di mana Anda seharusnya berkumpul bersama keluarga"
+];
+
+const INTERVIEW_COMPLICATIONS = [
+  "dengan dalih ingin membantu operasional asrama dan menjalin hubungan kekeluargaan yang erat",
+  "karena ingin membantu siswa tersebut mempertahankan beasiswa prestasinya di Sekolah Rakyat",
+  "dengan alasan memanfaatkan fasilitas negara yang sedang menganggur di garasi asrama saat hari libur",
+  "atas dasar loyalitas buta kepada rekan sejawat demi menyelamatkan nama baik instansi sekolah rakyat",
+  "karena keterbatasan jumlah personel wali asrama yang siaga dan tingginya urgensi keselamatan jiwa siswa"
+];
+
+const INTERVIEW_REACTIONS = [
+  "Tindakan ini jika dibiarkan akan merusak integritas sistem seleksi dan keadilan sosial di lingkungan asrama.",
+  "Hal ini menciptakan persaingan nilai yang tidak sehat dan mencederai kejujuran akademik siswa lainnya secara sistematis.",
+  "Hal ini berpotensi merugikan keuangan negara dan menurunkan tingkat kepercayaan publik terhadap kedisiplinan staf.",
+  "Hal ini melanggar akuntabilitas publik dan berisiko menyeret institusi ke dalam ranah pelanggaran hukum berat.",
+  "Dedikasi pelayanan publik Anda diuji dalam menyeimbangkan kewajiban profesi dengan komitmen keluarga."
+];
+
+// Helper to generate dynamic option sentences
+function generateOptions(category: string, student: string, problem: string) {
+  if (category === 'teknis') {
+    return [
+      { text: `Memanggil ${student} secara khusus untuk dialog konseling dua arah secara empatik guna menggali akar masalahnya, lalu bersama seluruh anggota kamar merancang sistem peer support (dukungan bergantian) untuk menyeimbangkan empati dan kedisiplinan bersama.`, score: 5 },
+      { text: `Menjadwalkan sesi bimbingan psikologis berkala bagi ${student} untuk menguatkan kemandiriannya, serta berkoordinasi dengan wali kelas dan orang tuanya agar proses pembinaan karakter di asrama selaras.`, score: 4 },
+      { text: `Mengadakan pertemuan tertutup dengan seluruh penghuni kamar untuk menegaskan aturan tata tertib asrama secara tegas, memberikan teguran formal kepada ${student}, serta mencatat poin kedisiplinan secara administratif.`, score: 3 },
+      { text: `Menginstruksikan ketua kamar untuk memberikan pengawasan ketat terhadap kegiatan harian ${student} serta menegurnya secara langsung saat terjadi keterlambatan atau pelanggaran demi menjaga wibawa tata tertib.`, score: 2 },
+      { text: `Memindahkan ${student} ke kamar lain atau kamar khusus isolasi agar tidak memicu gesekan sosial lanjutan di dalam kamar lamanya dan membiarkannya mandiri menyelesaikan masalah pribadinya.`, score: 1 }
+    ];
+  } else if (category === 'manajerial') {
+    return [
+      { text: `Mengadakan forum dialog terstruktur bersama seluruh staf piket, merumuskan kembali jadwal dan pembagian tugas secara partisipatif (RACI Matrix), menetapkan indikator kinerja (KPI) transparan, dan melakukan evaluasi realtime.`, score: 5 },
+      { text: `Menyusun panduan tata laksana piket yang baru, mengedarkan surat edaran instruksi tertulis wajib bagi seluruh staf asrama, serta mewajibkan pengumpulan laporan mingguan secara tepat waktu.`, score: 4 },
+      { text: `Mengajukan teguran resmi dan usulan sanksi pemotongan tunjangan kinerja bagi staf yang lalai atau tidak patuh kepada pimpinan komite sekolah rakyat agar disiplin kerja tegak.`, score: 3 },
+      { text: `Mengambil alih seluruh koordinasi tugas piket malam secara mandiri untuk sementara waktu demi menjamin operasional asrama tidak terganggu sambil mencari staf pengganti dari luar.`, score: 2 },
+      { text: `Membiarkan alur kerja berjalan sesuai kebiasaan lama sambil menunggu staf beradaptasi secara natural seiring bertambahnya pengalaman kerja mereka di asrama.`, score: 1 }
+    ];
+  } else if (category === 'sosial') {
+    return [
+      { text: `Merancang proyek kolaboratif kreatif (seperti pertunjukan drama kebangsaan lintas budaya) yang mengharuskan seluruh siswa terlibat aktif bekerja sama, dipadukan dengan sesi refleksi toleransi berkala.`, score: 5 },
+      { text: `Mengadakan forum mediasi khusus antara kelompok siswa yang terlibat, memberikan arahan persuasif tentang pentingnya persatuan nasional, dan membimbing mereka untuk saling meminta maaf secara tertulis.`, score: 4 },
+      { text: `Menetapkan kebijakan resmi asrama yang melarang segala bentuk pembahasan adat, budaya, suku, atau agama di area publik asrama demi menjaga perdamaian dan stabilitas keamanan.`, score: 3 },
+      { text: `Melakukan rotasi atau pemindahan penempatan kamar siswa secara acak untuk memecah konsentrasi kelompok eksklusif tersebut tanpa perlu mengintervensi dinamika hubungan mereka secara mendalam.`, score: 2 },
+      { text: `Menyerahkan sepenuhnya wewenang penyelesaian friksi sosial tersebut kepada pengurus organisasi siswa asrama agar mereka belajar mandiri menyelesaikan masalah konflik sosial.`, score: 1 }
+    ];
+  } else { // Wawancara (Wawancara)
+    return [
+      { text: `Menolak keterlibatan tersebut secara tegas, mengingatkan rekan sejawat akan sumpah jabatan dan nilai integritas Core Values ASN BerAKHLAK, serta melaporkannya secara resmi kepada pimpinan disertai bukti objektif.`, score: 5 },
+      { text: `Mengajak rekan sejawat berdiskusi secara personal, memberikan nasihat persuasif mengenai konsekuensi hukum dan moral dari tindakan tersebut, serta memintanya menghentikan pelanggaran tersebut secara sukarela.`, score: 4 },
+      { text: `Memilih bersikap netral dengan menolak tawaran tersebut demi keselamatan karir pribadi, namun tidak melaporkan temuan tersebut kepada pimpinan untuk menjaga solidaritas kerja.`, score: 3 },
+      { text: `Menceritakan kejadian tersebut kepada rekan kerja lainnya atau pengurus komite sekolah secara informal agar menjadi bahan evaluasi sosial tidak resmi di lingkungan kerja.`, score: 2 },
+      { text: `Menerima hal tersebut secara kompromistis dengan syarat hasil kontribusi tersebut dialokasikan sepenuhnya untuk peningkatan fasilitas umum asrama siswa yang membutuhkan bantuan finansial.`, score: 1 }
+    ];
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════
-// MAIN GENERATOR FUNCTION
+// PROCEDURAL DAILY QUESTION GENERATOR (145 SOAL UNIK & DETAIL)
 // ═══════════════════════════════════════════════════════════════
 export function generateDailyQuestions(dateStr: string): Question[] {
   const result: Question[] = [];
   const rand = getSeededRandom(dateStr);
-
-  // Helper to pick dynamic elements based on seeded random
-  const pickRandom = <T>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 
   // Add the 5 reference questions as the base for numbers 1, 2, 3 (Teknis), 116 (Sosial), and 136 (Wawancara)
   const ref1 = { ...REFERENCE_QUESTIONS[0], dateStr, number: 1 };
@@ -260,25 +210,23 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   result.push(ref1, ref2, ref3);
 
   for (let num = 4; num <= 90; num++) {
-    const scenarioTemplate = TEKNIS_SCENARIOS[(num + dateStr.charCodeAt(0)) % TEKNIS_SCENARIOS.length];
+    const qRand = getSeededRandom(`${dateStr}-teknis-${num}`);
     
-    // Inject dynamic names/rooms
-    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
-    const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
-    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
-    const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
+    const problem = TEKNIS_PROBLEMS[Math.floor(qRand() * TEKNIS_PROBLEMS.length)];
+    const complication = TEKNIS_COMPLICATIONS[Math.floor(qRand() * TEKNIS_COMPLICATIONS.length)];
+    const reaction = TEKNIS_REACTIONS[Math.floor(qRand() * TEKNIS_REACTIONS.length)];
+    
+    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(0)) % STUDENT_NAMES.length];
+    const room = ROOMS[(num + dateStr.charCodeAt(1)) % ROOMS.length];
+    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(2)) % DORM_NAMES.length];
 
-    const questionText = scenarioTemplate.text
-      .replace(/{student}/g, student)
-      .replace(/{room}/g, room)
-      .replace(/{dorm}/g, dorm)
-      .replace(/{staff}/g, staff);
+    const questionText = `Sebagai Wali Asrama Sekolah Rakyat di asrama putra ${dorm}, Anda mendapati bahwa ${student} di ${room} tampak ${problem}. Complication muncul ${complication}. ${reaction} Langkah pembinaan karakter, penataan operasional, serta tindakan pedagogis yang paling bijaksana untuk menyelesaikan dinamika tersebut adalah...`;
 
-    const formattedOptions = scenarioTemplate.options.map((opt, oIdx) => {
+    const formattedOptions = generateOptions('teknis', student, problem).map((opt, idx) => {
       const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
       return {
-        key: keys[oIdx],
-        text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
+        key: keys[idx],
+        text: opt.text,
         score: opt.score
       };
     });
@@ -287,38 +235,36 @@ export function generateDailyQuestions(dateStr: string): Question[] {
       dateStr,
       number: num,
       category: 'teknis',
-      topic: scenarioTemplate.topic,
-      questionText: `[SKB CAT BKN - Soal #${num}] ${questionText}`,
+      topic: 'Pembinaan Karakter & SOP Asrama',
+      questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
       options: formattedOptions,
-      correctAnswer: scenarioTemplate.correctAnswer as any,
-      explanation: scenarioTemplate.explanation.replace(/{student}/g, student),
-      competency: scenarioTemplate.competency,
-      berakhlak: scenarioTemplate.berakhlak,
-      psychologyBasis: scenarioTemplate.psychologyBasis,
-      catTips: scenarioTemplate.catTips
+      correctAnswer: 'A', // Graded SJT doesn't strictly require one correct key, but we set a default 'A'
+      explanation: `Dalam menyelesaikan kasus ${student} di asrama ${dorm} yang ${problem}, pilihan A adalah solusi terbaik. Pendekatan konseling personal dua arah yang persuasif dikombinasikan dengan pembentukan sistem peer support (dukungan sebaya) melatih resiliensi mental siswa sekaligus membangun ikatan kekeluargaan di asrama.\n\nMengapa pilihan lain kurang tepat: Penegakan sanksi berat secara reaktif (pilihan C) atau teguran langsung di depan umum (pilihan D) berisiko memicu ketidakpercayaan siswa terhadap wali asrama serta merusak kepercayaan diri remaja. Pemindahan kamar secara reaktif (pilihan E) atau pembiaran masalah (pilihan B) juga tidak melatih keterampilan resolusi masalah siswa secara jangka panjang.`,
+      competency: 'SOP Asrama, Konseling Siswa, & Karakter Kebangsaan',
+      berakhlak: 'Harmonis (Saling Peduli) & Kolaboratif (Kerjasama Sinergis)',
+      psychologyBasis: 'Social Support Theory (Teori Dukungan Sosial) dan Client-Centered Therapy Carl Rogers.',
+      catTips: 'Pilihlah jawaban yang menghindari sanksi fisik/reaktif langsung dan berfokus pada kolaborasi, dialog dua arah, serta sistem dukungan sebaya.'
     });
   }
 
   // 2. Managerial: 25 Soal (Numbers 91 to 115)
   for (let num = 91; num <= 115; num++) {
-    const scenarioTemplate = MANAGERIAL_SCENARIOS[(num + dateStr.charCodeAt(0)) % MANAGERIAL_SCENARIOS.length];
+    const qRand = getSeededRandom(`${dateStr}-manajerial-${num}`);
     
-    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
-    const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
-    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
+    const problem = MANAGERIAL_PROBLEMS[Math.floor(qRand() * MANAGERIAL_PROBLEMS.length)];
+    const complication = MANAGERIAL_COMPLICATIONS[Math.floor(qRand() * MANAGERIAL_COMPLICATIONS.length)];
+    const reaction = MANAGERIAL_REACTIONS[Math.floor(qRand() * MANAGERIAL_REACTIONS.length)];
+    
     const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
+    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(1)) % DORM_NAMES.length];
 
-    const questionText = scenarioTemplate.text
-      .replace(/{student}/g, student)
-      .replace(/{room}/g, room)
-      .replace(/{dorm}/g, dorm)
-      .replace(/{staff}/g, staff);
+    const questionText = `Anda menjabat sebagai Koordinator Wali Asrama di unit asrama ${dorm}. Saat bertugas, Anda mengamati bahwa di bawah kepemimpinan operasional Anda, ${problem}. Masalah ini terjadi ${complication}. ${reaction} Langkah manajerial, penataan staf, dan keputusan organisasi yang paling tepat untuk mengoptimalkan kinerja tim Anda adalah...`;
 
-    const formattedOptions = scenarioTemplate.options.map((opt, oIdx) => {
+    const formattedOptions = generateOptions('manajerial', staff, problem).map((opt, idx) => {
       const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
       return {
-        key: keys[oIdx],
-        text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
+        key: keys[idx],
+        text: opt.text,
         score: opt.score
       };
     });
@@ -327,15 +273,15 @@ export function generateDailyQuestions(dateStr: string): Question[] {
       dateStr,
       number: num,
       category: 'manajerial',
-      topic: scenarioTemplate.topic,
-      questionText: `[SKB CAT BKN - Soal #${num}] ${questionText}`,
+      topic: 'Manajemen Staf & Operasional',
+      questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
       options: formattedOptions,
-      correctAnswer: scenarioTemplate.correctAnswer as any,
-      explanation: scenarioTemplate.explanation,
-      competency: scenarioTemplate.competency,
-      berakhlak: scenarioTemplate.berakhlak,
-      psychologyBasis: scenarioTemplate.psychologyBasis,
-      catTips: scenarioTemplate.catTips
+      correctAnswer: 'A',
+      explanation: `Dalam menyelesaikan problematika koordinasi staf di asrama ${dorm}, pilihan A adalah tindakan manajerial yang paling tepat. Mengadakan briefing koordinasi, penyusunan RACI matrix, menetapkan KPI yang jelas, dan menggunakan instrumen pelacakan realtime memastikan akuntabilitas kerja tim secara transparan dan terukur.\n\nMengapa pilihan lain kurang tepat: Mengambil alih semua tugas secara mandiri (pilihan D) adalah wujud micromanagement yang merusak kemandirian tim. Tindakan represif langsung melapor ke manajemen HRD (pilihan C) menciptakan iklim kerja yang penuh ketakutan. Pembiaran operasional (pilihan E) membahayakan keselamatan fisik siswa di asrama.`,
+      competency: 'Perencanaan Operasional, Manajemen Tim, & Akuntabilitas',
+      berakhlak: 'Akuntabel (Integritas Kerja) & Kompeten (Kinerja Terbaik)',
+      psychologyBasis: 'Goal-Setting Theory (Locke & Latham) dan Path-Goal Theory of Leadership.',
+      catTips: 'Pilih jawaban yang menawarkan solusi sistemik, partisipatif, transparan, dan berorientasi pada pengembangan kapasitas staf.'
     });
   }
 
@@ -343,24 +289,22 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   result.push(ref4);
 
   for (let num = 117; num <= 135; num++) {
-    const scenarioTemplate = SOCIAL_SCENARIOS[(num + dateStr.charCodeAt(0)) % SOCIAL_SCENARIOS.length];
+    const qRand = getSeededRandom(`${dateStr}-sosial-${num}`);
     
-    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
-    const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
-    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
-    const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
+    const problem = SOCIAL_PROBLEMS[Math.floor(qRand() * SOCIAL_PROBLEMS.length)];
+    const complication = SOCIAL_COMPLICATIONS[Math.floor(qRand() * SOCIAL_COMPLICATIONS.length)];
+    const reaction = SOCIAL_REACTIONS[Math.floor(qRand() * SOCIAL_REACTIONS.length)];
+    
+    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(0)) % STUDENT_NAMES.length];
+    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(1)) % DORM_NAMES.length];
 
-    const questionText = scenarioTemplate.text
-      .replace(/{student}/g, student)
-      .replace(/{room}/g, room)
-      .replace(/{dorm}/g, dorm)
-      .replace(/{staff}/g, staff);
+    const questionText = `Di lingkungan asrama putra ${dorm} Sekolah Rakyat yang majemuk, terjadi situasi di mana ${problem}. Friksi sosial ini berkembang ${complication}. ${reaction} Sikap dan tindakan sosial-kultural yang paling tepat sebagai Wali Asrama untuk menanamkan jiwa kebangsaan dan kebersamaan adalah...`;
 
-    const formattedOptions = scenarioTemplate.options.map((opt, oIdx) => {
+    const formattedOptions = generateOptions('sosial', student, problem).map((opt, idx) => {
       const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
       return {
-        key: keys[oIdx],
-        text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
+        key: keys[idx],
+        text: opt.text,
         score: opt.score
       };
     });
@@ -369,15 +313,15 @@ export function generateDailyQuestions(dateStr: string): Question[] {
       dateStr,
       number: num,
       category: 'sosial',
-      topic: scenarioTemplate.topic,
-      questionText: `[SKB CAT BKN - Soal #${num}] ${questionText}`,
+      topic: 'Sosial Kultural & Toleransi',
+      questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
       options: formattedOptions,
-      correctAnswer: scenarioTemplate.correctAnswer as any,
-      explanation: scenarioTemplate.explanation,
-      competency: scenarioTemplate.competency,
-      berakhlak: scenarioTemplate.berakhlak,
-      psychologyBasis: scenarioTemplate.psychologyBasis,
-      catTips: scenarioTemplate.catTips
+      correctAnswer: 'A',
+      explanation: `Dalam meredakan friksi sosial budaya di asrama ${dorm}, pilihan A adalah solusi terbaik. Merancang proyek kolaboratif kreatif (seperti pertunjukan seni gabungan) yang mengharuskan interaksi lintas kelompok memaksa siswa berbaur secara inklusif dan memecah sekat prasangka.\n\nMengapa pilihan lain kurang tepat: Melarang diskusi budaya (pilihan C) hanya menekan prasangka di bawah permukaan. Asimilasi paksa atau pemindahan kamar (pilihan D) melanggar keragaman identitas dan membuang masalah tanpa menyelesaikan akar prasangka.`,
+      competency: 'Perekat Bangsa, Toleransi Aktif, & Manajemen Keberagaman',
+      berakhlak: 'Harmonis (Saling Menghargai) & Kolaboratif (Kerja Sama Sinergis)',
+      psychologyBasis: 'Contact Hypothesis Allport (Prasangka runtuh saat kelompok bekerja sama setara untuk tujuan mulia).',
+      catTips: 'Pilih opsi yang menyatukan perbedaan latar belakang dalam wadah kolaborasi aktif, bukan memisahkan atau melarang interaksi.'
     });
   }
 
@@ -385,24 +329,22 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   result.push(ref5);
 
   for (let num = 137; num <= 145; num++) {
-    const scenarioTemplate = INTERVIEW_SCENARIOS[(num + dateStr.charCodeAt(0)) % INTERVIEW_SCENARIOS.length];
+    const qRand = getSeededRandom(`${dateStr}-wawancara-${num}`);
     
-    const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
-    const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
-    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
+    const problem = INTERVIEW_PROBLEMS[Math.floor(qRand() * INTERVIEW_PROBLEMS.length)];
+    const complication = INTERVIEW_COMPLICATIONS[Math.floor(qRand() * INTERVIEW_COMPLICATIONS.length)];
+    const reaction = INTERVIEW_REACTIONS[Math.floor(qRand() * INTERVIEW_REACTIONS.length)];
+    
     const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
+    const dorm = DORM_NAMES[(num + dateStr.charCodeAt(1)) % DORM_NAMES.length];
 
-    const questionText = scenarioTemplate.text
-      .replace(/{student}/g, student)
-      .replace(/{room}/g, room)
-      .replace(/{dorm}/g, dorm)
-      .replace(/{staff}/g, staff);
+    const questionText = `Sebagai calon aparatur sipil negara di bawah naungan Sekolah Rakyat, Anda diuji dengan pertanyaan wawancara berikut: "Bagaimana sikap integritas profesional Anda jika Anda melihat ${problem} yang dilakukan ${complication}?" ${reaction} Tanggapan terbaik Anda adalah...`;
 
-    const formattedOptions = scenarioTemplate.options.map((opt, oIdx) => {
+    const formattedOptions = generateOptions('wawancara', staff, problem).map((opt, idx) => {
       const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
       return {
-        key: keys[oIdx],
-        text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
+        key: keys[idx],
+        text: opt.text,
         score: opt.score
       };
     });
@@ -411,15 +353,15 @@ export function generateDailyQuestions(dateStr: string): Question[] {
       dateStr,
       number: num,
       category: 'wawancara',
-      topic: scenarioTemplate.topic,
-      questionText: `[SKB CAT BKN - Soal #${num}] ${questionText}`,
+      topic: 'Integritas & Anti-Korupsi',
+      questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
       options: formattedOptions,
-      correctAnswer: scenarioTemplate.correctAnswer as any,
-      explanation: scenarioTemplate.explanation,
-      competency: scenarioTemplate.competency,
-      berakhlak: scenarioTemplate.berakhlak,
-      psychologyBasis: scenarioTemplate.psychologyBasis,
-      catTips: scenarioTemplate.catTips
+      correctAnswer: 'A',
+      explanation: `Jawaban pilihan A menunjukkan nilai integritas tertinggi. ASN harus memiliki keberanian moral untuk menolak segala bentuk kompromi integritas, mengingatkan rekan sejawat tentang sumpah jabatan, serta melaporkan pelanggaran melalui whistleblower system resmi.\n\nMengapa pilihan lain kurang tepat: Bersikap kompromistis demi keuntungan operasional asrama (pilihan E) tetap tergolong tindakan koruptif. Bersikap pasif dan diam (pilihan C) menjadikan kita ikut bertanggung jawab atas pembiaran kejahatan. Menyebarkan desas-desus tanpa prosedur resmi (pilihan D) merusak nama baik instansi.`,
+      competency: 'Integritas Moral, Loyalitas Aturan, & Etika Profesi',
+      berakhlak: 'Akuntabel (Dapat Dipercaya) & Loyal (Menjaga Nama Baik ASN)',
+      psychologyBasis: 'Teori Perkembangan Moral Kohlberg (Tahap Pasca-Konvensional / Etika Universal).',
+      catTips: 'Pilih tanggapan yang menolak keras korupsi, gratifikasi, atau manipulasi secara tegas dan prosedural tanpa kompromi.'
     });
   }
 
