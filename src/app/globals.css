@@ -111,130 +111,73 @@ body {
   color: var(--color-foreground);
 }
 
-/* Glassmorphism utility with Light/Dark mode automated contrast overrides */
+/* Glassmorphism utility */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  color: #0f172a !important; /* slate-900 */
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Light mode overrides inside glass-panel to force dark-slate text */
-.glass-panel .text-white,
-.glass-panel .text-slate-100 {
-  color: #0f172a !important; /* slate-900 */
-}
-
-.glass-panel .text-slate-200 {
-  color: #1e293b !important; /* slate-800 */
-}
-
-.glass-panel .text-slate-300 {
-  color: #334155 !important; /* slate-700 */
-}
-
-.glass-panel .text-slate-400 {
-  color: #475569 !important; /* slate-600 */
-}
-
-.glass-panel .text-slate-500 {
-  color: #64748b !important; /* slate-500 */
-}
-
-.glass-panel select,
-.glass-panel input,
-.glass-panel textarea {
-  background-color: #f1f5f9 !important; /* slate-100 */
-  color: #0f172a !important; /* slate-900 */
-  border-color: #cbd5e1 !important; /* slate-300 */
-}
-
-.glass-panel select option {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-}
-
-.glass-panel .bg-black\/30 {
-  background-color: #f1f5f9 !important; /* slate-100 */
-  border-color: #cbd5e1 !important; /* slate-300 */
-}
-
-.glass-panel .bg-slate-950\/20,
-.glass-panel .bg-slate-950\/40 {
-  background-color: #f8fafc !important; /* slate-50 */
-  border-color: #e2e8f0 !important; /* slate-200 */
-}
-
-.glass-panel .border-white\/5,
-.glass-panel .border-white\/10 {
-  border-color: #cbd5e1 !important; /* slate-300 */
-}
-
-/* Dark mode overrides (restores glowy colors on black card background) */
 .dark .glass-panel {
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  color: #f1f5f9 !important;
 }
 
-.dark .glass-panel .text-white {
-  color: #ffffff !important;
+/* Light mode global overrides for hardcoded dark classes */
+html:not(.dark) .glass-panel {
+  background: hsl(var(--card)) !important;
+  border-color: hsl(var(--border)) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
 }
 
-.dark .glass-panel .text-slate-100 {
-  color: #f1f5f9 !important;
+html:not(.dark) .glass-panel .text-white,
+html:not(.dark) .glass-panel .text-slate-100,
+html:not(.dark) .glass-panel .text-slate-200,
+html:not(.dark) .glass-panel .text-slate-300,
+html:not(.dark) .glass-panel .text-zinc-100,
+html:not(.dark) .glass-panel .text-zinc-200,
+html:not(.dark) .glass-panel .text-zinc-300 {
+  color: #0f172a !important; /* slate-900 (black) */
 }
 
-.dark .glass-panel .text-slate-200 {
-  color: #e2e8f0 !important;
+html:not(.dark) .glass-panel .text-slate-400,
+html:not(.dark) .glass-panel .text-zinc-400 {
+  color: #334155 !important; /* slate-700 (dark gray) */
 }
 
-.dark .glass-panel .text-slate-300 {
-  color: #cbd5e1 !important;
+html:not(.dark) .glass-panel .text-slate-500,
+html:not(.dark) .glass-panel .text-zinc-500 {
+  color: #64748b !important; /* slate-500 (medium gray) */
 }
 
-.dark .glass-panel .text-slate-400 {
-  color: #94a3b8 !important;
+html:not(.dark) .glass-panel .bg-slate-950\/20,
+html:not(.dark) .glass-panel .bg-slate-900,
+html:not(.dark) .glass-panel [class*="bg-slate-950/20"] {
+  background-color: #f1f5f9 !important; /* slate-100 */
+  border-color: #cbd5e1 !important; /* slate-300 */
 }
 
-.dark .glass-panel .text-slate-500 {
-  color: #64748b !important;
+html:not(.dark) .glass-panel .border-white\/5,
+html:not(.dark) .glass-panel .border-white\/10 {
+  border-color: #e2e8f0 !important; /* slate-200 */
 }
 
-.dark .glass-panel select,
-.dark .glass-panel input,
-.dark .glass-panel textarea {
-  background-color: #000000 !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+/* Light mode overrides for header and navigation */
+html:not(.dark) header {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: #cbd5e1 !important; /* slate-300 */
 }
 
-.dark .glass-panel select option {
-  background-color: #09090b !important;
-  color: #ffffff !important;
+html:not(.dark) header .text-white,
+html:not(.dark) header .text-slate-200 {
+  color: #0f172a !important;
 }
 
-.dark .glass-panel .bg-black\/30 {
-  background-color: rgba(0, 0, 0, 0.3) !important;
-}
-
-.dark .glass-panel .bg-slate-950\/20 {
-  background-color: rgba(2, 6, 23, 0.2) !important;
-}
-
-.dark .glass-panel .bg-slate-950\/40 {
-  background-color: rgba(2, 6, 23, 0.4) !important;
-}
-
-.dark .glass-panel .border-white\/5 {
-  border-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-.dark .glass-panel .border-white\/10 {
-  border-color: rgba(255, 255, 255, 0.1) !important;
+html:not(.dark) header .text-slate-400 {
+  color: #475569 !important;
 }
 
 /* Hide scrollbar utility */
