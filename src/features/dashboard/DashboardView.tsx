@@ -14,7 +14,7 @@ import { StudyHeatmap } from './StudyHeatmap';
 import { AdminPanel } from '../question/AdminPanel';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { LayoutDashboard, History, ShieldAlert, Sparkles, Moon, Sun, ArrowRight, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { LayoutDashboard, History, ShieldAlert, Sparkles, Moon, Sun, ArrowRight, CheckCircle2, XCircle, Clock, LogOut } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -150,6 +150,23 @@ export function DashboardView() {
               <span className={`text-xs font-bold block leading-tight ${theme === 'light' ? 'text-slate-900' : 'text-slate-200'}`}>{auth.name}</span>
               <span className="text-[10px] text-slate-500 font-semibold">{auth.lokasi || auth.instansi}</span>
             </div>
+            
+            {/* Logout Button */}
+            <button
+              onClick={() => {
+                auth.logout();
+                toast.info('Keluar dari portal peserta.');
+              }}
+              className={`p-2 rounded-lg border transition-colors cursor-pointer flex items-center justify-center gap-1.5 text-xs font-semibold ${
+                theme === 'light'
+                  ? 'border-slate-200 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600'
+                  : 'border-white/5 bg-slate-900 hover:bg-red-950/20 text-slate-400 hover:text-red-400'
+              }`}
+              title="Keluar Akun"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden md:inline">Keluar</span>
+            </button>
           </div>
         </div>
       </header>

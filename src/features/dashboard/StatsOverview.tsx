@@ -199,26 +199,14 @@ export function StatsOverview({
                 <User className="h-3.5 w-3.5" />
                 <span>Kartu Peserta</span>
               </div>
-              <Button
-                onClick={() => {
-                  logout();
-                  toast.info('Keluar dari portal peserta.');
-                }}
-                variant="ghost"
-                size="sm"
-                className="h-7 text-[10px] text-slate-500 hover:text-red-400 cursor-pointer"
-              >
-                <LogOut className="h-3 w-3 mr-1" />
-                Keluar
-              </Button>
             </div>
-            <h3 className="text-lg font-black text-white leading-tight">
+            <h3 className="text-lg font-black text-slate-900 dark:text-white leading-tight">
               {auth.name || 'Peserta Ujian'}
             </h3>
-            <div className="flex items-center gap-1.5 text-xs text-slate-400">
+            <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
               <MapPin className="h-3.5 w-3.5 text-slate-500" />
-              <span className="text-slate-500 font-medium">Lokasi:</span>
-              <span className="text-slate-300 font-bold">{auth.lokasi || auth.instansi || '-'}</span>
+              <span className="text-slate-600 dark:text-slate-500 font-medium">Lokasi:</span>
+              <span className="text-slate-800 dark:text-slate-300 font-bold">{auth.lokasi || auth.instansi || '-'}</span>
             </div>
           </CardContent>
         </Card>

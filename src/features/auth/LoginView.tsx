@@ -5,11 +5,13 @@ import { useAuthStore } from '../../store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Shield, Mail, Lock, User, MapPin, Eye, EyeOff } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
 export function LoginView() {
   const { signUp, signIn, isLoading, isCloudEnabled } = useAuthStore();
+  const { theme } = useTheme();
 
   // Auth tabs: 'login' | 'register'
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
@@ -62,7 +64,11 @@ export function LoginView() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-slate-100 p-4 relative overflow-hidden select-none">
+    <div className={`min-h-screen flex items-center justify-center p-4 relative overflow-hidden select-none transition-colors duration-300 ${
+      theme === 'light' 
+        ? 'bg-slate-50 text-slate-900' 
+        : 'bg-black text-slate-100'
+    }`}>
       
       {/* Background glowing effects - Crimson red and silver branding */}
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-red-600/10 blur-[120px] pointer-events-none" />
@@ -76,9 +82,13 @@ export function LoginView() {
       >
         {/* Sekolah Rakyat Header & Status Badge */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/5 bg-zinc-950 text-xs font-semibold mb-4">
+          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold mb-4 transition-colors ${
+            theme === 'light'
+              ? 'border-slate-200 bg-slate-100 text-slate-700'
+              : 'border-white/5 bg-zinc-950 text-slate-400'
+          }`}>
             <span className={`h-2 w-2 rounded-full ${isCloudEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-            <span className="text-slate-400">
+            <span>
               {isCloudEnabled ? 'Cloud Terhubung (Supabase)' : 'Mode Demo Lokal (IndexedDB)'}
             </span>
           </div>
