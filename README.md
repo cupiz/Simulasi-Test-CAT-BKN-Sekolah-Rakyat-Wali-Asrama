@@ -77,17 +77,22 @@ npm run start
 
 ### Metode 1: Satu-Klik via Dashboard Admin (Web App)
 1. Jalankan aplikasi dan masuk ke **Admin Panel** (klik tab Admin di Dashboard).
-2. Klik tombol **Update Soal Harian** (ikon bintang/sparkles).
+2. Klik tombol **Generate Soal Harian** (ikon bintang/sparkles).
 3. Masukkan tanggal yang diinginkan dengan format `YYYY-MM-DD` (default adalah tanggal hari ini).
-4. Klik **OK** dan sistem akan otomatis menginjeksikan **145 soal baru** yang unik untuk tanggal tersebut ke IndexedDB lokal Anda.
-5. Kembali ke halaman login, dropdown **Pilih Tanggal Soal CAT** akan langsung menampilkan tanggal baru tersebut.
+4. Klik **OK** dan sistem akan otomatis menginjeksikan **145 soal baru** yang 100% unik dan dinamis untuk tanggal tersebut ke IndexedDB lokal Anda.
+5. Proses log brainstorming generator AI dapat Anda saksikan secara real-time pada **Antigravity CLI Console** di bawah form.
+6. Kembali ke dashboard utama, pilih tanggal target pada dropdown **Bank Soal Tanggal** di bagian atas untuk memulai simulasi ujian.
 
 ### Metode 2: via Antigravity CLI (Terminal)
-Gunakan perintah CLI berikut untuk men-generate file JSON set soal harian secara otomatis:
+Gunakan perintah CLI berikut untuk men-generate berkas JSON berisi 145 soal harian secara offline:
 ```bash
 npm run generate-daily
 ```
-Perintah ini akan membuat berkas JSON bernama `daily_questions_YYYY-MM-DD.json` di direktori utama proyek. Anda kemudian dapat memuat berkas ini ke dalam database menggunakan tombol **Impor JSON** di Admin Panel.
+Perintah ini akan membuat berkas JSON bernama `daily_questions_YYYY-MM-DD.json` di direktori utama proyek. Anda kemudian dapat memuat berkas ini ke dalam database cloud Supabase menggunakan perintah pengunggah:
+```bash
+node scripts/upload-questions.js daily_questions_YYYY-MM-DD.json
+```
+*(Atau gunakan tombol **Impor JSON** di Admin Panel untuk mengunggahnya secara visual).*
 
 ---
 
