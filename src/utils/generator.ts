@@ -39,10 +39,15 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   // Add the 5 reference questions as the base for numbers 1, 2, 3 (Teknis), 116 (Sosial), and 136 (Wawancara)
   // We map them to today's date Str and proper numbers
   const ref1 = { ...REFERENCE_QUESTIONS[0], dateStr, number: 1 };
+  delete ref1.id;
   const ref2 = { ...REFERENCE_QUESTIONS[1], dateStr, number: 2 };
+  delete ref2.id;
   const ref3 = { ...REFERENCE_QUESTIONS[2], dateStr, number: 3 };
+  delete ref3.id;
   const ref4 = { ...REFERENCE_QUESTIONS[3], dateStr, number: 116 };
+  delete ref4.id;
   const ref5 = { ...REFERENCE_QUESTIONS[4], dateStr, number: 136 };
+  delete ref5.id;
 
   // 1. Technical: 90 Soal (Numbers 1 to 90)
   // 1, 2, 3 are reference questions
