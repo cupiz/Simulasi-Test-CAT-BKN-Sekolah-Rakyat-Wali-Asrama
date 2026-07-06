@@ -5,7 +5,7 @@ import { db } from '../../lib/db';
 import { Question, QuestionOption } from '../../types';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Trash2, Edit, Plus, FileSpreadsheet, Download, Upload, RefreshCw, Search, X } from 'lucide-react';
+import { Trash2, Edit, Plus, FileSpreadsheet, Download, Upload, RefreshCw, Search, X, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { getInitialQuestions } from '../../data/questions';
 
@@ -187,6 +187,26 @@ export function AdminPanel() {
     }
   };
 
+  const handleGenerateDaily = async () => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todayMatch = questions.some(q => q.questionText.includes(`[Studi Kasus Harian - ${todayStr}]`));
+    if (todayMatch) {
+      toast.info(`Soal harian untuk tanggal ${todayStr} sudah terpasang di database.`);
+      return;
+    }
+
+    try {
+      const { generateDailyQuestions } = await import('../../utils/generator');
+      const highestId = questions.length > 0 ? Math.max(...questions.map(q => q.id)) : 145;
+      const dailyQs = generateDailyQuestions(todayStr, highestId + 1);
+      await db.questions.bulkPut(dailyQs);
+      toast.success(`Berhasil menambahkan 5 soal harian baru untuk tanggal ${todayStr}!`);
+      loadQuestions();
+    } catch (err) {
+      toast.error('Gagal men-generate soal harian');
+    }
+  };
+
   const filteredQuestions = questions.filter(
     q =>
       q.questionText.toLowerCase().includes(search.toLowerCase()) ||
@@ -218,6 +238,10 @@ export function AdminPanel() {
               className="hidden"
             />
           </label>
+          <Button onClick={handleGenerateDaily} variant="outline" size="sm" className="h-9 border-primary/30 text-primary hover:bg-primary/5 flex items-center gap-1.5 cursor-pointer">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Update Soal Harian</span>
+          </Button>
         </div>
         <Button onClick={handleRestoreDefaults} variant="outline" size="sm" className="h-9 border-red-500/20 text-red-400 hover:bg-red-500/5">
           <RefreshCw className="h-4 w-4 mr-1.5" />
