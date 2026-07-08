@@ -36,6 +36,14 @@ export function DashboardView() {
   const auth = useAuthStore();
   const { theme, setTheme } = useTheme();
 
+  const isAdmin = auth.isLoggedIn && auth.email?.toLowerCase().includes('admin');
+
+  useEffect(() => {
+    if (activeTab === 'admin' && !isAdmin) {
+      setActiveTab('dashboard');
+    }
+  }, [activeTab, isAdmin]);
+
   useEffect(() => {
     loadData();
   }, []);
@@ -117,6 +125,7 @@ export function DashboardView() {
           {/* Nav Tabs */}
           <nav className="hidden md:flex space-x-1">
             {(['dashboard', 'history', 'admin'] as const).map((tab) => {
+              if (tab === 'admin' && !isAdmin) return null;
               const isActive = activeTab === tab;
               return (
                 <button
@@ -186,6 +195,7 @@ export function DashboardView() {
         {/* Mobile Tabs */}
         <div className={`flex md:hidden border-b pb-2 justify-around ${theme === 'light' ? 'border-slate-200' : 'border-white/5'}`}>
           {(['dashboard', 'history', 'admin'] as const).map((tab) => {
+            if (tab === 'admin' && !isAdmin) return null;
             const isActive = activeTab === tab;
             return (
               <button
@@ -430,7 +440,7 @@ export function DashboardView() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {isAdminUnlocked ? (
+              {isAdminUnlocked || isAdmin ? (
                 <AdminPanel />
               ) : (
                 <Card className="glass-panel border-white/5 max-w-md mx-auto">
