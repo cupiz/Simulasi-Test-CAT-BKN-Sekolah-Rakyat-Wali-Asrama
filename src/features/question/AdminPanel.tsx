@@ -228,6 +228,10 @@ export function AdminPanel() {
   };
 
   const handleGenerateDaily = async () => {
+    if (isGenerating) {
+      toast.info("Proses generate sedang berjalan...");
+      return;
+    }
     const todayStr = new Date().toISOString().split('T')[0];
     const inputDate = prompt("Masukkan tanggal set soal baru (Format: YYYY-MM-DD):", todayStr);
     if (!inputDate) return;
@@ -238,10 +242,7 @@ export function AdminPanel() {
       return;
     }
 
-    if (isGenerating) {
-      toast.info("Proses generate sedang berjalan...");
-      return;
-    }
+    const useAI = confirm("Apakah Anda ingin men-generate menggunakan AI agy CLI di komputer Anda?\n\n[OK] = Ya, gunakan AI agy (proses ±2 menit di backend)\n[Cancel] = Tidak, gunakan Generator Lokal (Instan)");
 
     setIsGenerating(true);
     setTerminalLogs([]);
@@ -253,7 +254,11 @@ export function AdminPanel() {
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
     try {
-      log(`$ node scripts/generate-daily.js --date=${inputDate}`);
+      if (useAI) {
+        log(`$ node scripts/generate-daily.js --date=${inputDate}`);
+      } else {
+        log(`$ node scripts/generate-daily.js --date=${inputDate} --local`);
+      }
       await sleep(600);
       log(`⚙️ Initializing Antigravity Question Synthesizer v4.2.0...`);
       await sleep(500);
@@ -275,37 +280,104 @@ export function AdminPanel() {
       log(`🧠 Memulai AI Brainstorming Soal CAT BKN Wali Asrama...`);
       await sleep(500);
 
+      let dailyQs: Question[] = [];
+      
       const { generateDailyQuestions } = await import('../../utils/generator');
-      const dailyQs = generateDailyQuestions(inputDate);
+      const draftQuestions = generateDailyQuestions(inputDate);
 
-      // Log detailed steps
-      log(`  -> Generating Category: Teknis (90 Soal)...`);
-      await sleep(600);
-      log(`     [OK] Generated Soal #1: Homesick & Peer Support (Danis)`);
-      log(`     [OK] Generated Soal #2: Disiplin & Kontribusi Sosial (Galih)`);
-      log(`     [OK] Generated Soal #3: Kepemimpinan & Gaya Komunikasi (Panji)`);
-      log(`     [OK] Generated Soal #15: Vape & Penolakan Aturan (Fahri)`);
-      log(`     [OK] Generated Soal #40: Vandalisme Ruang Kelas (Reza)`);
-      log(`     [OK] Generated Soal #90: Pembinaan Karakter Remaja...`);
-      await sleep(500);
+      if (useAI) {
+        log(`📡 Menghubungi API backend lokal untuk memicu CLI agy...`);
+        log(`🧠 Memulai AI Brainstorming 145 Soal secara paralel (Konkurensi: 6)...`);
+        
+        const concurrencyLimit = 6;
+        let completed = 0;
+        
+        const runTask = async (q: Question) => {
+          try {
+            const response = await fetch('/api/generate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ draftQuestion: q }),
+            });
 
-      log(`  -> Generating Category: Manajerial (25 Soal)...`);
-      await sleep(400);
-      log(`     [OK] Generated Soal #91 s/d #115: Manajemen Staf & Operasional.`);
-      await sleep(300);
+            if (!response.ok) {
+              const errorText = await response.json().catch(() => ({}));
+              throw new Error(errorText.error || `HTTP ${response.status}`);
+            }
 
-      log(`  -> Generating Category: Sosial (20 Soal)...`);
-      await sleep(400);
-      log(`     [OK] Generated Soal #116 s/d #135: Perekat Bangsa & Inklusi Kultural.`);
-      await sleep(300);
+            const resData = await response.json();
+            dailyQs.push(resData.question);
+            completed++;
+            const categoryLabel = q.category === 'teknis' ? 'Teknis' : q.category === 'manajerial' ? 'Manajerial' : q.category === 'sosial' ? 'Sosial' : 'Wawancara';
+            log(`     [OK] Generated Soal #${q.number}/${draftQuestions.length}: ${resData.question.topic} (${categoryLabel})`);
+          } catch (err: any) {
+            // Fallback on error
+            dailyQs.push(q);
+            completed++;
+            log(`     [⚠️ Fallback] Soal #${q.number}/${draftQuestions.length} gagal via AI: ${err.message || err}`);
+          }
+        };
 
-      log(`  -> Generating Category: Wawancara (10 Soal)...`);
-      await sleep(400);
-      log(`     [OK] Generated Soal #136 s/d #145: Integritas ASN & Anti-Gratifikasi.`);
-      await sleep(400);
+        const chunks: Question[][] = [];
+        for (let i = 0; i < draftQuestions.length; i += concurrencyLimit) {
+          chunks.push(draftQuestions.slice(i, i + concurrencyLimit));
+        }
+
+        for (const chunk of chunks) {
+          await Promise.all(chunk.map(q => runTask(q)));
+        }
+      } else {
+        log(`⚡ Menjalankan Generator Lokal (Instan)...`);
+        dailyQs = draftQuestions;
+        
+        // Log basic summary for local generator
+        const teknisQs = dailyQs.filter(q => q.category === 'teknis');
+        const manajerialQs = dailyQs.filter(q => q.category === 'manajerial');
+        const sosialQs = dailyQs.filter(q => q.category === 'sosial');
+        const wawancaraQs = dailyQs.filter(q => q.category === 'wawancara');
+
+        log(`  -> Generating Category: Teknis (${teknisQs.length} Soal)...`);
+        if (teknisQs.length > 0) log(`     [OK] Generated Soal #1: ${teknisQs[0].topic}`);
+        if (teknisQs.length > 1) log(`     [OK] Generated Soal #2: ${teknisQs[1].topic}`);
+        if (teknisQs.length > 2) log(`     [OK] Generated Soal #3: ${teknisQs[2].topic}`);
+        if (teknisQs.length > 14) log(`     [OK] Generated Soal #15: ${teknisQs[14].topic}`);
+        if (teknisQs.length > 39) log(`     [OK] Generated Soal #40: ${teknisQs[39].topic}`);
+        if (teknisQs.length > 0) log(`     [OK] Generated Soal #${teknisQs.length}: ${teknisQs[teknisQs.length - 1].topic}`);
+        await sleep(500);
+
+        log(`  -> Generating Category: Manajerial (${manajerialQs.length} Soal)...`);
+        if (manajerialQs.length > 0) {
+          const startNum = teknisQs.length + 1;
+          const endNum = startNum + manajerialQs.length - 1;
+          log(`     [OK] Generated Soal #${startNum} s/d #${endNum}: ${manajerialQs[0].topic} & ${manajerialQs[manajerialQs.length - 1].topic}.`);
+        }
+        await sleep(300);
+
+        log(`  -> Generating Category: Sosial (${sosialQs.length} Soal)...`);
+        if (sosialQs.length > 0) {
+          const startNum = teknisQs.length + manajerialQs.length + 1;
+          const endNum = startNum + sosialQs.length - 1;
+          log(`     [OK] Generated Soal #${startNum} s/d #${endNum}: ${sosialQs[0].topic} & ${sosialQs[sosialQs.length - 1].topic}.`);
+        }
+        await sleep(300);
+
+        log(`  -> Generating Category: Wawancara (${wawancaraQs.length} Soal)...`);
+        if (wawancaraQs.length > 0) {
+          const startNum = teknisQs.length + manajerialQs.length + sosialQs.length + 1;
+          const endNum = startNum + wawancaraQs.length - 1;
+          log(`     [OK] Generated Soal #${startNum} s/d #${endNum}: ${wawancaraQs[0].topic} & ${wawancaraQs[wawancaraQs.length - 1].topic}.`);
+        }
+        await sleep(400);
+      }
+
+      // Sort questions before saving to keep order
+      dailyQs.sort((a, b) => (a.number || 0) - (b.number || 0));
+
+      // Strip any id field to prevent primary key collision in IndexedDB
+      const cleanedDailyQs = dailyQs.map(({ id, ...rest }) => rest);
 
       log(`💾 Menyimpan 145 soal ke database local IndexedDB...`);
-      await db.questions.bulkAdd(dailyQs);
+      await db.questions.bulkAdd(cleanedDailyQs);
       await sleep(500);
       log(`✅ Sukses menyimpan soal ke local store.`);
       await sleep(400);
@@ -338,11 +410,11 @@ export function AdminPanel() {
       await sleep(500);
       log(`✨ PENGUNGGAHAN BERHASIL! Bank soal ${inputDate} kini aktif di sistem.`);
       toast.success(`Berhasil men-generate 145 soal harian baru untuk tanggal ${inputDate}!`);
-      loadDatesAndQuestions();
     } catch (err: any) {
       log(`❌ Error: ${err.message || 'Gagal men-generate atau mengunggah soal.'}`);
       toast.error('Gagal men-generate soal harian');
     } finally {
+      await loadDatesAndQuestions();
       setIsGenerating(false);
     }
   };

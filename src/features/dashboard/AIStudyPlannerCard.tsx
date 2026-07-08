@@ -37,35 +37,63 @@ export function AIStudyPlannerCard() {
 
     const latest = histList[histList.length - 1];
     const weakAreas = latest.aiAnalysis.recommendedTopics.map(t => t.topic);
+
+    // Calculate weakest category based on scores ratio
+    const categories: ('teknis' | 'manajerial' | 'sosial' | 'wawancara')[] = ['teknis', 'manajerial', 'sosial', 'wawancara'];
+    const ratios = categories.map(cat => ({
+      category: cat,
+      ratio: latest.scores[cat] / (latest.maxScores[cat] || 1)
+    }));
+    ratios.sort((a, b) => a.ratio - b.ratio);
+    const weakestCategory = ratios[0].category;
+
+    // Database of category-specific tasks
+    const taskLibrary: Record<'teknis' | 'manajerial' | 'sosial' | 'wawancara', { topic: string; description: string; durationMin: number }[]> = {
+      teknis: [
+        { topic: 'SOP Penanganan Bullying & Intimidasi', description: 'Mengkaji protokol penanganan bullying fisik/non-fisik dan perlindungan saksi junior.', durationMin: 45 },
+        { topic: 'Konseling Siswa Homesick & Stres Ujian', description: 'Mempelajari koping stres remaja dan merancang forum peer-support kamar.', durationMin: 40 },
+        { topic: 'Sanitasi Kamar & Pencegahan Hama', description: 'Membuat jadwal penataan lemari mandiri dan SOP higienitas asrama Sekolah Rakyat.', durationMin: 30 },
+        { topic: 'Manajemen Gadget & Kecanduan Game', description: 'Strategi pembatasan gawai persuasif dan pembinaan regulasi diri digital siswa.', durationMin: 45 }
+      ],
+      manajerial: [
+        { topic: 'Penerapan Servant Leadership Asrama', description: 'Mempelajari konsep kepemimpinan mengayomi bagi ketua organisasi asrama.', durationMin: 45 },
+        { topic: 'Penegakan Tata Tertib Persuasif', description: 'Latihan merumuskan teguran mendidik tanpa intimidasi di ruang makan asrama.', durationMin: 40 },
+        { topic: 'Pendelegasian Tugas Piket Adil', description: 'Manajemen beban kerja pengurus asrama dan resolusi konflik kecemburuan tugas.', durationMin: 35 },
+        { topic: 'Pengambilan Keputusan Jam Malam', description: 'Studi kasus dispensasi keluar asrama atas dasar darurat keluarga vs aturan.', durationMin: 50 }
+      ],
+      sosial: [
+        { topic: 'Inklusivitas & Resolusi Konflik SARA', description: 'Mempelajari Contact Hypothesis untuk merukunkan perselisihan latar belakang budaya.', durationMin: 45 },
+        { topic: 'Kebinekaan Global di Asrama', description: 'Merancang program apresiasi ragam daerah untuk meminimalkan stereotip suku.', durationMin: 40 },
+        { topic: 'Mediasi Pengucilan Sosial Kamar', description: 'Teknik fasilitasi restoratif terintegrasi guna merangkul siswa yang dikucilkan.', durationMin: 45 },
+        { topic: 'Etika Sosio-Kultural BerAKHLAK', description: 'Refleksi nilai toleransi, keadilan sosial, dan kesopanan komunal di lingkungan BKN.', durationMin: 30 }
+      ],
+      wawancara: [
+        { topic: 'Anti-Gratifikasi & Akuntabilitas ASN', description: 'Mengkaji panduan KPK tentang gratifikasi pendidikan dan integritas pegawai.', durationMin: 45 },
+        { topic: 'Benturan Kepentingan Wali Asrama', description: 'Analisis dilema memberi perlakuan istimewa kepada sanak saudara di asrama.', durationMin: 40 },
+        { topic: 'Core Values BerAKHLAK Instansi', description: 'Ulasan mendalam mengenai akuntabilitas, komitmen, dan moralitas aparatur sipil.', durationMin: 30 },
+        { topic: 'Loyalitas & Penegakan Kode Etik', description: 'Menghadapi tekanan eksternal dari wali murid yang meminta nilai atau kelonggaran SOP.', durationMin: 45 }
+      ]
+    };
     
-    // Construct standard tasks based on weak categories
+    // Construct dynamic tasks based on weak categories
     const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
     const tasks: AIStudyPlanTask[] = days.map((day, idx) => {
-      let topic = 'Penguatan Umum SOP Asrama';
-      let category = 'Teknis';
+      let topic = '';
+      let category = '';
       let durationMin = 30;
-      let description = 'Membaca regulasi asrama Sekolah Rakyat dan meninjau hak kepedulian bersama.';
+      let description = '';
 
       if (idx === 0) {
         topic = latest.aiAnalysis.recommendedTopics[0]?.topic || 'Review Pertanyaan Salah';
         category = 'Fokus Utama';
-        description = 'Analisis mendalam terhadap 10 soal yang salah pada sesi ujian terakhir.';
-      } else if (idx === 1) {
-        topic = 'Studi Kasus Psikologi Remaja & Homesick';
-        category = 'Teknis';
-        description = 'Mempelajari Social Support Theory dan intervensi awal stres homesick.';
-      } else if (idx === 2) {
-        topic = 'Latihan Soal Manajerial (Decision Making)';
-        category = 'Manajerial';
-        description = 'Melatih penegakan aturan persuasif tanpa menciptakan atmosfer ketakutan.';
-      } else if (idx === 3) {
-        topic = 'Resolusi Konflik Sosial-Kultural';
-        category = 'Sosial';
-        description = 'Mengkaji penerapan Contact Hypothesis dalam pementasan seni kolaboratif.';
-      } else if (idx === 4) {
-        topic = 'Integritas & Anti-Korupsi ASN';
-        category = 'Wawancara';
-        description = 'Review panduan gratifikasi dan akuntabilitas nilai BerAKHLAK.';
+        durationMin = 45;
+        description = 'Analisis mendalam terhadap soal-soal yang salah pada sesi ujian terakhir Anda.';
+      } else if (idx >= 1 && idx <= 4) {
+        const libTask = taskLibrary[weakestCategory][idx - 1];
+        topic = libTask.topic;
+        category = weakestCategory.charAt(0).toUpperCase() + weakestCategory.slice(1);
+        durationMin = libTask.durationMin;
+        description = libTask.description;
       } else if (idx === 5) {
         topic = 'Simulasi CAT Mode Ujian';
         category = 'Simulasi';
@@ -74,6 +102,7 @@ export function AIStudyPlannerCard() {
       } else {
         topic = 'Evaluasi & AI Report Review';
         category = 'Analisis';
+        durationMin = 30;
         description = 'Mengevaluasi grafik kompetensi asrama di Dashboard dan merencanakan minggu depan.';
       }
 

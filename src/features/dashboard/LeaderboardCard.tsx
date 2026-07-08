@@ -1,34 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { db } from '../../lib/db';
-import { LeaderboardEntry } from '../../types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Trophy, Medal, Search, Clock } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { id } from 'date-fns/locale';
+import { useLeaderboardStore } from '../../store';
 
 export function LeaderboardCard() {
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const { entries, loadLeaderboard } = useLeaderboardStore();
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    async function loadLeaderboard() {
-      const data = await db.leaderboard.toArray();
-      // Sort by score desc, then timeSpent asc
-      const sorted = data.sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        return a.timeSpent - b.timeSpent;
-      });
-      // Add ranks dynamically
-      const ranked = sorted.map((entry, idx) => ({
-        ...entry,
-        rank: idx + 1
-      }));
-      setEntries(ranked);
-    }
     loadLeaderboard();
-  }, []);
+  }, [loadLeaderboard]);
 
   const filteredEntries = entries.filter(
     (e) =>

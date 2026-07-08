@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../../lib/db';
 import { ExamHistoryItem, ExamMode } from '../../types';
-import { useExamStore, useAuthStore } from '../../store';
+import { useExamStore, useAuthStore, useLeaderboardStore } from '../../store';
 import { StatsOverview } from './StatsOverview';
 import { PerformanceCharts } from './PerformanceCharts';
 import { LeaderboardCard } from './LeaderboardCard';
@@ -38,6 +38,15 @@ export function DashboardView() {
 
   useEffect(() => {
     loadData();
+  }, []);
+
+  // Live simulation of other competitors taking exams in background (silent updates)
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      await useLeaderboardStore.getState().simulateCompetitorActivity();
+    }, 60000); // update silently every 60 seconds
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -254,21 +263,21 @@ export function DashboardView() {
             >
               {selectedHistoryItem ? (
                 // Expand Details of specific history item
-                <Card className="glass-panel border-white/5">
-                  <CardHeader className="pb-3 border-b border-white/5 flex flex-row items-center justify-between">
+                <Card className="glass-panel border-slate-200 dark:border-white/5">
+                  <CardHeader className="pb-3 border-b border-slate-200 dark:border-white/5 flex flex-row items-center justify-between">
                     <div>
                       <Button
                         onClick={() => setSelectedHistoryItem(null)}
                         variant="ghost"
                         size="sm"
-                        className="text-xs hover:bg-slate-900 text-slate-400 hover:text-white mb-2 h-7"
+                        className="text-xs hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-2 h-7"
                       >
                         ← Kembali ke Riwayat
                       </Button>
-                      <CardTitle className="text-white text-base">
+                      <CardTitle className="text-slate-900 dark:text-white text-base font-bold">
                         Simulasi Sesi: {new Date(selectedHistoryItem.date).toLocaleString('id-ID')}
                       </CardTitle>
-                      <CardDescription className="text-xs">
+                      <CardDescription className="text-xs text-slate-500 dark:text-slate-400">
                         Analisis nilai, kepribadian, dan pembimbing belajar personal.
                       </CardDescription>
                     </div>
@@ -277,7 +286,7 @@ export function DashboardView() {
                       <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
                         selectedHistoryItem.isPassed
                           ? 'bg-success/15 text-success border border-success/30'
-                          : 'bg-red-500/15 text-red-400 border border-red-500/30'
+                          : 'bg-red-500/15 text-red-500 dark:text-red-400 border border-red-500/30'
                       }`}>
                         {selectedHistoryItem.isPassed ? 'LULUS' : 'TIDAK LULUS'}
                       </span>
@@ -286,50 +295,50 @@ export function DashboardView() {
                   <CardContent className="pt-6 space-y-6">
                     {/* Score summary */}
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                      <div className="p-3.5 rounded-xl border border-white/5 bg-slate-950/20 text-center">
-                        <span className="text-[10px] text-slate-500 font-semibold block uppercase">Total Skor</span>
-                        <span className="text-2xl font-black text-white">{selectedHistoryItem.scores.total}</span>
-                        <span className="text-[9px] text-slate-500 block">maks: {selectedHistoryItem.maxScores.total}</span>
+                      <div className="p-3.5 rounded-xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20 text-center shadow-xs">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block uppercase">Total Skor</span>
+                        <span className="text-2xl font-black text-slate-900 dark:text-white">{selectedHistoryItem.scores.total}</span>
+                        <span className="text-[9px] text-slate-500 dark:text-slate-400 block">maks: {selectedHistoryItem.maxScores.total}</span>
                       </div>
                       {Object.keys(selectedHistoryItem.scores).filter(k => k !== 'total').map((k) => (
-                        <div key={k} className="p-3.5 rounded-xl border border-white/5 bg-slate-950/20 text-center">
-                          <span className="text-[10px] text-slate-500 font-semibold block uppercase">{getCategoryName(k)}</span>
-                          <span className="text-xl font-bold text-slate-200">{selectedHistoryItem.scores[k as keyof typeof selectedHistoryItem.scores]}</span>
-                          <span className="text-[9px] text-slate-500 block">maks: {selectedHistoryItem.maxScores[k as keyof typeof selectedHistoryItem.maxScores]}</span>
+                        <div key={k} className="p-3.5 rounded-xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20 text-center shadow-xs">
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block uppercase">{getCategoryName(k)}</span>
+                          <span className="text-xl font-bold text-slate-800 dark:text-slate-200">{selectedHistoryItem.scores[k as keyof typeof selectedHistoryItem.scores]}</span>
+                          <span className="text-[9px] text-slate-500 dark:text-slate-400 block">maks: {selectedHistoryItem.maxScores[k as keyof typeof selectedHistoryItem.maxScores]}</span>
                         </div>
                       ))}
                     </div>
 
                     {/* AI report */}
-                    <div className="p-5 rounded-xl bg-primary/5 border border-primary/10 space-y-3">
+                    <div className="p-5 rounded-xl bg-red-50/50 dark:bg-primary/5 border border-red-100 dark:border-primary/10 space-y-3">
                       <h4 className="text-xs font-extrabold text-primary flex items-center gap-1.5 uppercase tracking-wider">
                         <Sparkles className="h-4 w-4" />
                         <span>Analisis AI & Profil Psikologi</span>
                       </h4>
-                      <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                      <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
                         {selectedHistoryItem.aiAnalysis.narrativeReport}
                       </p>
                       
                       {/* Weak areas tasks */}
                       {selectedHistoryItem.aiAnalysis.recommendedTopics.length > 0 && (
                         <div className="pt-2 space-y-2">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rekomendasi Tindakan AI:</span>
+                          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Rekomendasi Tindakan AI:</span>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {selectedHistoryItem.aiAnalysis.recommendedTopics.map((topic, i) => (
-                              <div key={i} className="p-3.5 rounded-lg border border-white/5 bg-slate-950/40 text-xs space-y-1.5">
+                              <div key={i} className="p-3.5 rounded-lg border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-950/40 text-xs space-y-1.5 shadow-xs">
                                 <div className="flex justify-between items-center">
-                                  <span className="font-extrabold text-slate-200">{topic.topic}</span>
+                                  <span className="font-extrabold text-slate-800 dark:text-slate-200">{topic.topic}</span>
                                   <span className={`text-[9px] px-1.5 rounded-xs font-semibold ${
-                                    topic.priority === 'High' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                                    topic.priority === 'Medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                                    'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                    topic.priority === 'High' ? 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20' :
+                                    topic.priority === 'Medium' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20' :
+                                    'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20'
                                   }`}>
                                     {topic.priority} Priority
                                   </span>
                                 </div>
-                                <p className="text-[11px] text-slate-400 leading-relaxed">{topic.reason}</p>
-                                <div className="text-[9px] text-slate-500">
-                                  <span className="font-semibold">Bahan:</span> {topic.resources.join(', ')}
+                                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">{topic.reason}</p>
+                                <div className="text-[9px] text-slate-500 dark:text-slate-400">
+                                  <span className="font-semibold text-slate-700 dark:text-slate-300">Bahan:</span> {topic.resources.join(', ')}
                                 </div>
                               </div>
                             ))}

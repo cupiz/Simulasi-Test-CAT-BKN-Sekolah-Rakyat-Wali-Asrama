@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 const DORM_NAMES = [
   'Ahmad Dahlan', 'Hasyim Asyari', 'Ki Hajar Dewantara', 'Sudirman', 'Kartini', 
@@ -190,7 +191,7 @@ const MANAGERIAL_TEMPLATES = [
       { text: 'Memberikan pelatihan asistensi personal (one-on-one mentoring) secara sabar kepada {staff}, menjelaskan efisiensi kerja aplikasi tersebut, serta memantau perkembangannya secara berkala.', score: 5 },
       { text: 'Menugaskan salah satu wali asrama junior untuk mengetikkan seluruh catatan manual milik {staff} ke dalam aplikasi setiap hari.', score: 4 },
       { text: 'Menegur {staff} dalam rapat staf mingguan agar ia merasa termotivasi untuk segera mempelajari sistem teknologi yang baru.', score: 3 },
-      { text: 'Mengizinkan {staff} tetap menggunakan metode manual secara permanen demi menghormati status senioritasnya di asrama.', score: 2 },
+      { text: 'Mengizinakn {staff} tetap menggunakan metode manual secara permanen demi menghormati status senioritasnya di asrama.', score: 2 },
       { text: 'Mengusulkan kepada pimpinan sekolah untuk memutasi {staff} ke bagian lain yang tidak memerlukan penggunaan sistem digital.', score: 1 }
     ],
     explanation: 'Pendekatan mentoring personal memberikan rasa aman psikologis bagi staf senior untuk belajar menguasai teknologi baru tanpa merasa dihakimi, mempercepat adopsi inovasi digital secara inklusif.',
@@ -231,7 +232,7 @@ const SOCIAL_TEMPLATES = [
     explanation: 'Mengajarkan kolaboratif adaptif mendidik siswa mayoritas berempati nyata dan merancang solusi inklusif, sementara {student} tetap merasa berdaya sebagai bagian dari komunitas.',
     competency: 'Pemberdayaan Disabilitas, Pendidikan Inklusif, dan Penanaman Nilai Kemanusiaan.',
     berakhlak: 'Harmonis (Menghargai Perbedaan) & Berorientasi Pelayanan (Inklusif)',
-    psychologyBasis: 'Social Exchange Theory dan Inclusive Pedagogical Framework.',
+    psychologyBasis: 'Social Exchange Theory and Inclusive Pedagogical Framework.',
     catTips: 'Pilih jawaban yang mendorong adaptasi aktivitas agar semua pihak dapat terlibat aktif, bukan mengisolasi anak berkebutuhan khusus.'
   }
 ];
@@ -258,7 +259,7 @@ const INTERVIEW_TEMPLATES = [
     text: 'Dalam wawancara seleksi, Anda ditanya: "Jika terjadi situasi darurat di mana beberapa siswa di asrama {dorm} mengalami keracunan makanan pada malam hari raya besar keagamaan di saat Anda sedang libur nasional bersama keluarga besar, dan pimpinan asrama meminta Anda segera datang siaga ke asrama karena keterbatasan personel. Sikap Anda adalah..."',
     options: [
       { text: 'Merespons panggilan darurat tersebut dengan penuh tanggung jawab, segera berangkat ke asrama untuk menyelamatkan siswa, serta mengomunikasikan penundaan acara keluarga secara persuasif.', score: 5 },
-      { text: 'Menghubungi rekan kerja terdekat yang tidak merayakan hari raya keagamaan tersebut untuk menggantikan posisi Anda bertugas di asrama.', score: 4 },
+      { text: 'Menhubungi rekan kerja terdekat yang tidak merayakan hari raya keagamaan tersebut untuk menggantikan posisi Anda bertugas di asrama.', score: 4 },
       { text: 'Menerima tugas tersebut namun meminta pimpinan asrama untuk menyediakan kendaraan antar-jemput dan kompensasi lembur ganda terlebih dahulu.', score: 3 },
       { text: 'Menolak panggilan darurat tersebut secara sopan dengan alasan hak libur nasional bersama keluarga sudah dilindungi oleh aturan ketenagakerjaan.', score: 2 },
       { text: 'Mematikan telepon genggam Anda selama liburan keluarga agar tidak terganggu oleh urusan kedaruratan pekerjaan asrama.', score: 1 }
@@ -271,61 +272,97 @@ const INTERVIEW_TEMPLATES = [
   }
 ];
 
-function generateOptions(category, student, problem) {
-  if (category === 'teknis') {
-    return [
-      { text: `Memanggil ${student} secara khusus untuk dialog konseling dua arah secara empatik guna menggali akar masalahnya, lalu bersama seluruh anggota kamar merancang sistem peer support (dukungan bergantian) untuk menyeimbangkan empati dan kedisiplinan bersama.`, score: 5 },
-      { text: `Menjadwalkan sesi bimbingan psikologis berkala bagi ${student} untuk menguatkan kemandiriannya, serta berkoordinasi dengan wali kelas dan orang tuanya agar proses pembinaan karakter di asrama selaras.`, score: 4 },
-      { text: `Mengadakan pertemuan tertutup dengan seluruh penghuni kamar untuk menegaskan aturan tata tertib asrama secara tegas, memberikan teguran formal kepada ${student}, serta mencatat poin kedisiplinan secara administratif.`, score: 3 },
-      { text: `Menginstruksikan ketua kamar untuk memberikan pengawasan ketat terhadap kegiatan harian ${student} serta menegurnya secara langsung saat terjadi keterlambatan atau pelanggaran demi menjaga wibawa tata tertib.`, score: 2 },
-      { text: `Memindahkan ${student} ke kamar lain atau kamar khusus isolasi agar tidak memicu gesekan sosial lanjutan di dalam kamar lamanya dan membiarkannya mandiri menyelesaikan masalah pribadinya.`, score: 1 }
-    ];
-  } else if (category === 'manajerial') {
-    return [
-      { text: `Mengadakan forum dialog terstruktur bersama seluruh staf piket, merumuskan kembali jadwal dan pembagian tugas secara partisipatif (RACI Matrix), menetapkan indikator kinerja (KPI) transparan, dan melakukan evaluasi realtime.`, score: 5 },
-      { text: `Menyusun panduan tata laksana piket yang baru, mengedarkan surat edaran instruksi tertulis wajib bagi seluruh staf asrama, serta mewajibkan pengumpulan laporan mingguan secara tepat waktu.`, score: 4 },
-      { text: `Mengajukan teguran resmi dan usulan sanksi pemotongan tunjangan kinerja bagi staf yang lalai atau tidak patuh kepada pimpinan komite sekolah rakyat agar disiplin kerja tegak.`, score: 3 },
-      { text: `Mengambil alih seluruh koordinasi tugas piket malam secara mandiri untuk sementara waktu demi menjamin operasional asrama tidak terganggu sambil mencari staf pengganti dari luar.`, score: 2 },
-      { text: `Membiarkan alur kerja berjalan sesuai kebiasaan lama sambil menunggu staf beradaptasi secara natural seiring bertambahnya pengalaman kerja mereka di asrama.`, score: 1 }
-    ];
-  } else if (category === 'sosial') {
-    return [
-      { text: `Merancang proyek kolaboratif kreatif (seperti pertunjukan drama kebangsaan lintas budaya) yang mengharuskan seluruh siswa terlibat aktif bekerja sama, dipadukan dengan sesi refleksi toleransi berkala.`, score: 5 },
-      { text: `Mengadakan forum mediasi khusus antara kelompok siswa yang terlibat, memberikan arahan persuasif tentang pentingnya persatuan nasional, dan membimbing mereka untuk saling meminta maaf secara tertulis.`, score: 4 },
-      { text: `Menetapkan kebijakan resmi asrama yang melarang segala bentuk pembahasan adat, budaya, suku, atau agama di area publik asrama demi menjaga perdamaian dan stabilitas keamanan.`, score: 3 },
-      { text: `Melakukan rotasi atau pemindahan penempatan kamar siswa secara acak untuk memecah konsentrasi kelompok eksklusif tersebut tanpa perlu mengintervensi dinamika hubungan mereka secara mendalam.`, score: 2 },
-      { text: `Menyerahkan sepenuhnya wewenang penyelesaian friksi sosial tersebut kepada pengurus organisasi siswa asrama agar mereka belajar mandiri menyelesaikan masalah konflik sosial.`, score: 1 }
-    ];
-  } else {
-    return [
-      { text: `Menolak keterlibatan tersebut secara tegas, mengingatkan rekan sejawat akan sumpah jabatan dan nilai integritas Core Values ASN BerAKHLAK, serta melaporkannya secara resmi kepada pimpinan disertai bukti objektif.`, score: 5 },
-      { text: `Mengajak rekan sejawat berdiskusi secara personal, memberikan nasihat persuasif mengenai konsekuensi hukum dan moral dari tindakan tersebut, serta memintanya menghentikan pelanggaran tersebut secara sukarela.`, score: 4 },
-      { text: `Memilih bersikap netral dengan menolak tawaran tersebut demi keselamatan karir pribadi, namun tidak melaporkan temuan tersebut kepada pimpinan untuk menjaga solidaritas kerja.`, score: 3 },
-      { text: `Menceritakan kejadian tersebut kepada rekan kerja lainnya atau pengurus komite sekolah secara informal agar menjadi bahan evaluasi sosial tidak resmi di lingkungan kerja.`, score: 2 },
-      { text: `Menerima hal tersebut secara kompromistis dengan syarat hasil kontribusi tersebut dialokasikan sepenuhnya untuk peningkatan fasilitas umum asrama siswa yang membutuhkan bantuan finansial.`, score: 1 }
-    ];
-  }
-}
-function generateDaily(dateStr) {
+function generateProceduralForDate(dateStr) {
   const result = [];
-  const rand = getSeededRandom(dateStr);
-
-      { key: 'B', text: 'Menetapkan tema festival secara mandiri dari pihak pengelola asrama untuk menjaga netralitas dan kedamaian di antara kelompok siswa.', score: 2 },
-      { key: 'C', text: 'Memberikan waktu tambahan bagi setiap kelompok untuk berlatih secara terpisah demi menampilkan performa terbaik mereka masing-masing.', score: 3 },
-      { key: 'D', text: 'Mengundang tokoh budayawan nasional untuk memberikan ceramah intensif mengenai indahnya keberagaman dan persatuan bangsa kepada seluruh siswa.', score: 4 },
-      { key: 'E', text: 'Menyediakan panggung yang sama luas dan durasi yang sama persis bagi setiap daerah agar asas keadilan terpenuhi secara nyata.', score: 1 }
+  
+  // Basic reference questions
+  const ref1 = {
+    dateStr,
+    number: 1,
+    category: 'teknis',
+    topic: 'Homesick & Peer Support',
+    questionText: '[SKB CAT BKN Wali Asrama] Sebagai Wali Asrama Sekolah Rakyat di asrama Ahmad Dahlan, Anda mendapati bahwa Danis di Kamar 101 sering terlambat mengikuti apel pagi karena ia kerap terjaga hingga larut malam demi menemani dan menenangkan teman sekamarnya yang sedang mengalami kecemasan hebat akibat rindu rumah (homesick). Di sisi lain, anggota kamar yang lain mulai merasa kurang nyaman karena poin kedisiplinan kamar mereka menurun akibat keterlambatan Danis yang berulang. Langkah pembinaan karakter dan penataan operasional yang paling bijaksana untuk menyelesaikan dinamika tersebut adalah...',
+    options: [
+      { key: 'A', text: 'Memfasilitasi diskusi kamar untuk mengapresiasi empati Danis, sekaligus merancang bersama sistem dukungan bergantian (peer-support) bagi siswa yang cemas agar tanggung jawab kepedulian dipikul bersama.', score: 5 },
+      { key: 'B', text: 'Menjadwalkan sesi konseling personal bagi Danis dan siswa yang cemas tersebut guna menguatkan ketahanan mental serta kemandirian mereka selama di asrama.', score: 4 },
+      { key: 'C', text: 'Mengadakan kelas manajemen waktu dan regulasi emosi bagi seluruh penghuni asrama agar setiap individu mampu menyeimbangkan empati dan kedisiplinan.', score: 3 },
+      { key: 'D', text: 'Memberikan penghargaan kepada kamar lain yang selalu tepat waktu agar menjadi contoh nyata bagi Danis dan teman kamarnya untuk memperbaiki manajemen waktu.', score: 2 },
+      { key: 'E', text: 'Melakukan pemindahan Danis ke kamar khusus yang diisi oleh para pengurus asrama agar ia mendapatkan bimbingan intensif mengenai pembagian skala prioritas.', score: 1 }
     ],
     correctAnswer: 'A',
-    explanation: 'Pilihan A adalah GFM dari integrasi nasional dan kebinekaan global. Di Sekolah Rakyat yang mengusung nilai persatuan, kompetisi kedaerahan yang berlebihan harus diubah menjadi kolaborasi yang harmonis. Melalui drama musikal kolaboratif yang menggabungkan kisah Sumatera, Jawa, dan Indonesia Timur, siswa didorong untuk bekerja sama secara erat, mempelajari budaya rekan mereka, dan menyadari bahwa keindahan sejati Indonesia terletak pada perpaduan budaya tersebut (Bhineka Tunggal Ika), bukan keunggulan satu daerah atas daerah lain.',
-    competency: 'Keberagaman (Diversity), Inklusivitas, dan Kerja Sama (Collaboration).',
-    berakhlak: 'Harmonis & Kolaboratif',
-    psychologyBasis: 'Contact Hypothesis (Allport) yang menyatakan bahwa prasangka dan konflik antar-kelompok dapat direduksi melalui kerja sama yang setara demi mencapai tujuan bersama.',
-    catTips: 'Pilih solusi yang melebur perbedaan menjadi satu karya kolaboratif bersama (integrasi), bukan membagi panggung secara terpisah (segregasi) sekalipun terlihat adil.',
+    explanation: 'Melibatkan seluruh anggota kamar dalam sistem peer-support membantu membagi beban kepedulian, memulihkan kedisiplinan kamar, dan menanamkan nilai gotong royong tanpa mengorbankan kesejahteraan mental siswa yang sedang cemas.',
+    competency: 'SOP Asrama, Resolusi Konflik, dan Karakter Kebangsaan (Gotong Royong).',
+    berakhlak: 'Harmonis (Saling Peduli) & Kolaboratif (Kerjasama Sinergis)',
+    psychologyBasis: 'Social Support Theory dan Peer-Assisted Learning/Support Systems.',
+    catTips: 'Pilih opsi yang memberdayakan ekosistem asrama untuk menyelesaikan masalah secara bersama-sama, bukan sekadar menerapkan sanksi reaktif.'
+  };
+
+  const ref2 = {
     dateStr,
-    number: 116
+    number: 2,
+    category: 'teknis',
+    topic: 'Disiplin & Kontribusi Sosial',
+    questionText: '[SKB CAT BKN Wali Asrama] Pada saat kegiatan kerja bakti berkala membersihkan lingkungan asrama Sudirman, Anda melihat Galih sedang membaca buku di sudut gazebo yang tenang. Ketika Anda mendekatinya, Galih menjelaskan dengan sangat sopan bahwa ia ingin memaksimalkan waktu luangnya untuk mempersiapkan diri menghadapi kompetisi sains tingkat nasional yang akan berlangsung minggu depan. Teman-teman sebayanya mulai menggerutu, namun mereka tetap melanjutkan pekerjaan mereka. Tindakan pembinaan yang paling tepat untuk mengarahkan perilaku Galih adalah...',
+    options: [
+      { key: 'A', text: 'Mengajak Galih berdialog mengenai esensi keseimbangan antara prestasi akademis and kontribusi sosial, lalu membimbingnya meluangkan waktu sejenak untuk membantu teman-temannya.', score: 5 },
+      { key: 'B', text: 'Mengarahkan Galih untuk mengganti kontribusi fisiknya dengan membuat rangkuman materi pelajaran yang bermanfaat bagi seluruh penghuni asrama.', score: 4 },
+      { key: 'C', text: 'Memfasilitasi forum musyawarah asrama untuk merumuskan dispensasi khusus yang legal bagi siswa yang sedang bersiap menghadapi kompetisi penting.', score: 3 },
+      { key: 'D', text: 'Meminta Galih untuk memimpin doa dan memberikan evaluasi di akhir kegiatan kerja bakti sebagai wujud kontribusi kepemimpinan bagi asrama.', score: 2 },
+      { key: 'E', text: 'Memberikan apresiasi atas kegigihan belajar Galih di depan umum, serta memotivasi siswa lain untuk meniru semangat belajarnya di waktu yang tepat.', score: 1 }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Mengajak Galih berdialog membantu membangun kesadaran moral mengenai pentingnya menyeimbangkan prestasi akademik individu dengan tanggung jawab sosial kemasyarakatan di asrama.',
+    competency: 'Budaya Sekolah, Pembinaan Karakter Disiplin, dan Manajemen Konflik.',
+    berakhlak: 'Harmonis (Kedamaian Komunitas) & Akuntabel (Tanggung Jawab Sosial)',
+    psychologyBasis: 'Teori perkembangan moral Kohlberg pada tahap pasca-konvensional (kontrak sosial).',
+    catTips: 'Pilih opsi yang mendidik karakter siswa secara personal melalui dialog dua arah, bukan hukuman langsung atau dispensasi yang merusak kebersamaan kelompok.'
+  };
+
+  const ref3 = {
+    dateStr,
+    number: 3,
+    category: 'teknis',
+    topic: 'Kepemimpinan & Gaya Komunikasi',
+    questionText: '[SKB CAT BKN Wali Asrama] Panji adalah seorang ketua organisasi siswa di asrama Ahmad Dahlan yang dikenal sangat disiplin. Namun, Anda memperhatikan bahwa dalam beberapa minggu terakhir, Panji cenderung menggunakan intonasi suara yang tinggi dan instruksi yang kaku saat menegakkan tata krama makan di aula asrama kepada para siswa junior. Meskipun para junior patuh, suasana makan menjadi tegang. Rekan sesama pengurus menyatakan bahwa metode Panji efektif untuk menjaga keteraturan. Sikap Anda sebagai Wali Asrama untuk membina karakter kepemimpinan Panji adalah...',
+    options: [
+      { key: 'A', text: 'Membimbing Panji melalui bimbingan personal mengenai konsep kepemimpinan yang mengayomi, serta mengajaknya merancang metode penegakan tata krama berbasis keteladanan bersama.', score: 5 },
+      { key: 'B', text: 'Memberikan pujian kepada Panji atas kedisiplinannya, disertai saran tertulis mengenai variasi metode penegakan aturan yang lebih persuasif.', score: 4 },
+      { key: 'C', text: 'Mengadakan pelatihan etika komunikasi publik bagi seluruh pengurus asrama guna meningkatkan kompetensi berbicara mereka.', score: 3 },
+      { key: 'D', text: 'Melakukan rotasi berkala posisi pengurus asrama agar terjadi penyegaran gaya komunikasi di lingkungan ruang makan.', score: 2 },
+      { key: 'E', text: 'Menghadiri setiap sesi makan malam secara langsung untuk memberikan teladan nyata mengenai cara menegur yang ramah dan menyejukkan.', score: 1 }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Bimbingan personal (coaching) mengajarkan konsep servant leadership kepada Panji, membantunya menyadari bahwa kepatuhan sejati lahir dari rasa hormat dan teladan, bukan intimidasi.',
+    competency: 'Kepemimpinan (Leadership), Etika Komunikasi, dan Pembinaan Karakter.',
+    berakhlak: 'Berorientasi Pelayanan (Pengayoman) & Harmonis (Kenyamanan Bersama)',
+    psychologyBasis: 'Servant Leadership Theory (Greenleaf) dan Transformational Leadership.',
+    catTips: 'Carilah opsi yang memberikan bimbingan langsung (coaching) kepada pelaku agar terjadi perubahan metode dari kaku menjadi persuasif.'
+  };
+
+  const ref4 = {
+    dateStr,
+    number: 116,
+    category: 'sosial',
+    topic: 'Toleransi & Integrasi Budaya Siswa',
+    questionText: '[SKB CAT BKN Wali Asrama] Di ruang makan asrama Ahmad Dahlan Sekolah Rakyat, Anda memperhatikan adanya pengelompokan meja makan yang eksklusif berdasarkan asal daerah asal siswa. Kelompok siswa asal Sumatera, Jawa, dan Sulawesi enggan berbaur. Terkadang terdengar ejekan bernada stereotip daerah yang memicu ketegangan kecil saat makan malam. Langkah Anda selaku Wali Asrama untuk menyatukan perbedaan kultural tersebut adalah...',
+    options: [
+      { key: 'A', text: 'Merancang proyek pertunjukan drama musikal cerita rakyat nusantara kolaboratif yang mengharuskan pencampuran anggota kelompok daerah, didampingi diskusi kebangsaan berkala.', score: 5 },
+      { key: 'B', text: 'Mengatur posisi duduk siswa secara paksa di ruang makan dengan mencantumkan nama daerah asal pada label meja makan mereka.', score: 4 },
+      { key: 'C', text: 'Mengadakan forum evaluasi umum asrama untuk melarang segala bentuk diskusi kedaerahan di lingkungan ruang makan asrama.', score: 3 },
+      { key: 'D', text: 'Mengundang budayawan lokal untuk memberikan ceramah intensif mengenai indahnya Bhinneka Tunggal Ika kepada seluruh siswa.', score: 2 },
+      { key: 'E', text: 'Membiarkan situasi tersebut karena menganggap pengelompokan berdasarkan daerah asal adalah hak kenyamanan masing-masing siswa.', score: 1 }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Drama kolaboratif memaksa siswa berinteraksi secara erat dan setara demi mencapai tujuan bersama, secara efektif meruntuhkan prasangka kultural (Contact Hypothesis).',
+    competency: 'Manajemen Keragaman Budaya, Penanaman Karakter Kultural, dan Perekat Bangsa.',
+    berakhlak: 'Harmonis (Saling Menghargai) & Kolaboratif (Kerjasama Sinergis)',
+    psychologyBasis: 'Allport\'s Contact Hypothesis (Prasangka runtuh melalui kerja sama setara dalam tujuan yang disepakati).',
+    catTips: 'Pilih jawaban yang melebur perbedaan melalui wadah kolaborasi aktif bersama, bukan asimilasi paksa.'
   };
 
   const ref5 = {
+    dateStr,
+    number: 136,
     category: 'wawancara',
     topic: 'Integritas',
     questionText: '[SKB CAT BKN Wali Asrama] Satria menemukan sebuah dompet berisi uang tunai dalam jumlah cukup besar di koridor asrama. Berdasarkan kartu identitas di dalamnya, dompet tersebut milik salah satu petugas kebersihan dapur asrama yang dikenal sedang kesulitan membiayai sekolah anaknya. Satria mengamankan dompet tersebut di lemarinya dan bermaksud mengembalikannya saat area dapur sepi karena ia merasa canggung. Di sisi lain, petugas kebersihan tersebut tampak sangat panik dan menangis di ruang utama. Tindakan Wali Asrama yang paling edukatif adalah...',
@@ -341,17 +378,14 @@ function generateDaily(dateStr) {
     competency: 'Integritas (Integrity), Empati (Empathy), dan Pengambilan Keputusan (Decision Making).',
     berakhlak: 'Akuntabel & Harmonis',
     psychologyBasis: 'Perspective-Taking Theory (Teori Pengambilan Perspektif) dan teori perkembangan sosial-emosional, di mana anak dilatih merasakan kecemasan orang lain dan bertindak proaktif untuk meringankannya.',
-    catTips: 'Pilihlah opsi yang menggabungkan aspek kejujuran formal dengan pendidikan karakter empati dan tindakan nyata langsung kepada pihak yang membutuhkan bantuan.',
-    dateStr,
-    number: 136
+    catTips: 'Pilihlah opsi yang menggabungkan aspek kejujuran formal dengan pendidikan karakter empati dan tindakan nyata langsung kepada pihak yang membutuhkan bantuan.'
   };
 
-  // 1. Technical: 90 Questions
   result.push(ref1, ref2, ref3);
+
+  // Teknis: 4-90
   for (let num = 4; num <= 90; num++) {
-    const qRand = getSeededRandom(`${dateStr}-teknis-high-${num}`);
-    const baseTemplate = TEKNIS_TEMPLATES[(num + dateStr.charCodeAt(0)) % TEKNIS_TEMPLATES.length];
-    
+    const baseTemplate = TEKNIS_TEMPLATES[num % TEKNIS_TEMPLATES.length];
     const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
     const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
     const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
@@ -364,13 +398,11 @@ function generateDaily(dateStr) {
       .replace(/{staff}/g, staff);
 
     const keys = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.map((opt, oIdx) => {
-      return {
-        key: keys[oIdx],
-        text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
-        score: opt.score
-      };
-    });
+    const formattedOptions = baseTemplate.options.map((opt, oIdx) => ({
+      key: keys[oIdx],
+      text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
+      score: opt.score
+    }));
 
     result.push({
       dateStr,
@@ -379,7 +411,7 @@ function generateDaily(dateStr) {
       topic: baseTemplate.topic,
       questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
       options: formattedOptions,
-      correctAnswer: 'A',
+      correctAnswer: keys[baseTemplate.options.findIndex(o => o.score === 5)],
       explanation: baseTemplate.explanation.replace(/{student}/g, student).replace(/{dorm}/g, dorm),
       competency: baseTemplate.competency,
       berakhlak: baseTemplate.berakhlak,
@@ -388,11 +420,9 @@ function generateDaily(dateStr) {
     });
   }
 
-  // 2. Managerial: 25 Questions
+  // Manajerial: 91-115
   for (let num = 91; num <= 115; num++) {
-    const qRand = getSeededRandom(`${dateStr}-manajerial-high-${num}`);
-    const baseTemplate = MANAGERIAL_TEMPLATES[(num + dateStr.charCodeAt(0)) % MANAGERIAL_TEMPLATES.length];
-    
+    const baseTemplate = MANAGERIAL_TEMPLATES[num % MANAGERIAL_TEMPLATES.length];
     const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
     const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
     const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
@@ -405,13 +435,11 @@ function generateDaily(dateStr) {
       .replace(/{staff}/g, staff);
 
     const keys = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.map((opt, oIdx) => {
-      return {
-        key: keys[oIdx],
-        text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
-        score: opt.score
-      };
-    });
+    const formattedOptions = baseTemplate.options.map((opt, oIdx) => ({
+      key: keys[oIdx],
+      text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
+      score: opt.score
+    }));
 
     result.push({
       dateStr,
@@ -420,7 +448,7 @@ function generateDaily(dateStr) {
       topic: baseTemplate.topic,
       questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
       options: formattedOptions,
-      correctAnswer: 'A',
+      correctAnswer: keys[baseTemplate.options.findIndex(o => o.score === 5)],
       explanation: baseTemplate.explanation.replace(/{staff}/g, staff).replace(/{dorm}/g, dorm),
       competency: baseTemplate.competency,
       berakhlak: baseTemplate.berakhlak,
@@ -429,12 +457,10 @@ function generateDaily(dateStr) {
     });
   }
 
-  // 3. Sosial: 20 Questions
+  // Sosial: 116-135
   result.push(ref4);
   for (let num = 117; num <= 135; num++) {
-    const qRand = getSeededRandom(`${dateStr}-sosial-high-${num}`);
-    const baseTemplate = SOCIAL_TEMPLATES[(num + dateStr.charCodeAt(0)) % SOCIAL_TEMPLATES.length];
-    
+    const baseTemplate = SOCIAL_TEMPLATES[num % SOCIAL_TEMPLATES.length];
     const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
     const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
     const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
@@ -447,13 +473,11 @@ function generateDaily(dateStr) {
       .replace(/{staff}/g, staff);
 
     const keys = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.map((opt, oIdx) => {
-      return {
-        key: keys[oIdx],
-        text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
-        score: opt.score
-      };
-    });
+    const formattedOptions = baseTemplate.options.map((opt, oIdx) => ({
+      key: keys[oIdx],
+      text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
+      score: opt.score
+    }));
 
     result.push({
       dateStr,
@@ -462,7 +486,7 @@ function generateDaily(dateStr) {
       topic: baseTemplate.topic,
       questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
       options: formattedOptions,
-      correctAnswer: 'A',
+      correctAnswer: keys[baseTemplate.options.findIndex(o => o.score === 5)],
       explanation: baseTemplate.explanation.replace(/{student}/g, student).replace(/{dorm}/g, dorm),
       competency: baseTemplate.competency,
       berakhlak: baseTemplate.berakhlak,
@@ -471,12 +495,10 @@ function generateDaily(dateStr) {
     });
   }
 
-  // 4. Wawancara: 10 Questions
+  // Wawancara: 136-145
   result.push(ref5);
   for (let num = 137; num <= 145; num++) {
-    const qRand = getSeededRandom(`${dateStr}-wawancara-high-${num}`);
-    const baseTemplate = INTERVIEW_TEMPLATES[(num + dateStr.charCodeAt(0)) % INTERVIEW_TEMPLATES.length];
-    
+    const baseTemplate = INTERVIEW_TEMPLATES[num % INTERVIEW_TEMPLATES.length];
     const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
     const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
     const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
@@ -489,13 +511,11 @@ function generateDaily(dateStr) {
       .replace(/{staff}/g, staff);
 
     const keys = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.map((opt, oIdx) => {
-      return {
-        key: keys[oIdx],
-        text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
-        score: opt.score
-      };
-    });
+    const formattedOptions = baseTemplate.options.map((opt, oIdx) => ({
+      key: keys[oIdx],
+      text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
+      score: opt.score
+    }));
 
     result.push({
       dateStr,
@@ -504,7 +524,7 @@ function generateDaily(dateStr) {
       topic: baseTemplate.topic,
       questionText: `[SKB CAT BKN Wali Asrama] ${questionText}`,
       options: formattedOptions,
-      correctAnswer: 'A',
+      correctAnswer: keys[baseTemplate.options.findIndex(o => o.score === 5)],
       explanation: baseTemplate.explanation.replace(/{staff}/g, staff).replace(/{dorm}/g, dorm),
       competency: baseTemplate.competency,
       berakhlak: baseTemplate.berakhlak,
@@ -516,19 +536,211 @@ function generateDaily(dateStr) {
   return result.sort((a, b) => a.number - b.number);
 }
 
-const today = new Date();
-const dateStrToday = today.toISOString().split('T')[0];
-const questionsToday = generateDaily(dateStrToday);
+function cleanJsonResponse(text) {
+  let cleaned = text.trim();
+  const jsonStart = cleaned.indexOf('```json');
+  if (jsonStart !== -1) {
+    const start = jsonStart + 7;
+    const end = cleaned.lastIndexOf('```');
+    cleaned = cleaned.substring(start, end);
+  } else {
+    const codeStart = cleaned.indexOf('```');
+    if (codeStart !== -1) {
+      const start = codeStart + 3;
+      const end = cleaned.lastIndexOf('```');
+      cleaned = cleaned.substring(start, end);
+    }
+  }
+  return cleaned.trim();
+}
 
-const fileName = `daily_questions_${dateStrToday}.json`;
-const filePath = path.join(__dirname, '..', fileName);
+async function generateQuestionWithAI(category, topic, dateStr, num, baseTemplate) {
+  const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
+  const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
+  const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
+  const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
 
-fs.writeFileSync(filePath, JSON.stringify(questionsToday, null, 2), 'utf-8');
+  const systemInstruction = `Anda adalah sistem pakar pembuat soal Situational Judgment Test (SJT) CAT BKN untuk posisi Wali Asrama Sekolah Rakyat.
+Tugas Anda adalah memodifikasi dan mengembangkan draf soal yang diberikan menjadi kasus yang sangat panjang (100-150 kata), realistis, mendalam, dan menggunakan nama siswa/staf Indonesia.
+Aturan:
+1. Soal harus ditulis dalam Bahasa Indonesia yang baik dan profesional.
+2. Skenario harus spesifik mengenai kehidupan asrama (homesick, bullying, toleransi, integritas, gratifikasi, dll.).
+3. Berikan 5 opsi pilihan (A, B, C, D, E). Salah satu opsi harus memiliki nilai bobot nilai SJT = 5 (tindakan terbaik, bijaksana, komunikatif/dialog, atau berintegritas tinggi). Opsi lainnya diberi bobot nilai 1, 2, 3, dan 4 secara proporsional.
+4. Output harus berupa objek JSON valid tanpa penjelasan tambahan di luar JSON.`;
 
-console.log(`\n======================================================`);
-console.log(`🎉 SUKSES GENERATE SET UJIAN HARIAN (145 SOAL) VIA CLI!`);
-console.log(`Tanggal: ${dateStrToday}`);
-console.log(`Jumlah Soal: ${questionsToday.length} Butir`);
-console.log(`Lokasi File: ${filePath}`);
-console.log(`Silakan unggah berkas ini melalui tombol "Impor JSON" di Admin Panel.`);
-console.log(`======================================================\n`);
+  const prompt = `Buatlah 1 soal ujian CAT BKN kategori "${category}" bertema "${topic}" untuk tanggal "${dateStr}" nomor soal ${num}.
+Berikut draf acuan kasus sebagai inspirasi:
+"${baseTemplate.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff)}"
+
+Pilihan Jawaban Acuan:
+${baseTemplate.options.map(o => `- [Skor ${o.score}]: ${o.text}`).join('\n')}
+
+Silakan kembangkan dan tulis ulang soal tersebut ke dalam format JSON valid berikut:
+{
+  "dateStr": "${dateStr}",
+  "number": ${num},
+  "category": "${category}",
+  "topic": "${topic}",
+  "questionText": "[SKB CAT BKN Wali Asrama] (Tulis kasus hasil pengembangan Anda di sini, minimal 100 kata)",
+  "options": [
+    { "key": "A", "text": "(Pilihan A)", "score": (skor 1-5) },
+    { "key": "B", "text": "(Pilihan B)", "score": (skor 1-5) },
+    { "key": "C", "text": "(Pilihan C)", "score": (skor 1-5) },
+    { "key": "D", "text": "(Pilihan D)", "score": (skor 1-5) },
+    { "key": "E", "text": "(Pilihan E)", "score": (skor 1-5) }
+  ],
+  "correctAnswer": "(Key yang memiliki score 5, misalnya 'B')",
+  "explanation": "(Penjelasan mengapa opsi score 5 paling tepat dan mengapa yang lain kurang tepat, minimal 60 kata)",
+  "competency": "${baseTemplate.competency}",
+  "berakhlak": "${baseTemplate.berakhlak}",
+  "psychologyBasis": "${baseTemplate.psychologyBasis}",
+  "catTips": "${baseTemplate.catTips}"
+}`;
+
+  const tempPath = path.join(__dirname, `temp_prompt_${num}.txt`);
+  fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
+
+  try {
+    try {
+      execSync('agy --version', { stdio: 'ignore' });
+    } catch (e) {
+      throw new Error("CLI 'agy' tidak ditemukan.");
+    }
+
+    const cmd = `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`;
+
+    const output = execSync(cmd, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
+    const cleaned = cleanJsonResponse(output);
+    return JSON.parse(cleaned);
+  } catch (err) {
+    // Procedural Fallback
+    const keys = ['A', 'B', 'C', 'D', 'E'];
+    const formattedOptions = baseTemplate.options.map((opt, oIdx) => ({
+      key: keys[oIdx],
+      text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
+      score: opt.score
+    }));
+    return {
+      dateStr,
+      number: num,
+      category,
+      topic,
+      questionText: `[SKB CAT BKN Wali Asrama] ${baseTemplate.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff)}`,
+      options: formattedOptions,
+      correctAnswer: keys[baseTemplate.options.findIndex(o => o.score === 5)],
+      explanation: baseTemplate.explanation.replace(/{student}/g, student).replace(/{dorm}/g, dorm),
+      competency: baseTemplate.competency,
+      berakhlak: baseTemplate.berakhlak,
+      psychologyBasis: baseTemplate.psychologyBasis,
+      catTips: baseTemplate.catTips
+    };
+  } finally {
+    if (fs.existsSync(tempPath)) {
+      fs.unlinkSync(tempPath);
+    }
+  }
+}
+
+async function mapLimit(array, limit, fn) {
+  const results = [];
+  const executing = [];
+  for (const item of array) {
+    const p = Promise.resolve().then(() => fn(item));
+    results.push(p);
+    if (limit <= array.length) {
+      const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+      executing.push(e);
+      if (executing.length >= limit) {
+        await Promise.race(executing);
+      }
+    }
+  }
+  return Promise.all(results);
+}
+
+async function main() {
+  const args = process.argv.slice(2);
+  let dateStr = new Date().toISOString().split('T')[0];
+  let useAI = true;
+
+  args.forEach(arg => {
+    if (arg.startsWith('--date=')) {
+      dateStr = arg.split('=')[1];
+    } else if (arg === '--local' || arg === '--no-ai') {
+      useAI = false;
+    }
+  });
+
+  console.log(`📅 Men-generate 145 soal untuk tanggal: ${dateStr}`);
+  
+  if (useAI) {
+    // Verify CLI executable presence
+    try {
+      execSync('agy --version', { stdio: 'ignore' });
+      console.log(`🤖 Mode AI Aktif (menggunakan CLI 'agy')...`);
+    } catch (e) {
+      console.log(`⚠️ Peringatan: Tidak ditemukan CLI 'agy'. Beralih ke Mode Lokal.`);
+      useAI = false;
+    }
+  }
+
+  let finalQuestions = [];
+
+  if (!useAI) {
+    console.log(`⚡ Men-generate soal secara lokal (prosedural)...`);
+    finalQuestions = generateProceduralForDate(dateStr);
+  } else {
+    console.log(`🧠 Memulai brainstorming soal CAT BKN Wali Asrama bersama AI Gemini (Secara Paralel)...`);
+    
+    const tasks = [];
+    
+    // Teknis: 1-90
+    for (let num = 1; num <= 90; num++) {
+      tasks.push({ category: 'teknis', num, templates: TEKNIS_TEMPLATES });
+    }
+    // Manajerial: 91-115
+    for (let num = 91; num <= 115; num++) {
+      tasks.push({ category: 'manajerial', num, templates: MANAGERIAL_TEMPLATES });
+    }
+    // Sosial: 116-135
+    for (let num = 116; num <= 135; num++) {
+      tasks.push({ category: 'sosial', num, templates: SOCIAL_TEMPLATES });
+    }
+    // Wawancara: 136-145
+    for (let num = 136; num <= 145; num++) {
+      tasks.push({ category: 'wawancara', num, templates: INTERVIEW_TEMPLATES });
+    }
+
+    const concurrencyLimit = 8;
+    let completedCount = 0;
+    
+    finalQuestions = await mapLimit(tasks, concurrencyLimit, async (task) => {
+      const baseTemplate = task.templates[task.num % task.templates.length];
+      const q = await generateQuestionWithAI(task.category, baseTemplate.topic, dateStr, task.num, baseTemplate);
+      completedCount++;
+      if (completedCount % 5 === 0 || completedCount === 145) {
+        console.log(`📈 Progress: ${completedCount}/145 soal selesai di-brainstorm via agy CLI...`);
+      }
+      return q;
+    });
+  }
+
+  // Sort and write output file
+  finalQuestions.sort((a, b) => a.number - b.number);
+  const fileName = `daily_questions_${dateStr}.json`;
+  const filePath = path.join(__dirname, '..', fileName);
+  fs.writeFileSync(filePath, JSON.stringify(finalQuestions, null, 2), 'utf-8');
+
+  console.log(`\n======================================================`);
+  console.log(`🎉 SUKSES GENERATE SET UJIAN HARIAN (145 SOAL)!`);
+  console.log(`Tanggal: ${dateStr}`);
+  console.log(`Jumlah Soal: ${finalQuestions.length} Butir`);
+  console.log(`Lokasi File: ${filePath}`);
+  console.log(`Silakan unggah berkas ini melalui tombol "Impor JSON" di Admin Panel.`);
+  console.log(`======================================================\n`);
+}
+
+main().catch(err => {
+  console.error("❌ Terjadi kesalahan fatal:", err);
+  process.exit(1);
+});

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { db } from '../lib/db';
-import { Question, ExamMode, ExamSession, ExamHistoryItem } from '../types';
+import { Question, ExamMode, ExamSession, ExamHistoryItem, LeaderboardEntry, CategoryScores } from '../types';
 import { toast } from 'sonner';
 import { supabase, isCloudEnabled } from '../lib/supabase';
 
@@ -479,8 +479,6 @@ export const useExamStore = create<ExamState>((set, get) => ({
       });
     }
 
-    const narrativeReport = `Berdasarkan analisis CAT BKN Sekolah Rakyat, Anda menunjukkan profil psikologi Wali Asrama yang ${isPassed ? 'kompeten dan siap bertugas' : 'masih memerlukan pembinaan intensif'}. Nilai Integritas Anda tercatat sebesar ${integrityScore}%, sedangkan aspek Empati & Pelayanan Sosial mendapat skor ${empathyScore}%. Fokus penguatan sebaiknya diarahkan pada topik: ${weakestAreas.length > 0 ? weakestAreas.join(', ') : 'Pemeliharaan konsistensi nilai'}.`;
-
     const aiAnalysis = {
       psychologyProfile: {
         leadership: leadershipScore,
@@ -493,7 +491,14 @@ export const useExamStore = create<ExamState>((set, get) => ({
         decisionMaking: decisionMakingScore,
         service: serviceScore
       },
-      narrativeReport,
+      narrativeReport: generateDynamicNarrative(
+        isPassed,
+        scores,
+        maxScores,
+        integrityScore,
+        empathyScore,
+        weakestAreas
+      ),
       recommendedTopics
     };
 
@@ -557,6 +562,9 @@ export const useExamStore = create<ExamState>((set, get) => ({
 
       // Trigger achievement check
       await checkAchievements(scores.total, timeSpent, isPassed);
+
+      // Reload leaderboard store
+      await useLeaderboardStore.getState().loadLeaderboard();
     }
 
     set({
@@ -614,3 +622,134 @@ async function checkAchievements(totalScore: number, timeSpent: number, isPassed
     // ignore
   }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// DYNAMIC NARRATIVE GENERATOR
+// ═══════════════════════════════════════════════════════════════
+function generateDynamicNarrative(
+  isPassed: boolean,
+  scores: CategoryScores,
+  maxScores: CategoryScores,
+  integrityScore: number,
+  empathyScore: number,
+  weakestAreas: string[]
+): string {
+  const generalStatus = isPassed
+    ? "menunjukkan kompetensi yang sangat matang dan siap memikul tanggung jawab penuh sebagai Wali Asrama Sekolah Rakyat."
+    : "masih memerlukan bimbingan intensif dan pembenahan pada beberapa aspek kompetensi sebelum dinyatakan siap bertugas.";
+
+  // Integrity assessment
+  let integrityText = "";
+  if (integrityScore >= 85) {
+    integrityText = "Tingkat integritas moral Anda luar biasa tinggi, menunjukkan ketegasan dalam etika dan penolakan gratifikasi.";
+  } else if (integrityScore >= 65) {
+    integrityText = "Integritas Anda berada pada level standar kelayakan, namun Anda harus lebih cermat menghindari benturan kepentingan kecil.";
+  } else {
+    integrityText = "Skor integritas Anda tergolong rendah, menandakan adanya celah kompromi etika dalam situasi krisis di asrama.";
+  }
+
+  // Empathy and Service
+  let socialText = "";
+  if (empathyScore >= 80) {
+    socialText = "Kemampuan sosio-kultural dan empati sosial Anda sangat menonjol, ideal untuk menciptakan iklim asrama yang harmonis dan inklusif.";
+  } else if (empathyScore >= 60) {
+    socialText = "Anda memiliki empati sosial yang cukup, namun perlu lebih aktif merespons dinamika isolasi sosial siswa.";
+  } else {
+    socialText = "Aspek pelayanan sosial Anda memerlukan evaluasi serius karena respons Anda cenderung kaku dan kurang peka terhadap siswa.";
+  }
+
+  // Technical SOP
+  const techRatio = scores.teknis / maxScores.teknis;
+  let techText = "";
+  if (techRatio >= 0.8) {
+    techText = "Pemahaman teknis Anda mengenai tata tertib asrama, bullying, dan SOP keselamatan sangat taktis dan komprehensif.";
+  } else if (techRatio >= 0.6) {
+    techText = "Penguasaan prosedur operasional asrama Anda memadai, tetapi perlu diperkuat pada bagian mitigasi darurat.";
+  } else {
+    techText = "Pemahaman teknis Anda berada di zona kritis. Sangat disarankan untuk meninjau ulang modul asrama dasar.";
+  }
+
+  const weakestText = weakestAreas.length > 0
+    ? `Fokus perbaikan mandiri sebaiknya diprioritaskan pada: ${weakestAreas.join(", ")}.`
+    : "Pertahankan konsistensi performa Anda dengan melatih efisiensi waktu pengerjaan.";
+
+  return `Berdasarkan analisis hasil evaluasi CAT BKN, Anda ${generalStatus} ${integrityText} ${socialText} ${techText} ${weakestText}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LEADERBOARD STORE (DYNAMIC SIMULATION)
+// ═══════════════════════════════════════════════════════════════
+interface LeaderboardState {
+  entries: LeaderboardEntry[];
+  loadLeaderboard: () => Promise<void>;
+  simulateCompetitorActivity: () => Promise<{ name: string; score: number; rankBefore: number; rankAfter: number } | null>;
+}
+
+export const useLeaderboardStore = create<LeaderboardState>((set) => ({
+  entries: [],
+
+  loadLeaderboard: async () => {
+    const data = await db.leaderboard.toArray();
+    const sorted = data.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.timeSpent - b.timeSpent;
+    });
+    const ranked = sorted.map((entry, idx) => ({
+      ...entry,
+      rank: idx + 1
+    }));
+    set({ entries: ranked });
+  },
+
+  simulateCompetitorActivity: async () => {
+    const list = await db.leaderboard.toArray();
+    if (list.length === 0) return null;
+
+    const competitors = list.filter(item => !item.isCurrentUser);
+    if (competitors.length === 0) return null;
+
+    const randomIndex = Math.floor(Math.random() * competitors.length);
+    const chosen = competitors[randomIndex];
+
+    const pointsToAdd = Math.floor(Math.random() * 16) + 5; // add 5 to 20 points
+    const oldScore = chosen.score;
+    const newScore = Math.min(745, oldScore + pointsToAdd);
+
+    if (newScore === oldScore) return null;
+
+    // Simulate slightly faster time too
+    const oldTime = chosen.timeSpent;
+    const newTime = Math.max(3600, oldTime - Math.floor(Math.random() * 200));
+
+    await db.leaderboard.update(chosen.id, { score: newScore, timeSpent: newTime });
+
+    const updatedList = await db.leaderboard.toArray();
+    const sorted = updatedList.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.timeSpent - b.timeSpent;
+    });
+
+    const sortedOld = [...list].sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.timeSpent - b.timeSpent;
+    });
+
+    const rankBefore = sortedOld.findIndex(item => item.id === chosen.id) + 1;
+
+    const ranked = sorted.map((entry, idx) => ({
+      ...entry,
+      rank: idx + 1
+    }));
+
+    const rankAfter = ranked.findIndex(item => item.id === chosen.id) + 1;
+
+    set({ entries: ranked });
+
+    return {
+      name: chosen.name,
+      score: newScore,
+      rankBefore,
+      rankAfter
+    };
+  }
+}));
