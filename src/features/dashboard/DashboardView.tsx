@@ -36,7 +36,7 @@ export function DashboardView() {
   const auth = useAuthStore();
   const { theme, setTheme } = useTheme();
 
-  const isAdmin = auth.isLoggedIn && auth.email?.toLowerCase().includes('admin');
+  const isAdmin = auth.isLoggedIn && auth.email?.toLowerCase() === 'spfindo@gmail.com';
 
   useEffect(() => {
     if (activeTab === 'admin' && !isAdmin) {
