@@ -526,6 +526,8 @@ export const useExamStore = create<ExamState>((set, get) => ({
         if (userData?.user) {
           const { error } = await supabase.from('exam_history').insert({
             user_id: userData.user.id,
+            user_name: authState.name || 'Peserta Ujian',
+            user_instansi: authState.lokasi || authState.instansi || 'Sekolah Rakyat',
             date: historyItem.date,
             mode: historyItem.mode,
             scores: historyItem.scores,
@@ -689,6 +691,64 @@ export const useLeaderboardStore = create<LeaderboardState>((set) => ({
   entries: [],
 
   loadLeaderboard: async () => {
+    const authState = useAuthStore.getState();
+    if (authState.isLoggedIn && authState.isCloudEnabled) {
+      try {
+        const { data: cloudHistory, error } = await supabase
+          .from('exam_history')
+          .select('user_id, user_name, user_instansi, scores, time_spent')
+          .order('percentage', { ascending: false })
+          .limit(200);
+
+        if (error) throw error;
+
+        if (cloudHistory && cloudHistory.length > 0) {
+          const entriesMap: Record<string, LeaderboardEntry> = {};
+
+          cloudHistory.forEach(item => {
+            const uid = item.user_id;
+            const score = item.scores?.total || 0;
+            const timeSpent = item.time_spent || 0;
+            const name = item.user_name || 'Peserta Ujian';
+            const instansi = item.user_instansi || 'Sekolah Rakyat';
+
+            // Keep the highest score for this user
+            if (!entriesMap[uid] || score > entriesMap[uid].score) {
+              entriesMap[uid] = {
+                id: uid,
+                name,
+                instansi,
+                score,
+                timeSpent,
+                rank: 1,
+                isCurrentUser: false
+              };
+            }
+          });
+
+          // Identify the current user's ID
+          const currentUserId = authState.email ? (await supabase.auth.getSession())?.data?.session?.user?.id : null;
+
+          const entriesList = Object.values(entriesMap);
+          const sorted = entriesList.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.timeSpent - b.timeSpent;
+          });
+
+          const ranked = sorted.map((entry, idx) => ({
+            ...entry,
+            rank: idx + 1,
+            isCurrentUser: entry.id === currentUserId
+          }));
+
+          set({ entries: ranked });
+          return;
+        }
+      } catch (err) {
+        console.error('Failed to load cloud leaderboard, using local fallback:', err);
+      }
+    }
+
     const data = await db.leaderboard.toArray();
     const sorted = data.sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;

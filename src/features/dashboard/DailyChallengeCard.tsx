@@ -21,25 +21,31 @@ export function DailyChallengeCard() {
     async function loadDailyChallenge() {
       try {
         let current = await db.dailyChallenges.get(todayStr);
-        
-        if (!current) {
-          // Generate a pseudo-random question based on current date
-          const qCount = await db.questions.count();
-          if (qCount > 0) {
+        let q = null;
+
+        if (current) {
+          q = await db.questions.get(current.questionId);
+        }
+
+        // If not generated yet or the cached question was deleted, regenerate
+        if (!current || !q) {
+          const keys = await db.questions.toCollection().primaryKeys();
+          if (keys.length > 0) {
             const dateNum = new Date().getDate();
-            const qId = (dateNum * 17) % qCount + 1; // consistent for the day
+            const keyIndex = (dateNum * 17) % keys.length;
+            const qId = keys[keyIndex];
             current = {
               dateStr: todayStr,
-              questionId: qId
+              questionId: qId as number
             };
             await db.dailyChallenges.put(current);
+            q = await db.questions.get(qId as number);
           }
         }
 
-        if (current) {
+        if (current && q) {
           setChallenge(current);
-          const q = await db.questions.get(current.questionId);
-          if (q) setQuestion(q);
+          setQuestion(q);
           if (current.answeredOption) {
             setSelectedOption(current.answeredOption);
             setSubmitted(true);
