@@ -854,7 +854,7 @@ async function main() {
       tasks.push({ category: 'wawancara', num, templates: INTERVIEW_TEMPLATES });
     }
 
-    const concurrencyLimit = 8;
+    const concurrencyLimit = 5;
     let completedCount = 0;
     
     finalQuestions = await mapLimit(tasks, concurrencyLimit, async (task) => {

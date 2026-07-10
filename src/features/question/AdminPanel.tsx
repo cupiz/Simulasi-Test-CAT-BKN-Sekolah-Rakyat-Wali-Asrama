@@ -304,9 +304,9 @@ export function AdminPanel() {
 
       if (useAI) {
         log(`📡 Menghubungi API backend lokal untuk memicu CLI agy...`);
-        log(`🧠 Memulai AI Brainstorming 145 Soal secara paralel (Konkurensi: 6)...`);
+        log(`🧠 Memulai AI Brainstorming 145 Soal secara paralel (Konkurensi: 5)...`);
         
-        const concurrencyLimit = 6;
+        const concurrencyLimit = 5;
         let completed = 0;
         
         const runTask = async (q: Question) => {
