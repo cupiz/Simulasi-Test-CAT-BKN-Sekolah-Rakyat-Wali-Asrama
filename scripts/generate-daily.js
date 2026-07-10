@@ -678,7 +678,7 @@ Format JSON output harus persis seperti struktur berikut:
 
   try {
     try {
-      execSync('agy --version', { stdio: 'ignore' });
+      execSync('agy --version', { stdio: 'ignore', shell: 'cmd.exe' });
     } catch (e) {
       throw new Error("CLI 'agy' tidak ditemukan.");
     }
@@ -692,7 +692,7 @@ Format JSON output harus persis seperti struktur berikut:
       try {
         fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
         const cmd = `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`;
-        const output = execSync(cmd, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
+        const output = execSync(cmd, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024, shell: 'cmd.exe' });
         
         const cleaned = cleanJsonResponse(output);
         questionObj = JSON.parse(cleaned);

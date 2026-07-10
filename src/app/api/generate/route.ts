@@ -104,7 +104,10 @@ Format JSON output harus persis seperti struktur berikut:
 
         // Run agy command
         const cmd = `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`;
-        const { stdout } = await execPromise(cmd, { maxBuffer: 15 * 1024 * 1024 });
+        const { stdout } = await execPromise(cmd, { 
+          maxBuffer: 15 * 1024 * 1024,
+          shell: 'cmd.exe'
+        });
 
         // Clean JSON response
         let cleaned = stdout.trim();
