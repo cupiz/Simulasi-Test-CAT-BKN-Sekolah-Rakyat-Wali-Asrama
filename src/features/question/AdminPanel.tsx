@@ -172,10 +172,21 @@ export function AdminPanel() {
   const handleDeleteDateSet = async () => {
     if (!selectedDate) return;
     const count = questions.length;
-    if (confirm(`Hapus seluruh ${count} soal untuk set tanggal ${selectedDate}?`)) {
+    if (confirm(`Hapus seluruh ${count} soal untuk set tanggal ${selectedDate} di LOCAL dan CLOUD Supabase?`)) {
       const ids = questions.map(q => q.id).filter((id): id is number => !!id);
       await db.questions.bulkDelete(ids);
-      toast.success(`Berhasil menghapus ${count} soal untuk tanggal ${selectedDate}`);
+      
+      if (isCloudEnabled) {
+        try {
+          await supabase.from('questions').delete().eq('dateStr', selectedDate);
+          toast.success(`Berhasil menghapus ${count} soal untuk tanggal ${selectedDate} di Local & Supabase Cloud!`);
+        } catch (cloudErr: any) {
+          toast.error(`Gagal menghapus di Supabase Cloud: ${cloudErr.message || cloudErr}`);
+        }
+      } else {
+        toast.success(`Berhasil menghapus ${count} soal untuk tanggal ${selectedDate}`);
+      }
+      
       loadDatesAndQuestions();
     }
   };
@@ -274,6 +285,12 @@ export function AdminPanel() {
         if (existingIds.length > 0) {
           await db.questions.bulkDelete(existingIds);
         }
+        await sleep(600);
+      }
+
+      if (isCloudEnabled) {
+        log(`🧹 Membersihkan data lama untuk tanggal ${inputDate} di database Supabase Cloud...`);
+        await supabase.from('questions').delete().eq('dateStr', inputDate);
         await sleep(600);
       }
 
