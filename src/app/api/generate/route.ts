@@ -92,37 +92,57 @@ Format JSON output harus persis seperti struktur berikut:
   "catTips": "${draftQuestion.catTips || 'Pilih opsi yang paling profesional.'}"
 }`;
 
-    tempPath = path.join(process.cwd(), 'scripts', `temp_prompt_api_${draftQuestion.number}.txt`);
-    fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
+    let attempt = 0;
+    const maxRetries = 4;
+    let lastError: any = null;
+    let questionObj: any = null;
 
-    // Run agy command
-    const cmd = `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`;
-    const { stdout } = await execPromise(cmd, { maxBuffer: 15 * 1024 * 1024 });
+    while (attempt < maxRetries) {
+      try {
+        tempPath = path.join(process.cwd(), 'scripts', `temp_prompt_api_${draftQuestion.number}.txt`);
+        fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
 
-    // Clean up temp file
-    try {
-      if (fs.existsSync(tempPath)) {
-        fs.unlinkSync(tempPath);
-      }
-    } catch (e) {}
+        // Run agy command
+        const cmd = `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`;
+        const { stdout } = await execPromise(cmd, { maxBuffer: 15 * 1024 * 1024 });
 
-    // Clean JSON response
-    let cleaned = stdout.trim();
-    const jsonStart = cleaned.indexOf('```json');
-    if (jsonStart !== -1) {
-      const start = jsonStart + 7;
-      const end = cleaned.lastIndexOf('```');
-      cleaned = cleaned.substring(start, end);
-    } else {
-      const codeStart = cleaned.indexOf('```');
-      if (codeStart !== -1) {
-        const start = codeStart + 3;
-        const end = cleaned.lastIndexOf('```');
-        cleaned = cleaned.substring(start, end);
+        // Clean JSON response
+        let cleaned = stdout.trim();
+        const jsonStart = cleaned.indexOf('```json');
+        if (jsonStart !== -1) {
+          const start = jsonStart + 7;
+          const end = cleaned.lastIndexOf('```');
+          cleaned = cleaned.substring(start, end);
+        } else {
+          const codeStart = cleaned.indexOf('```');
+          if (codeStart !== -1) {
+            const start = codeStart + 3;
+            const end = cleaned.lastIndexOf('```');
+            cleaned = cleaned.substring(start, end);
+          }
+        }
+
+        questionObj = JSON.parse(cleaned.trim());
+        break; // Success
+      } catch (err: any) {
+        attempt++;
+        lastError = err;
+        if (attempt < maxRetries) {
+          const delay = attempt * 3000 + Math.random() * 1000;
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      } finally {
+        try {
+          if (tempPath && fs.existsSync(tempPath)) {
+            fs.unlinkSync(tempPath);
+          }
+        } catch (e) {}
       }
     }
 
-    const questionObj = JSON.parse(cleaned.trim());
+    if (!questionObj) {
+      throw lastError || new Error("Failed to generate question with AI after multiple attempts.");
+    }
 
     // Post-processing to enforce CAT BKN rules strictly
     if (draftQuestion.category === 'teknis') {

@@ -675,7 +675,6 @@ Format JSON output harus persis seperti struktur berikut:
 }`;
 
   const tempPath = path.join(__dirname, `temp_prompt_${num}.txt`);
-  fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
 
   try {
     try {
@@ -684,11 +683,39 @@ Format JSON output harus persis seperti struktur berikut:
       throw new Error("CLI 'agy' tidak ditemukan.");
     }
 
-    const cmd = `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`;
+    let attempt = 0;
+    const maxRetries = 4;
+    let lastError = null;
+    let questionObj = null;
 
-    const output = execSync(cmd, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
-    const cleaned = cleanJsonResponse(output);
-    const questionObj = JSON.parse(cleaned);
+    while (attempt < maxRetries) {
+      try {
+        fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
+        const cmd = `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`;
+        const output = execSync(cmd, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
+        
+        const cleaned = cleanJsonResponse(output);
+        questionObj = JSON.parse(cleaned);
+        break; // Success
+      } catch (err) {
+        attempt++;
+        lastError = err;
+        if (attempt < maxRetries) {
+          const delay = attempt * 3000 + Math.random() * 1000;
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      } finally {
+        if (fs.existsSync(tempPath)) {
+          try {
+            fs.unlinkSync(tempPath);
+          } catch (_) {}
+        }
+      }
+    }
+
+    if (!questionObj) {
+      throw lastError || new Error("Failed to generate question with AI after multiple attempts.");
+    }
 
     // Post-processing to enforce CAT BKN rules strictly
     if (category === 'teknis') {
@@ -737,7 +764,9 @@ Format JSON output harus persis seperti struktur berikut:
     };
   } finally {
     if (fs.existsSync(tempPath)) {
-      fs.unlinkSync(tempPath);
+      try {
+        fs.unlinkSync(tempPath);
+      } catch (_) {}
     }
   }
 }
