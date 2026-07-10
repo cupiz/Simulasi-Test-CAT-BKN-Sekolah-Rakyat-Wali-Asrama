@@ -533,7 +533,40 @@ function generateProceduralForDate(dateStr) {
     });
   }
 
-  return result.sort((a, b) => a.number - b.number);
+  return result.map(q => {
+    const optionCount = (q.category === 'manajerial' || q.category === 'wawancara') ? 4 : 5;
+    const maxScore = (q.category === 'manajerial' || q.category === 'wawancara') ? 4 : 5;
+    const keys = ['A', 'B', 'C', 'D', 'E'].slice(0, optionCount);
+    
+    let baseOptions = q.options;
+    if (q.category === 'manajerial' || q.category === 'wawancara') {
+      baseOptions = baseOptions.filter(o => o.score !== 1);
+    }
+    baseOptions = baseOptions.slice(0, optionCount);
+
+    const formattedOptions = baseOptions.map((o, idx) => {
+      let score = o.score;
+      if (q.category === 'teknis') {
+        score = o.score === 5 ? 5 : 0;
+      } else if (q.category === 'manajerial' || q.category === 'wawancara') {
+        score = o.score === 5 ? 4 : o.score === 4 ? 3 : o.score === 3 ? 2 : 1;
+      }
+      return {
+        key: keys[idx],
+        text: o.text,
+        score: score
+      };
+    });
+
+    const correctOpt = formattedOptions.find(o => o.score === maxScore);
+    const correctAnswer = correctOpt ? correctOpt.key : 'A';
+
+    return {
+      ...q,
+      options: formattedOptions,
+      correctAnswer
+    };
+  }).sort((a, b) => a.number - b.number);
 }
 
 function cleanJsonResponse(text) {
@@ -560,41 +593,85 @@ async function generateQuestionWithAI(category, topic, dateStr, num, baseTemplat
   const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
   const staff = STAFF_NAMES[(num + dateStr.charCodeAt(0)) % STAFF_NAMES.length];
 
-  const systemInstruction = `Anda adalah sistem pakar pembuat soal Situational Judgment Test (SJT) CAT BKN untuk posisi Wali Asrama Sekolah Rakyat.
-Tugas Anda adalah memodifikasi dan mengembangkan draf soal yang diberikan menjadi kasus yang sangat panjang (100-150 kata), realistis, mendalam, dan menggunakan nama siswa/staf Indonesia.
-Aturan:
-1. Soal harus ditulis dalam Bahasa Indonesia yang baik dan profesional.
-2. Skenario harus spesifik mengenai kehidupan asrama (homesick, bullying, toleransi, integritas, gratifikasi, dll.).
-3. Berikan 5 opsi pilihan (A, B, C, D, E). Salah satu opsi harus memiliki nilai bobot nilai SJT = 5 (tindakan terbaik, bijaksana, komunikatif/dialog, atau berintegritas tinggi). Opsi lainnya diberi bobot nilai 1, 2, 3, dan 4 secara proporsional.
-4. Output harus berupa objek JSON valid tanpa penjelasan tambahan di luar JSON.`;
+  const optionCount = (category === 'manajerial' || category === 'wawancara') ? 4 : 5;
+  const maxScore = (category === 'manajerial' || category === 'wawancara') ? 4 : 5;
+  const optionsKeys = ['A', 'B', 'C', 'D', 'E'].slice(0, optionCount);
 
-  const prompt = `Buatlah 1 soal ujian CAT BKN kategori "${category}" bertema "${topic}" untuk tanggal "${dateStr}" nomor soal ${num}.
-Berikut draf acuan kasus sebagai inspirasi:
+  const systemInstruction = `Anda adalah AI Master Question Designer untuk ujian CAT BKN (Computer Assisted Test Badan Kepegawaian Negara) khusus formasi PPPK Tenaga Kependidikan - Wali Asrama Sekolah Rakyat.
+Sekolah Rakyat adalah sekolah berasrama yang berfokus pada pembinaan karakter siswa prasejahtera, sehingga peran Wali Asrama menggabungkan fungsi penegakan SOP, pembinaan karakter positif, konseling psikologis, dan perekat keberagaman sosial-budaya (in loco parentis).
+
+Tugas Anda adalah memodifikasi dan mengembangkan draf soal yang diberikan menjadi studi kasus berkualitas tinggi, panjang (150-250 kata), realistis, mendalam, dilematis, serta memiliki bobot pilihan jawaban dan analisis teori yang komprehensif.
+
+KISI-KISI KOMPETENSI RESMI WALI ASRAMA (BKN 2026):
+Setiap soal harus menguji salah satu dari 6 kompetensi resmi berikut:
+1. Kemampuan melakukan pembinaan karakter dan kedisiplinan.
+2. Kemampuan mengelola pengawasan harian Peserta didik dalam kegiatan activity daily living (ADL - makan, mandi, belajar, ibadah, tidur).
+3. Kemampuan mengorganisir kegiatan di luar jam pelajaran sekolah (ekstrakurikuler, piket, gotong royong).
+4. Kemampuan mediasi dan penyelesaian konflik antar Peserta didik (peer conflict).
+5. Kemampuan komunikasi efektif (persuasif, asertif, konseling empati).
+6. Kemampuan berperilaku baik dan positif sehingga menjadi panutan (role model) Peserta didik.
+
+STANDAR REGULASI OPERASIONAL Boarding School:
+Setiap pemecahan kasus harus berlandaskan kerangka hukum:
+- Permendikbudristek No. 46 Tahun 2023 (PPKSP) tentang Pencegahan & Penanganan Kekerasan di Satuan Pendidikan.
+- PMA No. 30 Tahun 2022 tentang Pencegahan & Penanganan Kekerasan Seksual di satuan pendidikan berasrama.
+- UU RI No. 35 Tahun 2014 tentang Perlindungan Anak (jaminan keselamatan fisik/psikis 24 jam).
+- Parameter KemenPPPA tentang Standardisasi Asrama/Pesantren Ramah Anak.
+
+SOP EKSEKUSI TINDAKAN (SJT BKN):
+- Hindari Hukuman Fisik/Sosial: Pilihan yang mengandung unsur kekerasan fisik, menjemur di terik matahari, push-up berlebih, atau sanksi sosial yang mempermalukan (melabrak balik) wajib diberi skor rendah/0.
+- Respons Krisis Cepat: Untuk bullying/darurat malam, amankan korban & pisahkan pelaku segera, catat kronologi, laporkan ke TPPK sekolah esok hari, dan hubungi kedua belah orang tua.
+- Darurat Medis: Lakukan tindakan P3K primer, segera rujuk ke faskes dengan ambulans asrama, lalu kabari orang tua dengan santun.
+- Penegakan Edukatif: Sanksi pelanggaran tata tertib berat (seperti merokok/barang terlarang) harus bersifat edukatif, reflektif-konsekuensi, dan dikoordinasikan bersama Guru BK.
+
+ATURAN FORMULASI SOAL & PENILAIAN BERDASARKAN KATEGORI:
+1. KATEGORI TEKNIS:
+   - Wajib memiliki 5 pilihan jawaban (A, B, C, D, E).
+   - Menggunakan skema biner: satu opsi terbaik bernilai 5. Empat opsi lainnya harus memiliki nilai 0 (BKN PPPK Teknis standard).
+2. KATEGORI MANAJERIAL:
+   - Wajib memiliki 4 pilihan jawaban (A, B, C, D).
+   - Menggunakan bobot skor bertingkat dari 1 s/d 4 (tidak boleh ada skor 0).
+3. KATEGORI SOSIAL KULTURAL:
+   - Wajib memiliki 5 pilihan jawaban (A, B, C, D, E).
+   - Menggunakan bobot skor bertingkat dari 1 s/d 5 (tidak boleh ada skor 0).
+4. KATEGORI WAWANCARA:
+   - Wajib memiliki 4 pilihan jawaban (A, B, C, D).
+   - Menggunakan bobot skor bertingkat dari 1 s/d 4 (tidak boleh ada skor 0).
+
+Output harus berupa objek JSON valid tanpa penjelasan tambahan di luar JSON.`;
+
+  const prompt = `Kembangkan draf acuan soal ujian CAT BKN kategori "${category}" bertema "${topic}" nomor soal ${num} berikut:
+
+Kasus Draf Acuan:
 "${baseTemplate.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff)}"
 
-Pilihan Jawaban Acuan:
-${baseTemplate.options.map(o => `- [Skor ${o.score}]: ${o.text}`).join('\n')}
+Pilihan Jawaban Draf Acuan:
+${baseTemplate.options.slice(0, optionCount).map(o => `- [Skor ${o.score}]: ${o.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff)}`).join('\n')}
 
-Silakan kembangkan dan tulis ulang soal tersebut ke dalam format JSON valid berikut:
+Silakan kembangkan dan tulis ulang menjadi soal berkualitas tinggi dengan mengikuti aturan berikut:
+1. Tulis studi kasus (questionText) minimal 150-250 kata, sangat realistis menggambarkan kehidupan asrama Sekolah Rakyat, dilematis, dan menggunakan nama tokoh lokal Indonesia.
+2. Buat persis ${optionCount} opsi pilihan jawaban (A s/d ${optionsKeys[optionsKeys.length - 1]}).
+3. Tentukan bobot skor opsi jawaban sesuai aturan kategori:
+   - Kategori ${category}: ${category === 'teknis' ? 'Hanya satu opsi terbaik bernilai 5, opsi lainnya bernilai 0.' : `Gunakan skor bertingkat dari 1 s/d ${maxScore}.`}
+4. Tulis pembahasan (explanation) minimal 80-120 kata yang membedah keunggulan opsi terbaik dibanding opsi lainnya.
+5. Lengkapi field competency, berakhlak, psychologyBasis (harus landasan teori psikologi/manajemen yang konkret dan diakui secara akademis, misal: Servant Leadership, Kohlberg's Moral Development, dll.), dan catTips (satu baris tips taktis).
+
+Format JSON output harus persis seperti struktur berikut:
 {
   "dateStr": "${dateStr}",
   "number": ${num},
   "category": "${category}",
   "topic": "${topic}",
-  "questionText": "[SKB CAT BKN Wali Asrama] (Tulis kasus hasil pengembangan Anda di sini, minimal 100 kata)",
+  "questionText": "[SKB CAT BKN Wali Asrama] (Tulis kasus hasil pengembangan Anda di sini, minimal 150 kata)",
   "options": [
-    { "key": "A", "text": "(Pilihan A)", "score": (skor 1-5) },
-    { "key": "B", "text": "(Pilihan B)", "score": (skor 1-5) },
-    { "key": "C", "text": "(Pilihan C)", "score": (skor 1-5) },
-    { "key": "D", "text": "(Pilihan D)", "score": (skor 1-5) },
-    { "key": "E", "text": "(Pilihan E)", "score": (skor 1-5) }
+    ${optionsKeys.map(key => `{ "key": "${key}", "text": "(Tulis pilihan jawaban ${key} hasil pengembangan Anda)", "score": (skor) }`).join(',\n    ')}
   ],
-  "correctAnswer": "(Key yang memiliki score 5, misalnya 'B')",
-  "explanation": "(Penjelasan mengapa opsi score 5 paling tepat dan mengapa yang lain kurang tepat, minimal 60 kata)",
-  "competency": "${baseTemplate.competency}",
-  "berakhlak": "${baseTemplate.berakhlak}",
-  "psychologyBasis": "${baseTemplate.psychologyBasis}",
-  "catTips": "${baseTemplate.catTips}"
+  "correctAnswer": "(Key yang memiliki skor ${maxScore})",
+  "explanation": "(Tulis pembahasan hasil analisis Anda, minimal 80 kata)",
+  "competency": "${baseTemplate.competency || 'Kompetensi Wali Asrama'}",
+  "berakhlak": "${baseTemplate.berakhlak || 'Harmonis'}",
+  "psychologyBasis": "${baseTemplate.psychologyBasis || 'General Psychology'}",
+  "catTips": "${baseTemplate.catTips || 'Pilih opsi yang paling profesional.'}"
 }`;
 
   const tempPath = path.join(__dirname, `temp_prompt_${num}.txt`);
@@ -611,14 +688,38 @@ Silakan kembangkan dan tulis ulang soal tersebut ke dalam format JSON valid beri
 
     const output = execSync(cmd, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
     const cleaned = cleanJsonResponse(output);
-    return JSON.parse(cleaned);
+    const questionObj = JSON.parse(cleaned);
+
+    // Post-processing to enforce CAT BKN rules strictly
+    if (category === 'teknis') {
+      questionObj.options = questionObj.options.map(o => ({
+        ...o,
+        score: o.score === 5 ? 5 : 0
+      }));
+      const hasFive = questionObj.options.some(o => o.score === 5);
+      if (!hasFive) {
+        const correctKey = questionObj.correctAnswer || 'A';
+        questionObj.options = questionObj.options.map(o => ({
+          ...o,
+          score: o.key === correctKey ? 5 : 0
+        }));
+      }
+    } else {
+      // Ensure graded scores are valid
+      questionObj.options = questionObj.options.map(o => ({
+        ...o,
+        score: Math.max(1, Math.min(maxScore, o.score))
+      }));
+    }
+
+    return questionObj;
   } catch (err) {
     // Procedural Fallback
     const keys = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.map((opt, oIdx) => ({
+    const formattedOptions = baseTemplate.options.slice(0, optionCount).map((opt, oIdx) => ({
       key: keys[oIdx],
       text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
-      score: opt.score
+      score: category === 'teknis' ? (opt.score === 5 ? 5 : 0) : opt.score
     }));
     return {
       dateStr,
@@ -627,7 +728,7 @@ Silakan kembangkan dan tulis ulang soal tersebut ke dalam format JSON valid beri
       topic,
       questionText: `[SKB CAT BKN Wali Asrama] ${baseTemplate.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff)}`,
       options: formattedOptions,
-      correctAnswer: keys[baseTemplate.options.findIndex(o => o.score === 5)],
+      correctAnswer: keys[baseTemplate.options.slice(0, optionCount).findIndex(o => o.score === maxScore)],
       explanation: baseTemplate.explanation.replace(/{student}/g, student).replace(/{dorm}/g, dorm),
       competency: baseTemplate.competency,
       berakhlak: baseTemplate.berakhlak,

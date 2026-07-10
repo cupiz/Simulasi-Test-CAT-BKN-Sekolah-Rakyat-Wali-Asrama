@@ -439,7 +439,7 @@ export function generateDailyQuestions(dateStr: string): Question[] {
       return {
         key: keys[newIdx],
         text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
-        score: opt.score
+        score: opt.score === 5 ? 5 : 0
       };
     });
 
@@ -483,19 +483,22 @@ export function generateDailyQuestions(dateStr: string): Question[] {
 
     questionText = `[Ujian Set ${dateStr}] ${questionText}`;
 
-    const optionOrder = [0, 1, 2, 3, 4].sort(() => qRand() - 0.5);
-    const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
+    const optionOrder = [0, 1, 2, 3, 4]
+      .filter(idx => baseTemplate.options[idx].score !== 1)
+      .slice(0, 4)
+      .sort(() => qRand() - 0.5);
+    const keys: ('A'|'B'|'C'|'D')[] = ['A', 'B', 'C', 'D'];
     
     const formattedOptions = optionOrder.map((oldIdx, newIdx) => {
       const opt = baseTemplate.options[oldIdx];
       return {
         key: keys[newIdx],
         text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
-        score: opt.score
+        score: opt.score === 5 ? 4 : opt.score === 4 ? 3 : opt.score === 3 ? 2 : 1
       };
     });
 
-    const correctOpt = formattedOptions.find(o => o.score === 5);
+    const correctOpt = formattedOptions.find(o => o.score === 4);
     const correctAnswer = correctOpt ? correctOpt.key : 'A';
 
     result.push({
@@ -585,19 +588,22 @@ export function generateDailyQuestions(dateStr: string): Question[] {
 
     questionText = `[Ujian Set ${dateStr}] ${questionText}`;
 
-    const optionOrder = [0, 1, 2, 3, 4].sort(() => qRand() - 0.5);
-    const keys: ('A'|'B'|'C'|'D'|'E')[] = ['A', 'B', 'C', 'D', 'E'];
+    const optionOrder = [0, 1, 2, 3, 4]
+      .filter(idx => baseTemplate.options[idx].score !== 1)
+      .slice(0, 4)
+      .sort(() => qRand() - 0.5);
+    const keys: ('A'|'B'|'C'|'D')[] = ['A', 'B', 'C', 'D'];
     
     const formattedOptions = optionOrder.map((oldIdx, newIdx) => {
       const opt = baseTemplate.options[oldIdx];
       return {
         key: keys[newIdx],
         text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
-        score: opt.score
+        score: opt.score === 5 ? 4 : opt.score === 4 ? 3 : opt.score === 3 ? 2 : 1
       };
     });
 
-    const correctOpt = formattedOptions.find(o => o.score === 5);
+    const correctOpt = formattedOptions.find(o => o.score === 4);
     const correctAnswer = correctOpt ? correctOpt.key : 'A';
 
     result.push({
