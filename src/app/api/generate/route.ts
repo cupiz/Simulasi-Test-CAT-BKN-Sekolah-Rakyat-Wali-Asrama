@@ -125,11 +125,24 @@ Format JSON output harus persis seperti struktur berikut:
           }
         }
 
-        questionObj = JSON.parse(cleaned.trim());
+        const cleanedTrimmed = cleaned.trim();
+        // Check if output indicates a quota limit error disguised as plain text
+        if (cleanedTrimmed.toLowerCase().includes('quota') || cleanedTrimmed.toLowerCase().includes('subscription')) {
+          throw new Error(`Individual quota reached: ${cleanedTrimmed}`);
+        }
+
+        questionObj = JSON.parse(cleanedTrimmed);
         break; // Success
       } catch (err: any) {
         attempt++;
         lastError = err;
+
+        // Detect permanent errors to fail-fast
+        const errMsg = ((err.message || '') + ' ' + (err.stderr || '')).toLowerCase();
+        if (errMsg.includes('quota') || errMsg.includes('subscription') || errMsg.includes('upgrade')) {
+          attempt = maxRetries; // Skip remaining retries
+        }
+
         if (attempt < maxRetries) {
           const delay = attempt * 3000 + Math.random() * 1000;
           await new Promise(resolve => setTimeout(resolve, delay));
