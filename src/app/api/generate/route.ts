@@ -108,6 +108,9 @@ Format JSON output harus persis seperti struktur berikut:
           ? `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`
           : `opencode run --auto "Process the following input:" < "${tempPath}"`;
 
+        const promptLength = systemInstruction.length + prompt.length;
+        console.log(`🤖 [API Generate Soal #${draftQuestion.number}] Mengirim prompt (${promptLength} karakter) via CLI: ${selectedCli} (Attempt ${attempt + 1}/${maxRetries})...`);
+
         const { stdout } = await execPromise(cmd, { 
           maxBuffer: 15 * 1024 * 1024,
           shell: 'cmd.exe'

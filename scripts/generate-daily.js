@@ -700,6 +700,8 @@ Format JSON output harus persis seperti struktur berikut:
         const cmd = selectedCli === 'agy'
           ? `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`
           : `opencode run --auto "Process the following input:" < "${tempPath}"`;
+        const promptLength = systemInstruction.length + prompt.length;
+        console.log(`🤖 [Soal #${num}] Mengirim prompt (${promptLength} karakter) via CLI: ${selectedCli} (Attempt ${attempt + 1}/${maxRetries})...`);
         const output = execSync(cmd, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024, shell: 'cmd.exe' });
         
         const cleaned = cleanJsonResponse(output);
