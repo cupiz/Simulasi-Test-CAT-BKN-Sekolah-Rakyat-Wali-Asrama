@@ -96,14 +96,18 @@ Format JSON output harus persis seperti struktur berikut:
     const maxRetries = 4;
     let lastError: any = null;
     let questionObj: any = null;
+    let selectedCli = 'agy';
 
     while (attempt < maxRetries) {
       try {
         tempPath = path.join(process.cwd(), 'scripts', `temp_prompt_api_${draftQuestion.number}.txt`);
         fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
 
-        // Run agy command
-        const cmd = `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`;
+        // Run command (either agy or opencode)
+        const cmd = selectedCli === 'agy'
+          ? `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`
+          : `opencode run --auto "Process the following input:" < "${tempPath}"`;
+
         const { stdout } = await execPromise(cmd, { 
           maxBuffer: 15 * 1024 * 1024,
           shell: 'cmd.exe'
@@ -134,6 +138,14 @@ Format JSON output harus persis seperti struktur berikut:
         questionObj = JSON.parse(cleanedTrimmed);
         break; // Success
       } catch (err: any) {
+        // If we were using agy and it failed, switch to opencode fallback
+        if (selectedCli === 'agy') {
+          console.warn(`[API Generate] agy CLI failed on question #${draftQuestion.number}, trying opencode fallback...`);
+          selectedCli = 'opencode';
+          // Retry immediately using opencode without incrementing attempt count
+          continue;
+        }
+
         attempt++;
         lastError = err;
 

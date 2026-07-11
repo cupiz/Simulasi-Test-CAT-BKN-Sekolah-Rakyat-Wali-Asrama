@@ -677,10 +677,16 @@ Format JSON output harus persis seperti struktur berikut:
   const tempPath = path.join(__dirname, `temp_prompt_${num}.txt`);
 
   try {
+    let selectedCli = 'agy';
     try {
       execSync('agy --version', { stdio: 'ignore', shell: 'cmd.exe' });
     } catch (e) {
-      throw new Error("CLI 'agy' tidak ditemukan.");
+      try {
+        execSync('opencode --version', { stdio: 'ignore', shell: 'cmd.exe' });
+        selectedCli = 'opencode';
+      } catch (e2) {
+        throw new Error("CLI 'agy' maupun 'opencode' tidak ditemukan.");
+      }
     }
 
     let attempt = 0;
@@ -691,7 +697,9 @@ Format JSON output harus persis seperti struktur berikut:
     while (attempt < maxRetries) {
       try {
         fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
-        const cmd = `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`;
+        const cmd = selectedCli === 'agy'
+          ? `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`
+          : `opencode run --auto "Process the following input:" < "${tempPath}"`;
         const output = execSync(cmd, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024, shell: 'cmd.exe' });
         
         const cleaned = cleanJsonResponse(output);
@@ -704,6 +712,14 @@ Format JSON output harus persis seperti struktur berikut:
         questionObj = JSON.parse(cleanedTrimmed);
         break; // Success
       } catch (err) {
+        // If we were using agy and it failed, switch to opencode fallback
+        if (selectedCli === 'agy') {
+          console.warn(`[Wali Asrama] agy CLI failed on question #${num}, trying opencode fallback...`);
+          selectedCli = 'opencode';
+          // Retry immediately using opencode without incrementing attempt count
+          continue;
+        }
+
         attempt++;
         lastError = err;
 
@@ -819,11 +835,16 @@ async function main() {
   if (useAI) {
     // Verify CLI executable presence
     try {
-      execSync('agy --version', { stdio: 'ignore' });
+      execSync('agy --version', { stdio: 'ignore', shell: 'cmd.exe' });
       console.log(`🤖 Mode AI Aktif (menggunakan CLI 'agy')...`);
     } catch (e) {
-      console.log(`⚠️ Peringatan: Tidak ditemukan CLI 'agy'. Beralih ke Mode Lokal.`);
-      useAI = false;
+      try {
+        execSync('opencode --version', { stdio: 'ignore', shell: 'cmd.exe' });
+        console.log(`🤖 Mode AI Aktif (menggunakan CLI 'opencode')...`);
+      } catch (e2) {
+        console.log(`⚠️ Peringatan: Tidak ditemukan CLI 'agy' maupun 'opencode'. Beralih ke Mode Lokal.`);
+        useAI = false;
+      }
     }
   }
 
