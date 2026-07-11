@@ -276,76 +276,50 @@ export function AdminPanel() {
       log(`📡 Connecting to local database (SekolahRakyatDB)...`);
       await sleep(400);
 
-      const existingCount = await db.questions.where('dateStr').equals(inputDate).count();
-      if (existingCount > 0) {
-        log(`⚠️ Warning: Set soal untuk tanggal ${inputDate} sudah ada di database local (${existingCount} soal).`);
-        log(`🧹 Menghapus soal lama untuk tanggal ${inputDate} agar tidak terjadi duplikasi...`);
-        const existingQs = await db.questions.where('dateStr').equals(inputDate).toArray();
+      let dailyQs: Question[] = [];
+      const existingQs = await db.questions.where('dateStr').equals(inputDate).toArray();
+      dailyQs = [...existingQs];
+      log(`📄 Ditemukan ${existingQs.length} soal lokal di database IndexedDB.`);
+
+      if (isCloudEnabled) {
+        log(`🌐 Memeriksa data online di Supabase untuk tanggal ${inputDate}...`);
+        try {
+          const { data: onlineQuestions, error: onlineError } = await supabase
+            .from('questions')
+            .select('*')
+            .eq('dateStr', inputDate);
+          
+          if (onlineError) {
+            log(`⚠️ Gagal mengambil data online: ${onlineError.message}`);
+          } else if (onlineQuestions && onlineQuestions.length > 0) {
+            log(`🌐 Ditemukan ${onlineQuestions.length} soal online di Supabase.`);
+            for (const onlineQ of onlineQuestions) {
+              if (!dailyQs.some(offQ => offQ.number === onlineQ.number)) {
+                const { id, ...cleanedQ } = onlineQ;
+                await db.questions.add(cleanedQ);
+                dailyQs.push(cleanedQ);
+              }
+            }
+          }
+        } catch (e: any) {
+          log(`⚠️ Gagal melakukan sinkronisasi dengan Supabase: ${e.message}`);
+        }
+      }
+
+      const { generateDailyQuestions } = await import('../../utils/generator');
+      const draftQuestions = generateDailyQuestions(inputDate);
+
+      if (!useAI) {
+        log(`🧹 Membersihkan data lama untuk tanggal ${inputDate} untuk Generator Lokal...`);
         const existingIds = existingQs.map(q => q.id).filter((id): id is number => !!id);
         if (existingIds.length > 0) {
           await db.questions.bulkDelete(existingIds);
         }
-        await sleep(600);
-      }
-
-      if (isCloudEnabled) {
-        log(`🧹 Membersihkan data lama untuk tanggal ${inputDate} di database Supabase Cloud...`);
-        await supabase.from('questions').delete().eq('dateStr', inputDate);
-        await sleep(600);
-      }
-
-      log(`🧠 Memulai AI Brainstorming Soal CAT BKN Wali Asrama...`);
-      await sleep(500);
-
-      let dailyQs: Question[] = [];
-      
-      const { generateDailyQuestions } = await import('../../utils/generator');
-      const draftQuestions = generateDailyQuestions(inputDate);
-
-      if (useAI) {
-        log(`📡 Menghubungi API backend lokal untuk memicu CLI agy...`);
-        log(`🧠 Memulai AI Brainstorming 145 Soal secara berurutan (Satu per Satu)...`);
-        
-        const concurrencyLimit = 1;
-        let completed = 0;
-        
-        const runTask = async (q: Question) => {
-          const categoryLabel = q.category === 'teknis' ? 'Teknis' : q.category === 'manajerial' ? 'Manajerial' : q.category === 'sosial' ? 'Sosial' : 'Wawancara';
-          try {
-            log(`🤖 Memulai generate Soal #${q.number}/${draftQuestions.length} (${categoryLabel})...`);
-            
-            const response = await fetch('/api/generate', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ draftQuestion: q }),
-            });
-
-            if (!response.ok) {
-              const errorText = await response.json().catch(() => ({}));
-              throw new Error(errorText.error || `HTTP ${response.status}`);
-            }
-
-            const resData = await response.json();
-            dailyQs.push(resData.question);
-            completed++;
-            log(`     [OK] Generated Soal #${q.number}/${draftQuestions.length}: ${resData.question.topic} via CLI: ${resData.cliUsed || 'agy'} (Attempt ${resData.attempts || 1})`);
-          } catch (err: any) {
-            // Fallback on error
-            dailyQs.push(q);
-            completed++;
-            log(`     [⚠️ Fallback] Soal #${q.number}/${draftQuestions.length} gagal via AI: ${err.message || err}`);
-          }
-        };
-
-        const chunks: Question[][] = [];
-        for (let i = 0; i < draftQuestions.length; i += concurrencyLimit) {
-          chunks.push(draftQuestions.slice(i, i + concurrencyLimit));
+        if (isCloudEnabled) {
+          await supabase.from('questions').delete().eq('dateStr', inputDate);
         }
+        await sleep(500);
 
-        for (const chunk of chunks) {
-          await Promise.all(chunk.map(q => runTask(q)));
-        }
-      } else {
         log(`⚡ Menjalankan Generator Lokal (Instan)...`);
         dailyQs = draftQuestions;
         
@@ -387,45 +361,91 @@ export function AdminPanel() {
           log(`     [OK] Generated Soal #${startNum} s/d #${endNum}: ${wawancaraQs[0].topic} & ${wawancaraQs[wawancaraQs.length - 1].topic}.`);
         }
         await sleep(400);
-      }
 
-      // Sort questions before saving to keep order
-      dailyQs.sort((a, b) => (a.number || 0) - (b.number || 0));
-
-      // Strip any id field to prevent primary key collision in IndexedDB
-      const cleanedDailyQs = dailyQs.map(({ id, ...rest }) => rest);
-
-      log(`💾 Menyimpan 145 soal ke database local IndexedDB...`);
-      await db.questions.bulkAdd(cleanedDailyQs);
-      await sleep(500);
-      log(`✅ Sukses menyimpan soal ke local store.`);
-      await sleep(400);
-
-      if (isCloudEnabled) {
-        log(`☁️ NEXT_PUBLIC_SUPABASE_URL terdeteksi. Memulai sinkronisasi awan...`);
+        const cleanedDailyQs = dailyQs.map(({ id, ...rest }) => rest);
+        log(`💾 Menyimpan 145 soal ke database local IndexedDB...`);
+        await db.questions.bulkAdd(cleanedDailyQs);
         await sleep(500);
-        log(`🧹 Membersihkan data tanggal ${inputDate} di database Supabase...`);
-        await supabase.from('questions').delete().eq('dateStr', inputDate);
-        await sleep(600);
-        
-        log(`📤 Mengunggah 145 soal ke tabel "questions" Supabase...`);
-        // Remove ids before uploading to Supabase
-        const cleanedQs = dailyQs.map(({id, ...rest}) => rest);
-        
-        // Chunk upload
-        const chunkSize = 50;
-        for (let i = 0; i < cleanedQs.length; i += chunkSize) {
-          const chunk = cleanedQs.slice(i, i + chunkSize);
-          const { error } = await supabase.from('questions').insert(chunk);
-          if (error) throw new Error(error.message);
-          log(`     [OK] Terunggah chunk ${Math.floor(i / chunkSize) + 1}/${Math.ceil(cleanedQs.length / chunkSize)}`);
-          await sleep(300);
+
+        if (isCloudEnabled) {
+          log(`📤 Mengunggah 145 soal ke tabel "questions" Supabase...`);
+          const chunkSize = 50;
+          for (let i = 0; i < cleanedDailyQs.length; i += chunkSize) {
+            const chunk = cleanedDailyQs.slice(i, i + chunkSize);
+            const { error } = await supabase.from('questions').insert(chunk);
+            if (error) throw new Error(error.message);
+            log(`     [OK] Terunggah chunk ${Math.floor(i / chunkSize) + 1}/${Math.ceil(cleanedDailyQs.length / chunkSize)}`);
+            await sleep(300);
+          }
         }
-        log(`✅ Sinkronisasi Supabase cloud berhasil!`);
       } else {
-        log(`⚠️ NEXT_PUBLIC_SUPABASE_URL tidak dikonfigurasi. Lewati sinkronisasi awan.`);
+        log(`📡 Menghubungi API backend lokal untuk memicu CLI agy...`);
+        
+        const skippedNumbers = new Set(dailyQs.map(q => q.number));
+        const tasksToRun = draftQuestions.filter(q => !skippedNumbers.has(q.number));
+        
+        log(`📊 Progress: ${dailyQs.length} soal sudah lengkap. ${tasksToRun.length} soal tersisa.`);
+        log(`🧠 Memulai AI Brainstorming ${tasksToRun.length} sisa soal CAT BKN Wali Asrama secara berurutan...`);
+        
+        const concurrencyLimit = 1;
+        let completed = 0;
+        
+        const runTask = async (q: Question) => {
+          const categoryLabel = q.category === 'teknis' ? 'Teknis' : q.category === 'manajerial' ? 'Manajerial' : q.category === 'sosial' ? 'Sosial' : 'Wawancara';
+          try {
+            log(`🤖 Memulai generate Soal #${q.number}/${draftQuestions.length} (${categoryLabel})...`);
+            
+            const response = await fetch('/api/generate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ draftQuestion: q }),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.json().catch(() => ({}));
+              throw new Error(errorText.error || `HTTP ${response.status}`);
+            }
+
+            const resData = await response.json();
+            const generatedQ = resData.question;
+            const { id, ...cleanedQ } = generatedQ;
+            
+            // Save incrementally to IndexedDB
+            await db.questions.add(cleanedQ);
+
+            // Save incrementally to Supabase
+            if (isCloudEnabled) {
+              const { error } = await supabase.from('questions').insert(cleanedQ);
+              if (error) log(`     [⚠️ Cloud Save Error] Soal #${q.number} gagal diunggah: ${error.message}`);
+            }
+
+            dailyQs.push(generatedQ);
+            completed++;
+            log(`     [OK] Generated Soal #${q.number}/${draftQuestions.length}: ${generatedQ.topic} via CLI: ${resData.cliUsed || 'agy'} (Attempt ${resData.attempts || 1})`);
+          } catch (err: any) {
+            // Fallback on error: save draft so slots are not empty
+            const { id, ...cleanedQ } = q;
+            await db.questions.add(cleanedQ);
+            if (isCloudEnabled) {
+              await supabase.from('questions').insert(cleanedQ);
+            }
+            dailyQs.push(q);
+            completed++;
+            log(`     [⚠️ Fallback] Soal #${q.number}/${draftQuestions.length} gagal via AI: ${err.message || err}`);
+          }
+        };
+
+        const chunks: Question[][] = [];
+        for (let i = 0; i < tasksToRun.length; i += concurrencyLimit) {
+          chunks.push(tasksToRun.slice(i, i + concurrencyLimit));
+        }
+
+        for (const chunk of chunks) {
+          await Promise.all(chunk.map(q => runTask(q)));
+        }
       }
 
+      dailyQs.sort((a, b) => (a.number || 0) - (b.number || 0));
       await sleep(500);
       log(`✨ PENGUNGGAHAN BERHASIL! Bank soal ${inputDate} kini aktif di sistem.`);
       toast.success(`Berhasil men-generate 145 soal harian baru untuk tanggal ${inputDate}!`);
