@@ -1,6 +1,40 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { createClient } = require('@supabase/supabase-js');
+
+// Load env variables
+function loadEnv() {
+  const envPaths = [
+    path.join(__dirname, '..', '.env.local'),
+    path.join(__dirname, '..', '.env')
+  ];
+  for (const envPath of envPaths) {
+    if (fs.existsSync(envPath)) {
+      const content = fs.readFileSync(envPath, 'utf8');
+      content.split('\n').forEach(line => {
+        const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+        if (match) {
+          const key = match[1];
+          let value = match[2] || '';
+          if (value.trim().startsWith('"') && value.trim().endsWith('"')) {
+            value = value.trim().slice(1, -1);
+          } else if (value.trim().startsWith("'") && value.trim().endsWith("'")) {
+            value = value.trim().slice(1, -1);
+          }
+          process.env[key] = value.trim();
+        }
+      });
+      break;
+    }
+  }
+}
+
+loadEnv();
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
 const DORM_NAMES = [
   'Ahmad Dahlan', 'Hasyim Asyari', 'Ki Hajar Dewantara', 'Sudirman', 'Kartini', 
@@ -851,15 +885,54 @@ async function main() {
   }
 
   let finalQuestions = [];
+  const fileName = `daily_questions_${dateStr}.json`;
+  const filePath = path.join(__dirname, '..', fileName);
+
+  // 1. Check offline file first and load existing questions
+  if (fs.existsSync(filePath)) {
+    try {
+      finalQuestions = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      console.log(`📄 Ditemukan berkas lokal offline dengan ${finalQuestions.length} soal.`);
+    } catch (e) {
+      console.warn(`⚠️ Gagal membaca berkas lokal offline, akan dimulai dari awal: ${e.message}`);
+    }
+  }
+
+  // 2. Check online questions in Supabase (if credentials available)
+  if (useAI && supabase) {
+    try {
+      console.log(`🌐 Memeriksa data online di Supabase untuk tanggal ${dateStr}...`);
+      const { data: onlineQuestions, error: onlineError } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('dateStr', dateStr);
+
+      if (onlineError) {
+        console.warn(`⚠️ Gagal mengambil data online: ${onlineError.message}`);
+      } else if (onlineQuestions && onlineQuestions.length > 0) {
+        console.log(`🌐 Ditemukan ${onlineQuestions.length} soal online di Supabase.`);
+        
+        // Sync online questions into finalQuestions if missing locally
+        onlineQuestions.forEach(onlineQ => {
+          if (!finalQuestions.some(offQ => offQ.number === onlineQ.number)) {
+            const { id, created_at, ...cleanedQ } = onlineQ;
+            finalQuestions.push(cleanedQ);
+          }
+        });
+      }
+    } catch (e) {
+      console.warn(`⚠️ Gagal melakukan sinkronisasi dengan Supabase: ${e.message}`);
+    }
+  }
 
   if (!useAI) {
     console.log(`⚡ Men-generate soal secara lokal (prosedural)...`);
     finalQuestions = generateProceduralForDate(dateStr);
   } else {
-    console.log(`🧠 Memulai brainstorming soal CAT BKN Wali Asrama bersama AI Gemini (Secara Paralel)...`);
-    
+    // 3. Filter tasks to only generate what is missing offline and online
+    const skippedNumbers = new Set(finalQuestions.map(q => q.number));
+
     const tasks = [];
-    
     // Teknis: 1-90
     for (let num = 1; num <= 90; num++) {
       tasks.push({ category: 'teknis', num, templates: TEKNIS_TEMPLATES });
@@ -877,26 +950,38 @@ async function main() {
       tasks.push({ category: 'wawancara', num, templates: INTERVIEW_TEMPLATES });
     }
 
-    const concurrencyLimit = 1;
+    const tasksToRun = tasks.filter(t => !skippedNumbers.has(t.num));
+    console.log(`📊 Progress offline & online: ${finalQuestions.length} soal sudah lengkap.`);
+    console.log(`🧠 Memulai brainstorming ${tasksToRun.length} sisa soal CAT BKN Wali Asrama secara Paralel...`);
+
+    const concurrencyLimit = 5;
     let completedCount = 0;
     
-    finalQuestions = await mapLimit(tasks, concurrencyLimit, async (task) => {
-      const baseTemplate = task.templates[task.num % task.templates.length];
-      const q = await generateQuestionWithAI(task.category, baseTemplate.topic, dateStr, task.num, baseTemplate);
-      completedCount++;
-      console.log(`📈 Progress: ${completedCount}/145 soal selesai di-brainstorm via agy CLI...`);
-      return q;
-    });
+    if (tasksToRun.length > 0) {
+      await mapLimit(tasksToRun, concurrencyLimit, async (task) => {
+        const baseTemplate = task.templates[task.num % task.templates.length];
+        const q = await generateQuestionWithAI(task.category, baseTemplate.topic, dateStr, task.num, baseTemplate);
+        
+        // Push to master list and increment
+        finalQuestions.push(q);
+        completedCount++;
+        console.log(`📈 Progress: ${completedCount}/${tasksToRun.length} selesai. (Total saat ini: ${finalQuestions.length}/145)`);
+        
+        // Save incrementally on every successful question write
+        finalQuestions.sort((a, b) => a.number - b.number);
+        fs.writeFileSync(filePath, JSON.stringify(finalQuestions, null, 2), 'utf-8');
+      });
+    } else {
+      console.log(`✅ Semua soal (145/145) sudah lengkap offline & online. Tidak ada soal baru yang perlu di-generate.`);
+    }
   }
 
-  // Sort and write output file
+  // Final sort and write output file
   finalQuestions.sort((a, b) => a.number - b.number);
-  const fileName = `daily_questions_${dateStr}.json`;
-  const filePath = path.join(__dirname, '..', fileName);
   fs.writeFileSync(filePath, JSON.stringify(finalQuestions, null, 2), 'utf-8');
 
   console.log(`\n======================================================`);
-  console.log(`🎉 SUKSES GENERATE SET UJIAN HARIAN (145 SOAL)!`);
+  console.log(`🎉 SUKSES GENERATE SET UJIAN HARIAN!`);
   console.log(`Tanggal: ${dateStr}`);
   console.log(`Jumlah Soal: ${finalQuestions.length} Butir`);
   console.log(`Lokasi File: ${filePath}`);
