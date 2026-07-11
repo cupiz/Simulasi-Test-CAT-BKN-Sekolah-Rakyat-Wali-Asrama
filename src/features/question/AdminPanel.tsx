@@ -511,7 +511,7 @@ export function AdminPanel() {
         log(`📊 Progress: ${dailyQs.length} soal sudah lengkap. ${tasksToRun.length} soal tersisa.`);
         log(`🧠 Memulai AI Brainstorming ${tasksToRun.length} sisa soal CAT BKN Wali Asrama secara berurutan...`);
         
-        const concurrencyLimit = 1;
+        const concurrencyLimit = 5;
         let completed = 0;
         
         const runTask = async (q: Question) => {
