@@ -806,27 +806,7 @@ Format JSON output harus persis seperti struktur berikut:
 
     return questionObj;
   } catch (err) {
-    // Procedural Fallback
-    const keys = ['A', 'B', 'C', 'D', 'E'];
-    const formattedOptions = baseTemplate.options.slice(0, optionCount).map((opt, oIdx) => ({
-      key: keys[oIdx],
-      text: opt.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff),
-      score: category === 'teknis' ? (opt.score === 5 ? 5 : 0) : opt.score
-    }));
-    return {
-      dateStr,
-      number: num,
-      category,
-      topic,
-      questionText: `[SKB CAT BKN Wali Asrama] ${baseTemplate.text.replace(/{student}/g, student).replace(/{room}/g, room).replace(/{dorm}/g, dorm).replace(/{staff}/g, staff)}`,
-      options: formattedOptions,
-      correctAnswer: keys[baseTemplate.options.slice(0, optionCount).findIndex(o => o.score === maxScore)],
-      explanation: baseTemplate.explanation.replace(/{student}/g, student).replace(/{dorm}/g, dorm),
-      competency: baseTemplate.competency,
-      berakhlak: baseTemplate.berakhlak,
-      psychologyBasis: baseTemplate.psychologyBasis,
-      catTips: baseTemplate.catTips
-    };
+    throw err;
   } finally {
     if (fs.existsSync(tempPath)) {
       try {
