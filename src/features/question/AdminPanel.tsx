@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../../lib/db';
 import { Question, QuestionOption } from '../../types';
 import { Button } from '../../components/ui/button';
@@ -21,6 +21,9 @@ export function AdminPanel() {
   // Terminal logs state
   const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Sync ref lock to prevent duplicate concurrent cloud downloads
+  const syncedDates = useRef<Set<string>>(new Set());
 
   // Form State
   const [category, setCategory] = useState<'teknis' | 'manajerial' | 'sosial' | 'wawancara'>('teknis');
@@ -85,10 +88,35 @@ export function AdminPanel() {
   };
 
   const loadQuestionsByDate = async (dateStr: string) => {
-    const allQs = await db.questions.toArray();
-    let filtered = allQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
+    // 1. Ambil data lokal & bersihkan duplikasi lokal yang terlanjur ada
+    let allQs = await db.questions.toArray();
+    let dateQs = allQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
     
-    if (isCloudEnabled) {
+    // Cari duplikat di IndexedDB
+    const seenNumbers = new Set<number>();
+    const duplicateIds: number[] = [];
+    for (const q of dateQs) {
+      if (q.number) {
+        if (seenNumbers.has(q.number)) {
+          if (q.id) duplicateIds.push(q.id);
+        } else {
+          seenNumbers.add(q.number);
+        }
+      }
+    }
+    
+    if (duplicateIds.length > 0) {
+      await db.questions.bulkDelete(duplicateIds);
+      // Muat ulang setelah penghapusan duplikat
+      allQs = await db.questions.toArray();
+      dateQs = allQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
+    }
+    
+    let filtered = dateQs;
+
+    // 2. Cegah download ganda secara paralel dari cloud (Race Condition)
+    if (isCloudEnabled && !syncedDates.current.has(dateStr)) {
+      syncedDates.current.add(dateStr);
       try {
         const { data: onlineQs, error: onlineError } = await supabase
           .from('questions')
@@ -99,13 +127,19 @@ export function AdminPanel() {
           console.error('Gagal sinkronisasi dari cloud:', onlineError.message);
         } else if (onlineQs && onlineQs.length > 0) {
           let updatedNeeded = false;
+          
+          // Pastikan hanya memasukkan nomor yang belum ada sama sekali di lokal dan belum ada di batch sync ini
+          const addedNumbers = new Set(filtered.map(q => q.number));
+          
           for (const onlineQ of onlineQs) {
-            if (!filtered.some(localQ => localQ.number === onlineQ.number)) {
+            if (onlineQ.number && !addedNumbers.has(onlineQ.number)) {
               const { id, ...cleanedQ } = onlineQ;
               await db.questions.add(cleanedQ);
+              addedNumbers.add(onlineQ.number);
               updatedNeeded = true;
             }
           }
+          
           if (updatedNeeded) {
             const freshQs = await db.questions.toArray();
             filtered = freshQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
