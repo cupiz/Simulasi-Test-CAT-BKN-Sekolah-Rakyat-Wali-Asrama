@@ -672,7 +672,9 @@ ATURAN FORMULASI SOAL & PENILAIAN BERDASARKAN KATEGORI:
    - Wajib memiliki 4 pilihan jawaban (A, B, C, D).
    - Menggunakan bobot skor bertingkat dari 1 s/d 4 (tidak boleh ada skor 0).
 
-Output harus berupa objek JSON valid tanpa penjelasan tambahan di luar JSON.`;
+Output harus berupa objek JSON valid tanpa penjelasan tambahan di luar JSON.
+
+CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT write any files to the filesystem, and you MUST NOT create or run any scripts (such as .ps1 or .js files) in the workspace. Simply generate the JSON object in memory and print it directly to standard output. Do not attempt to validate using external scripts.`;
 
   const prompt = `Kembangkan draf acuan soal ujian CAT BKN kategori "${category}" bertema "${topic}" nomor soal ${num} berikut:
 
@@ -736,7 +738,13 @@ Format JSON output harus persis seperti struktur berikut:
           : `opencode run --auto "Process the following input:" < "${tempPath}"`;
         const promptLength = systemInstruction.length + prompt.length;
         console.log(`🤖 [Soal #${num}] Mengirim prompt (${promptLength} karakter) via CLI: ${selectedCli} (Attempt ${attempt + 1}/${maxRetries})...`);
-        const output = execSync(cmd, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024, shell: 'cmd.exe' });
+        const timeoutMs = selectedCli === 'agy' ? 30000 : 90000;
+        const output = execSync(cmd, { 
+          encoding: 'utf8', 
+          maxBuffer: 10 * 1024 * 1024, 
+          shell: 'cmd.exe',
+          timeout: timeoutMs
+        });
         
         const cleaned = cleanJsonResponse(output);
         const cleanedTrimmed = cleaned.trim();

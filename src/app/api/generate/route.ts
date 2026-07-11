@@ -6,6 +6,8 @@ import { promisify } from 'util';
 
 const execPromise = promisify(exec);
 
+export const maxDuration = 300;
+
 export async function POST(request: Request) {
   let tempPath = '';
   try {
@@ -56,7 +58,9 @@ ATURAN FORMULASI SOAL & PENILAIAN BERDASARKAN KATEGORI:
    - Wajib memiliki 4 pilihan jawaban (A, B, C, D).
    - Menggunakan bobot skor bertingkat dari 1 s/d 4 (tidak boleh ada skor 0).
 
-Output harus berupa objek JSON valid tanpa penjelasan tambahan di luar JSON.`;
+Output harus berupa objek JSON valid tanpa penjelasan tambahan di luar JSON.
+
+CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT write any files to the filesystem, and you MUST NOT create or run any scripts (such as .ps1 or .js files) in the workspace. Simply generate the JSON object in memory and print it directly to standard output. Do not attempt to validate using external scripts.`;
 
     const prompt = `Kembangkan draf acuan soal ujian CAT BKN kategori "${draftQuestion.category}" bertema "${draftQuestion.topic}" nomor soal ${draftQuestion.number} berikut:
 
@@ -111,9 +115,11 @@ Format JSON output harus persis seperti struktur berikut:
         const promptLength = systemInstruction.length + prompt.length;
         console.log(`🤖 [API Generate Soal #${draftQuestion.number}] Mengirim prompt (${promptLength} karakter) via CLI: ${selectedCli} (Attempt ${attempt + 1}/${maxRetries})...`);
 
+        const timeoutMs = selectedCli === 'agy' ? 30000 : 90000;
         const { stdout } = await execPromise(cmd, { 
           maxBuffer: 15 * 1024 * 1024,
-          shell: 'cmd.exe'
+          shell: 'cmd.exe',
+          timeout: timeoutMs
         });
 
         // Clean JSON response
