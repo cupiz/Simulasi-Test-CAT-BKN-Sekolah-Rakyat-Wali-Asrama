@@ -280,26 +280,26 @@ export function ExamView() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-5 rounded-xl bg-slate-950/60 border border-white/5 text-[11px] leading-relaxed text-slate-400 space-y-3"
+                    className="p-6 rounded-xl bg-slate-950/60 border border-white/5 text-sm leading-relaxed text-slate-300 space-y-4"
                   >
                     <div className="flex items-center gap-1.5 font-bold">
-                      <Sparkles className="h-4 w-4 text-primary" />
-                      <span className="text-white text-xs">Penjelasan Jawaban (Mode Belajar)</span>
+                      <Sparkles className="h-4.5 w-4.5 text-primary" />
+                      <span className="text-white text-sm">Penjelasan Jawaban (Mode Belajar)</span>
                     </div>
-                    <div className="whitespace-pre-line leading-relaxed mt-2">{currentQuestion.explanation}</div>
+                    <div className="whitespace-pre-line leading-relaxed mt-2 text-slate-200">{currentQuestion.explanation}</div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-white/5 text-[10px] text-slate-500">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5 text-xs text-slate-400">
                       <div>
-                        <strong className="text-slate-400">Kompetensi:</strong> {currentQuestion.competency}
+                        <strong className="text-slate-200">Kompetensi:</strong> {currentQuestion.competency}
                       </div>
                       <div>
-                        <strong className="text-slate-400">Nilai BerAKHLAK:</strong> {currentQuestion.berakhlak}
+                        <strong className="text-slate-200">Nilai BerAKHLAK:</strong> {currentQuestion.berakhlak}
                       </div>
                       <div>
-                        <strong className="text-slate-400">Landasan Psikologi:</strong> {currentQuestion.psychologyBasis}
+                        <strong className="text-slate-200">Landasan Psikologi:</strong> {currentQuestion.psychologyBasis}
                       </div>
                       <div>
-                        <strong className="text-slate-400">Tips CAT:</strong> {currentQuestion.catTips}
+                        <strong className="text-slate-200">Tips CAT:</strong> {currentQuestion.catTips}
                       </div>
                     </div>
                   </motion.div>
