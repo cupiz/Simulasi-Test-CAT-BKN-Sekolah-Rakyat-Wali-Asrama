@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { exec, execFile } from 'child_process';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import { promisify } from 'util';
 
 const execPromise = promisify(exec);
@@ -121,7 +122,7 @@ Format JSON output harus persis seperti struktur berikut:
           });
           stdout = res.stdout;
         } else {
-          tempPath = path.join(process.cwd(), 'scripts', `temp_prompt_api_${draftQuestion.number}.txt`);
+          tempPath = path.join(os.tmpdir(), `temp_prompt_api_${draftQuestion.number}.txt`);
           fs.writeFileSync(tempPath, fullPrompt, 'utf8');
           const cmd = `opencode run --auto "Process the following input:" < "${tempPath}"`;
           const res = await execPromise(cmd, { 
