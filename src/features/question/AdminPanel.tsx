@@ -720,194 +720,223 @@ export function AdminPanel() {
         </Card>
       )}
 
-      {/* Editor / Form Drawer */}
+        {/* Editor / Form Drawer (Popup Modal) */}
       {(isAdding || editingQuestion) && (
-        <Card className="glass-panel border-primary/20 bg-slate-950/60 shadow-xl rounded-xl">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <div>
-              <CardTitle className="text-white text-base">
-                {isAdding ? 'Tambah Soal Baru Wali Asrama' : `Edit Pertanyaan #${editingQuestion?.id}`}
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Masukkan rincian studi kasus, bobot SJT, dan pembahasan minimal 300 kata.
-              </CardDescription>
-            </div>
-            <Button
-              onClick={() => {
-                setIsAdding(false);
-                setEditingQuestion(null);
-              }}
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-slate-400 hover:text-white cursor-pointer"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400">Kategori</label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as any)}
-                    className="w-full h-9 rounded-lg border border-white/5 bg-slate-900 px-3 text-xs text-white"
-                  >
-                    <option value="teknis">Teknis (90 Soal)</option>
-                    <option value="manajerial">Manajerial (25 Soal)</option>
-                    <option value="sosial">Sosial (20 Soal)</option>
-                    <option value="wawancara">Wawancara (10 Soal)</option>
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400">Topik / Sub-Kompetensi</label>
-                  <input
-                    type="text"
-                    placeholder="Contoh: Homesick, Bullying, Integritas"
-                    value={topic}
-                    onChange={(e) => setTopic(e.target.value)}
-                    className="w-full h-9 rounded-lg border border-white/5 bg-slate-900 px-3 text-xs text-white"
-                  />
-                </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+          <Card className="glass-panel border-primary/20 bg-slate-950/90 shadow-2xl rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
+              <div>
+                <CardTitle className="text-white text-base">
+                  {isAdding ? 'Tambah Soal Baru Wali Asrama' : `Edit Pertanyaan #${editingQuestion?.id}`}
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Masukkan rincian studi kasus, bobot SJT, dan pembahasan minimal 300 kata.
+                </CardDescription>
               </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-400">Teks Pertanyaan (Studi Kasus)</label>
-                <textarea
-                  rows={4}
-                  placeholder="Ketik studi kasus asrama di sini secara lengkap..."
-                  value={questionText}
-                  onChange={(e) => setQuestionText(e.target.value)}
-                  className="w-full rounded-lg border border-white/5 bg-slate-900 p-3 text-xs text-white placeholder-slate-500 focus:outline-hidden"
-                />
-              </div>
-
-              {/* Options A-E */}
-              <div className="space-y-2.5">
-                <label className="text-[11px] font-bold text-slate-400 block">Pilihan Jawaban & Bobot Nilai (1-5)</label>
-                {options.map((opt, idx) => (
-                  <div key={opt.key} className="flex gap-2 items-center">
-                    <span className="text-xs font-bold text-slate-400 w-5">{opt.key}</span>
+              <Button
+                onClick={() => {
+                  setIsAdding(false);
+                  setEditingQuestion(null);
+                }}
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-slate-400 hover:text-white cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSave} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400">Kategori Subtes</label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value as any)}
+                      className="w-full rounded-lg border border-white/5 bg-slate-900 p-2.5 text-xs text-white focus:outline-hidden"
+                    >
+                      <option value="teknis">Teknis (90 Soal - Skala 5/0)</option>
+                      <option value="manajerial">Manajerial (25 Soal - Skala 4-1)</option>
+                      <option value="sosial">Sosial Kultural (20 Soal - Skala 5-1)</option>
+                      <option value="wawancara">Wawancara (10 Soal - Skala 4-1)</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400">Topik Permasalahan</label>
                     <input
                       type="text"
-                      placeholder={`Opsi ${opt.key}`}
-                      value={opt.text}
-                      onChange={(e) => {
-                        const newOpts = [...options];
-                        newOpts[idx].text = e.target.value;
-                        setOptions(newOpts);
-                      }}
-                      className="flex-1 h-9 rounded-lg border border-white/5 bg-slate-900 px-3 text-xs text-white"
-                    />
-                    <input
-                      type="number"
-                      min={0}
-                      max={5}
-                      value={opt.score}
-                      onChange={(e) => {
-                        const newOpts = [...options];
-                        newOpts[idx].score = parseInt(e.target.value) || 0;
-                        setOptions(newOpts);
-                      }}
-                      className="w-14 h-9 rounded-lg border border-white/5 bg-slate-900 text-center text-xs text-white"
+                      placeholder="Contoh: Dampak Bullying di Kamar Tidur"
+                      value={topic}
+                      onChange={(e) => setTopic(e.target.value)}
+                      className="w-full rounded-lg border border-white/5 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden"
                     />
                   </div>
-                ))}
-              </div>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400">Jawaban Benar (Skor 5)</label>
-                  <select
-                    value={correctAnswer}
-                    onChange={(e) => setCorrectAnswer(e.target.value as any)}
-                    className="w-full h-9 rounded-lg border border-white/5 bg-slate-900 px-3 text-xs text-white"
+                  <label className="text-[11px] font-bold text-slate-400">Studi Kasus Soal (SJT Text)</label>
+                  <textarea
+                    rows={4}
+                    placeholder="Tulis skenario studi kasus secara detail..."
+                    value={questionText}
+                    onChange={(e) => setQuestionText(e.target.value)}
+                    className="w-full rounded-lg border border-white/5 bg-slate-900 p-3 text-xs text-white placeholder-slate-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div className="border-y border-white/5 py-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-extrabold text-white">Formulasi Pilihan Jawaban & Bobot Nilai</h4>
+                    <span className="text-[10px] text-slate-400">Sistem mendeteksi kategori: <strong className="text-primary uppercase">{category}</strong></span>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {options.slice(0, category === 'manajerial' || category === 'wawancara' ? 4 : 5).map((opt, idx) => (
+                      <div key={opt.key} className="flex gap-3 items-start">
+                        <span className="w-6 h-8 flex items-center justify-center rounded-md bg-slate-900 border border-white/5 text-white font-extrabold text-xs mt-1">
+                          {opt.key}
+                        </span>
+                        <div className="flex-1">
+                          <input
+                            type="text"
+                            placeholder={`Tulis opsi jawaban ${opt.key}...`}
+                            value={opt.text}
+                            onChange={(e) => {
+                              const newOpts = [...options];
+                              newOpts[idx].text = e.target.value;
+                              setOptions(newOpts);
+                            }}
+                            className="w-full rounded-lg border border-white/5 bg-slate-900 p-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden"
+                          />
+                        </div>
+                        <div className="w-24">
+                          <select
+                            value={opt.score}
+                            onChange={(e) => {
+                              const newOpts = [...options];
+                              newOpts[idx].score = parseInt(e.target.value);
+                              setOptions(newOpts);
+                            }}
+                            className="w-full rounded-lg border border-white/5 bg-slate-900 p-2.5 text-xs text-white focus:outline-hidden text-center"
+                          >
+                            {category === 'teknis' ? (
+                              <>
+                                <option value={5}>Skor 5</option>
+                                <option value={0}>Skor 0</option>
+                              </>
+                            ) : category === 'manajerial' || category === 'wawancara' ? (
+                              <>
+                                <option value={4}>Skor 4</option>
+                                <option value={3}>Skor 3</option>
+                                <option value={2}>Skor 2</option>
+                                <option value={1}>Skor 1</option>
+                              </>
+                            ) : (
+                              <>
+                                <option value={5}>Skor 5</option>
+                                <option value={4}>Skor 4</option>
+                                <option value={3}>Skor 3</option>
+                                <option value={2}>Skor 2</option>
+                                <option value={1}>Skor 1</option>
+                              </>
+                            )}
+                          </select>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-400">Kompetensi Diuji</label>
+                      <input
+                        type="text"
+                        placeholder="Kompetensi..."
+                        value={competency}
+                        onChange={(e) => setCompetency(e.target.value)}
+                        className="w-full rounded-lg border border-white/5 bg-slate-900 p-2 text-xs text-white placeholder-slate-500 focus:outline-hidden"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-400">Nilai BerAKHLAK</label>
+                      <input
+                        type="text"
+                        placeholder="Core Values..."
+                        value={berakhlak}
+                        onChange={(e) => setBerakhlak(e.target.value)}
+                        className="w-full rounded-lg border border-white/5 bg-slate-900 p-2 text-xs text-white placeholder-slate-500 focus:outline-hidden"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-400">Landasan Psikologis</label>
+                      <input
+                        type="text"
+                        placeholder="Teori..."
+                        value={psychologyBasis}
+                        onChange={(e) => setPsychologyBasis(e.target.value)}
+                        className="w-full rounded-lg border border-white/5 bg-slate-900 p-2 text-xs text-white placeholder-slate-500 focus:outline-hidden"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-400">Tips Ujian CAT</label>
+                      <input
+                        type="text"
+                        placeholder="Tips taktis..."
+                        value={catTips}
+                        onChange={(e) => setCatTips(e.target.value)}
+                        className="w-full rounded-lg border border-white/5 bg-slate-900 p-2 text-xs text-white placeholder-slate-500 focus:outline-hidden"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400">Kunci Jawaban Benar (Opsi Terbaik)</label>
+                    <select
+                      value={correctAnswer}
+                      onChange={(e) => setCorrectAnswer(e.target.value as any)}
+                      className="w-32 rounded-lg border border-white/5 bg-slate-900 p-2 text-xs text-white focus:outline-hidden"
+                    >
+                      <option value="A">Opsi A</option>
+                      <option value="B">Opsi B</option>
+                      <option value="C">Opsi C</option>
+                      <option value="D">Opsi D</option>
+                      {category !== 'manajerial' && category !== 'wawancara' && <option value="E">Opsi E</option>}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-400">Pembahasan Lengkap (Min. 300 kata)</label>
+                  <textarea
+                    rows={6}
+                    placeholder="Penjelasan mengapa A-E salah atau benar, landasan teori, tips CAT..."
+                    value={explanation}
+                    onChange={(e) => setExplanation(e.target.value)}
+                    className="w-full rounded-lg border border-white/5 bg-slate-900 p-3 text-xs text-white placeholder-slate-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end gap-2">
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setIsAdding(false);
+                      setEditingQuestion(null);
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="border-white/5 hover:bg-slate-900 text-slate-300 cursor-pointer"
                   >
-                    <option value="A">Opsi A</option>
-                    <option value="B">Opsi B</option>
-                    <option value="C">Opsi C</option>
-                    <option value="D">Opsi D</option>
-                    <option value="E">Opsi E</option>
-                  </select>
+                    Batal
+                  </Button>
+                  <Button type="submit" size="sm" className="bg-primary text-white cursor-pointer">
+                    Simpan Soal
+                  </Button>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400">Kompetensi yang Diuji</label>
-                  <input
-                    type="text"
-                    placeholder="SOP Asrama, Resolusi Konflik..."
-                    value={competency}
-                    onChange={(e) => setCompetency(e.target.value)}
-                    className="w-full h-9 rounded-lg border border-white/5 bg-slate-900 px-3 text-xs text-white"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400">Nilai ASN BerAKHLAK</label>
-                  <input
-                    type="text"
-                    placeholder="Harmonis, Kolaboratif..."
-                    value={berakhlak}
-                    onChange={(e) => setBerakhlak(e.target.value)}
-                    className="w-full h-9 rounded-lg border border-white/5 bg-slate-900 px-3 text-xs text-white"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400">Landasan Psikologi</label>
-                  <input
-                    type="text"
-                    placeholder="Social Support Theory..."
-                    value={psychologyBasis}
-                    onChange={(e) => setPsychologyBasis(e.target.value)}
-                    className="w-full h-9 rounded-lg border border-white/5 bg-slate-900 px-3 text-xs text-white"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-400">Tips Ujian CAT</label>
-                <input
-                  type="text"
-                  placeholder="Cari jawaban yang melatih empati..."
-                  value={catTips}
-                  onChange={(e) => setCatTips(e.target.value)}
-                  className="w-full h-9 rounded-lg border border-white/5 bg-slate-900 px-3 text-xs text-white"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-400">Pembahasan Lengkap (Min. 300 kata)</label>
-                <textarea
-                  rows={6}
-                  placeholder="Penjelasan mengapa A-E salah atau benar, landasan teori, tips CAT..."
-                  value={explanation}
-                  onChange={(e) => setExplanation(e.target.value)}
-                  className="w-full rounded-lg border border-white/5 bg-slate-900 p-3 text-xs text-white placeholder-slate-500 focus:outline-hidden"
-                />
-              </div>
-
-              <div className="pt-2 flex justify-end gap-2">
-                <Button
-                  type="button"
-                  onClick={() => {
-                    setIsAdding(false);
-                    setEditingQuestion(null);
-                  }}
-                  variant="outline"
-                  size="sm"
-                  className="border-white/5 hover:bg-slate-900 text-slate-300 cursor-pointer"
-                >
-                  Batal
-                </Button>
-                <Button type="submit" size="sm" className="bg-primary text-white cursor-pointer">
-                  Simpan Soal
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Questions list */}
