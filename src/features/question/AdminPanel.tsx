@@ -245,9 +245,25 @@ export function AdminPanel() {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm(`Apakah Anda yakin ingin menghapus pertanyaan #${id}?`)) {
+    const q = await db.questions.get(id);
+    if (confirm(`Apakah Anda yakin ingin menghapus pertanyaan #${q?.number || id}?`)) {
       await db.questions.delete(id);
-      toast.success('Pertanyaan berhasil dihapus');
+      
+      if (isCloudEnabled && q?.dateStr && q?.number) {
+        try {
+          const { error } = await supabase
+            .from('questions')
+            .delete()
+            .eq('dateStr', q.dateStr)
+            .eq('number', q.number);
+          if (error) throw new Error(error.message);
+          toast.success(`Pertanyaan #${q.number} berhasil dihapus di Local & Supabase Cloud`);
+        } catch (cloudErr: any) {
+          toast.error(`Gagal menghapus di Supabase Cloud: ${cloudErr.message || cloudErr}`);
+        }
+      } else {
+        toast.success('Pertanyaan berhasil dihapus');
+      }
       loadDatesAndQuestions();
     }
   };
@@ -261,7 +277,8 @@ export function AdminPanel() {
       
       if (isCloudEnabled) {
         try {
-          await supabase.from('questions').delete().eq('dateStr', selectedDate);
+          const { error } = await supabase.from('questions').delete().eq('dateStr', selectedDate);
+          if (error) throw new Error(error.message);
           toast.success(`Berhasil menghapus ${count} soal untuk tanggal ${selectedDate} di Local & Supabase Cloud!`);
         } catch (cloudErr: any) {
           toast.error(`Gagal menghapus di Supabase Cloud: ${cloudErr.message || cloudErr}`);
