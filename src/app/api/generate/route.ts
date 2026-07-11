@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import { promisify } from 'util';
 
 const execPromise = promisify(exec);
+const execFilePromise = promisify(execFile);
 
 export const maxDuration = 300;
 
@@ -104,23 +105,32 @@ Format JSON output harus persis seperti struktur berikut:
 
     while (attempt < maxRetries) {
       try {
-        tempPath = path.join(process.cwd(), 'scripts', `temp_prompt_api_${draftQuestion.number}.txt`);
-        fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
-
-        // Run command (either agy or opencode)
-        const cmd = selectedCli === 'agy'
-          ? `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`
-          : `opencode run --auto "Process the following input:" < "${tempPath}"`;
-
-        const promptLength = systemInstruction.length + prompt.length;
+        const fullPrompt = `${systemInstruction}\n\n${prompt}`;
+        const promptLength = fullPrompt.length;
         console.log(`🤖 [API Generate Soal #${draftQuestion.number}] Mengirim prompt (${promptLength} karakter) via CLI: ${selectedCli} (Attempt ${attempt + 1}/${maxRetries})...`);
 
-        const timeoutMs = selectedCli === 'agy' ? 30000 : 90000;
-        const { stdout } = await execPromise(cmd, { 
-          maxBuffer: 15 * 1024 * 1024,
-          shell: 'cmd.exe',
-          timeout: timeoutMs
-        });
+        let stdout = '';
+        if (selectedCli === 'agy') {
+          const res = await execFilePromise('agy', [
+            '--dangerously-skip-permissions',
+            '--print',
+            fullPrompt
+          ], {
+            maxBuffer: 15 * 1024 * 1024,
+            timeout: 45000 // 45 seconds for agy
+          });
+          stdout = res.stdout;
+        } else {
+          tempPath = path.join(process.cwd(), 'scripts', `temp_prompt_api_${draftQuestion.number}.txt`);
+          fs.writeFileSync(tempPath, fullPrompt, 'utf8');
+          const cmd = `opencode run --auto "Process the following input:" < "${tempPath}"`;
+          const res = await execPromise(cmd, { 
+            maxBuffer: 15 * 1024 * 1024,
+            shell: 'cmd.exe',
+            timeout: 90000 // 90 seconds for opencode
+          });
+          stdout = res.stdout;
+        }
 
         // Clean JSON response
         let cleaned = stdout.trim();

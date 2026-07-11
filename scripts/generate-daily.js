@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 const { createClient } = require('@supabase/supabase-js');
 
 // Load env variables
@@ -732,19 +732,31 @@ Format JSON output harus persis seperti struktur berikut:
 
     while (attempt < maxRetries) {
       try {
-        fs.writeFileSync(tempPath, `${systemInstruction}\n\n${prompt}`, 'utf8');
-        const cmd = selectedCli === 'agy'
-          ? `agy --dangerously-skip-permissions --print "Process the following input:" < "${tempPath}"`
-          : `opencode run --auto "Process the following input:" < "${tempPath}"`;
-        const promptLength = systemInstruction.length + prompt.length;
+        const fullPrompt = `${systemInstruction}\n\n${prompt}`;
+        const promptLength = fullPrompt.length;
         console.log(`🤖 [Soal #${num}] Mengirim prompt (${promptLength} karakter) via CLI: ${selectedCli} (Attempt ${attempt + 1}/${maxRetries})...`);
-        const timeoutMs = selectedCli === 'agy' ? 30000 : 90000;
-        const output = execSync(cmd, { 
-          encoding: 'utf8', 
-          maxBuffer: 10 * 1024 * 1024, 
-          shell: 'cmd.exe',
-          timeout: timeoutMs
-        });
+
+        let output = '';
+        if (selectedCli === 'agy') {
+          output = execFileSync('agy', [
+            '--dangerously-skip-permissions',
+            '--print',
+            fullPrompt
+          ], {
+            encoding: 'utf8',
+            maxBuffer: 10 * 1024 * 1024,
+            timeout: 45000 // 45 seconds for agy
+          });
+        } else {
+          fs.writeFileSync(tempPath, fullPrompt, 'utf8');
+          const cmd = `opencode run --auto "Process the following input:" < "${tempPath}"`;
+          output = execSync(cmd, { 
+            encoding: 'utf8', 
+            maxBuffer: 10 * 1024 * 1024, 
+            shell: 'cmd.exe',
+            timeout: 90000 // 90 seconds for opencode
+          });
+        }
         
         const cleaned = cleanJsonResponse(output);
         const cleanedTrimmed = cleaned.trim();
