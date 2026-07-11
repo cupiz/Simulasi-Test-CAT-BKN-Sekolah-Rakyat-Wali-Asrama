@@ -52,13 +52,33 @@ export function AdminPanel() {
 
   const loadDatesAndQuestions = async () => {
     const allQs = await db.questions.toArray();
-    const dates = [...new Set(allQs.map(q => q.dateStr).filter((d): d is string => !!d))].sort();
-    setAvailableDates(dates);
+    const localDates = [...new Set(allQs.map(q => q.dateStr).filter((d): d is string => !!d))];
+    let mergedDates = [...localDates];
+
+    if (isCloudEnabled) {
+      try {
+        const { data: onlineQs, error: onlineError } = await supabase
+          .from('questions')
+          .select('dateStr');
+        
+        if (onlineError) {
+          console.error('Gagal mengambil daftar tanggal online:', onlineError.message);
+        } else if (onlineQs) {
+          const onlineDates = [...new Set(onlineQs.map(q => q.dateStr).filter((d): d is string => !!d))];
+          mergedDates = [...new Set([...localDates, ...onlineDates])];
+        }
+      } catch (err) {
+        console.error('Gagal memuat tanggal dari cloud:', err);
+      }
+    }
+
+    const sortedDates = mergedDates.sort();
+    setAvailableDates(sortedDates);
     
-    if (dates.length > 0) {
-      const latest = dates[dates.length - 1];
+    if (sortedDates.length > 0) {
+      const latest = sortedDates[sortedDates.length - 1];
       setSelectedDate(latest);
-      setQuestions(allQs.filter(q => q.dateStr === latest).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0)));
+      await loadQuestionsByDate(latest);
     } else {
       setQuestions(allQs.sort((a, b) => (a.id || 0) - (b.id || 0)));
     }
@@ -66,7 +86,36 @@ export function AdminPanel() {
 
   const loadQuestionsByDate = async (dateStr: string) => {
     const allQs = await db.questions.toArray();
-    const filtered = allQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
+    let filtered = allQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
+    
+    if (isCloudEnabled) {
+      try {
+        const { data: onlineQs, error: onlineError } = await supabase
+          .from('questions')
+          .select('*')
+          .eq('dateStr', dateStr);
+        
+        if (onlineError) {
+          console.error('Gagal sinkronisasi dari cloud:', onlineError.message);
+        } else if (onlineQs && onlineQs.length > 0) {
+          let updatedNeeded = false;
+          for (const onlineQ of onlineQs) {
+            if (!filtered.some(localQ => localQ.number === onlineQ.number)) {
+              const { id, ...cleanedQ } = onlineQ;
+              await db.questions.add(cleanedQ);
+              updatedNeeded = true;
+            }
+          }
+          if (updatedNeeded) {
+            const freshQs = await db.questions.toArray();
+            filtered = freshQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
+          }
+        }
+      } catch (err) {
+        console.error('Gagal sinkronisasi data online:', err);
+      }
+    }
+    
     setQuestions(filtered);
   };
 
