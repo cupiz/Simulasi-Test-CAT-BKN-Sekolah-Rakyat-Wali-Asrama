@@ -854,16 +854,14 @@ async function main() {
       tasks.push({ category: 'wawancara', num, templates: INTERVIEW_TEMPLATES });
     }
 
-    const concurrencyLimit = 5;
+    const concurrencyLimit = 1;
     let completedCount = 0;
     
     finalQuestions = await mapLimit(tasks, concurrencyLimit, async (task) => {
       const baseTemplate = task.templates[task.num % task.templates.length];
       const q = await generateQuestionWithAI(task.category, baseTemplate.topic, dateStr, task.num, baseTemplate);
       completedCount++;
-      if (completedCount % 5 === 0 || completedCount === 145) {
-        console.log(`📈 Progress: ${completedCount}/145 soal selesai di-brainstorm via agy CLI...`);
-      }
+      console.log(`📈 Progress: ${completedCount}/145 soal selesai di-brainstorm via agy CLI...`);
       return q;
     });
   }
