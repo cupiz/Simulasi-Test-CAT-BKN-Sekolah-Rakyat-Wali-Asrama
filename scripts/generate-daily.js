@@ -970,6 +970,24 @@ async function main() {
         // Save incrementally on every successful question write
         finalQuestions.sort((a, b) => a.number - b.number);
         fs.writeFileSync(filePath, JSON.stringify(finalQuestions, null, 2), 'utf-8');
+
+        // Auto-upload incrementally to Supabase (online) if credentials are loaded
+        if (supabase) {
+          try {
+            const { id, created_at, ...cleanedQ } = q;
+            const { error: uploadError } = await supabase
+              .from('questions')
+              .insert(cleanedQ);
+            
+            if (uploadError) {
+              console.warn(`⚠️ [Online] Gagal mengunggah soal #${q.number} ke Supabase: ${uploadError.message}`);
+            } else {
+              console.log(`🌐 [Online] Soal #${q.number} berhasil diunggah langsung ke Supabase.`);
+            }
+          } catch (uploadErr) {
+            console.warn(`⚠️ [Online] Error saat mengunggah soal #${q.number}: ${uploadErr.message}`);
+          }
+        }
       });
     } else {
       console.log(`✅ Semua soal (145/145) sudah lengkap offline & online. Tidak ada soal baru yang perlu di-generate.`);
