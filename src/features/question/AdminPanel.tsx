@@ -310,7 +310,10 @@ export function AdminPanel() {
         let completed = 0;
         
         const runTask = async (q: Question) => {
+          const categoryLabel = q.category === 'teknis' ? 'Teknis' : q.category === 'manajerial' ? 'Manajerial' : q.category === 'sosial' ? 'Sosial' : 'Wawancara';
           try {
+            log(`🤖 Memulai generate Soal #${q.number}/${draftQuestions.length} (${categoryLabel})...`);
+            
             const response = await fetch('/api/generate', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -325,8 +328,7 @@ export function AdminPanel() {
             const resData = await response.json();
             dailyQs.push(resData.question);
             completed++;
-            const categoryLabel = q.category === 'teknis' ? 'Teknis' : q.category === 'manajerial' ? 'Manajerial' : q.category === 'sosial' ? 'Sosial' : 'Wawancara';
-            log(`     [OK] Generated Soal #${q.number}/${draftQuestions.length}: ${resData.question.topic} (${categoryLabel})`);
+            log(`     [OK] Generated Soal #${q.number}/${draftQuestions.length}: ${resData.question.topic} via CLI: ${resData.cliUsed || 'agy'} (Attempt ${resData.attempts || 1})`);
           } catch (err: any) {
             // Fallback on error
             dailyQs.push(q);

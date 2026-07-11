@@ -152,15 +152,33 @@ Format JSON output harus persis seperti struktur berikut:
         attempt++;
         lastError = err;
 
-        // Detect permanent errors to fail-fast
         const errMsg = ((err.message || '') + ' ' + (err.stderr || '')).toLowerCase();
-        if (errMsg.includes('quota') || errMsg.includes('subscription') || errMsg.includes('upgrade')) {
+        const isRateLimit = errMsg.includes('429') || 
+                            errMsg.includes('rate limit') || 
+                            errMsg.includes('resourceexhausted') || 
+                            errMsg.includes('resource has been exhausted') ||
+                            errMsg.includes('queries per minute') ||
+                            errMsg.includes('quota limit exceeded') ||
+                            errMsg.includes('quota exceeded') ||
+                            errMsg.includes('quota reached');
+
+        // Detect permanent errors to fail-fast (billing, invalid api key, etc.)
+        const isPermanent = errMsg.includes('billing disabled') || 
+                            errMsg.includes('invalid api key') || 
+                            errMsg.includes('key is invalid') ||
+                            errMsg.includes('subscription ended');
+        if (isPermanent) {
           attempt = maxRetries; // Skip remaining retries
         }
 
         if (attempt < maxRetries) {
-          const delay = attempt * 3000 + Math.random() * 1000;
-          await new Promise(resolve => setTimeout(resolve, delay));
+          if (isRateLimit) {
+            console.warn(`⚠️ [API] Terdeteksi rate limit. Menunggu 15 detik sebelum mencoba kembali...`);
+            await new Promise(resolve => setTimeout(resolve, 15000));
+          } else {
+            const delay = attempt * 3000 + Math.random() * 1000;
+            await new Promise(resolve => setTimeout(resolve, delay));
+          }
         }
       } finally {
         try {
@@ -197,7 +215,12 @@ Format JSON output harus persis seperti struktur berikut:
       }));
     }
 
-    return NextResponse.json({ success: true, question: questionObj });
+    return NextResponse.json({ 
+      success: true, 
+      question: questionObj,
+      cliUsed: selectedCli,
+      attempts: attempt + 1
+    });
   } catch (err: any) {
     // Attempt clean up of temp file
     try {
