@@ -64,21 +64,22 @@ Output harus berupa objek JSON valid tanpa penjelasan tambahan di luar JSON.
 
 CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT write any files to the filesystem, and you MUST NOT create or run any scripts (such as .ps1 or .js files) in the workspace. Simply generate the JSON object in memory and print it directly to standard output. Do not attempt to validate using external scripts.`;
 
-    const prompt = `Kembangkan draf acuan soal ujian CAT BKN kategori "${draftQuestion.category}" bertema "${draftQuestion.topic}" nomor soal ${draftQuestion.number} berikut:
-
-Kasus Draf Acuan:
-"${draftQuestion.questionText}"
-
-Pilihan Jawaban Draf Acuan:
-${draftQuestion.options.slice(0, optionCount).map((o: any) => `- [Skor ${o.score}]: ${o.text}`).join('\n')}
-
-Silakan kembangkan dan tulis ulang menjadi soal berkualitas tinggi dengan mengikuti aturan berikut:
-1. Tulis studi kasus (questionText) minimal 150-250 kata, sangat realistis menggambarkan kehidupan asrama Sekolah Rakyat, dilematis, dan menggunakan nama tokoh lokal Indonesia.
-2. Buat persis ${optionCount} opsi pilihan jawaban (A s/d ${optionsKeys[optionsKeys.length - 1]}).
-3. Tentukan bobot skor opsi jawaban sesuai aturan kategori:
-   - Kategori ${draftQuestion.category}: ${draftQuestion.category === 'teknis' ? 'Hanya satu opsi terbaik bernilai 5, opsi lainnya bernilai 0.' : `Gunakan skor bertingkat dari 1 s/d ${maxScore}.`}
-4. Tulis pembahasan (explanation) minimal 80-120 kata yang membedah keunggulan opsi terbaik dibanding opsi lainnya.
-5. Lengkapi field competency, berakhlak, psychologyBasis (harus landasan teori psikologi/manajemen yang konkret dan diakui secara akademis, misal: Servant Leadership, Kohlberg's Moral Development, dll.), dan catTips (satu baris tips taktis).
+    const prompt = `Buatlah soal ujian CAT BKN kategori "${draftQuestion.category}" bertema "${draftQuestion.topic}" nomor soal ${draftQuestion.number} yang unik dan orisinil.
+    
+    Berikut adalah Draf Acuan (HANYA sebagai inspirasi topik dan panduan struktur kompetensi, Anda TIDAK BOLEH meniru cerita/use case ini):
+    Draf Cerita Acuan: "${draftQuestion.questionText}"
+    Draf Opsi Acuan:
+    ${draftQuestion.options.slice(0, optionCount).map((o: any) => `- [Skor ${o.score}]: ${o.text}`).join('\n')}
+    
+    ATURAN CRITICAL DIVERSIFIKASI (ANTI-REPETISI):
+    1. Anda WAJIB membuat studi kasus (questionText) baru yang SEPENUHNYA BERBEDA skenario ceritanya, konflik permasalahannya, nama tokohnya, dan detail ruang/kamar asrama dari Draf Cerita Acuan.
+    2. Jangan pernah menyalin alur cerita dari Draf Cerita Acuan. Karanglah skenario masalah baru yang realistis terjadi di asrama Sekolah Rakyat. Contoh variasi masalah: perkelahian fisik akibat ejekan SARA, perusakan fasilitas bersama (vandalisme), masalah kecanduan rokok/vape, siswa depresi/menangis histeris di malam hari, kecurangan saat ujian sekolah, pelanggaran jam malam untuk pacaran/pergi ke warnet, pertengkaran piket kebersihan, pencurian barang berharga (jam tangan/uang), dsb.
+    3. Tulis studi kasus (questionText) tersebut minimal 150-250 kata, menggunakan nama tokoh lokal Indonesia (misal: Tegar, Yusuf, Arif, Bagus, Danis, Galih, Panji, Satria, Rian, Bayu, Fajar, Bintang, dll.).
+    4. Buat persis ${optionCount} opsi pilihan jawaban (A s/d ${optionsKeys[optionsKeys.length - 1]}) yang spesifik untuk skenario cerita baru Anda tersebut. Jangan gunakan opsi dari Draf Opsi Acuan.
+    5. Tentukan bobot skor opsi jawaban sesuai aturan kategori:
+       - Kategori ${draftQuestion.category}: ${draftQuestion.category === 'teknis' ? 'Hanya satu opsi terbaik bernilai 5, opsi lainnya bernilai 0.' : `Gunakan skor bertingkat dari 1 s/d ${maxScore}.`}
+    6. Tulis pembahasan (explanation) minimal 80-120 kata yang membedah keunggulan opsi terbaik dibanding opsi lainnya.
+    7. Lengkapi field competency, berakhlak, psychologyBasis (harus landasan teori psikologi/manajemen yang konkret dan diakui secara akademis, misal: Servant Leadership, Kohlberg's Moral Development, dll.), dan catTips (satu baris tips taktis).
 
 Format JSON output harus persis seperti struktur berikut:
 {
