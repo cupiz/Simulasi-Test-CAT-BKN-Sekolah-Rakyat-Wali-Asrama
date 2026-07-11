@@ -114,7 +114,7 @@ export function AdminPanel() {
     
     let filtered = dateQs;
 
-    // 2. Cegah download ganda secara paralel dari cloud (Race Condition)
+    // 2. Sinkronisasi dua arah antara Lokal dan Cloud
     if (isCloudEnabled && !syncedDates.current.has(dateStr)) {
       syncedDates.current.add(dateStr);
       try {
@@ -125,24 +125,48 @@ export function AdminPanel() {
         
         if (onlineError) {
           console.error('Gagal sinkronisasi dari cloud:', onlineError.message);
-        } else if (onlineQs && onlineQs.length > 0) {
-          let updatedNeeded = false;
+        } else {
+          const onlineList = onlineQs || [];
+          let updatedLocalNeeded = false;
           
-          // Pastikan hanya memasukkan nomor yang belum ada sama sekali di lokal dan belum ada di batch sync ini
-          const addedNumbers = new Set(filtered.map(q => q.number));
+          // A. Sync: Cloud -> Lokal (Jika di lokal tidak ada, unduh dari cloud)
+          const localNumbers = new Set(filtered.map(q => q.number));
+          const addedLocalNumbers = new Set<number>();
           
-          for (const onlineQ of onlineQs) {
-            if (onlineQ.number && !addedNumbers.has(onlineQ.number)) {
+          for (const onlineQ of onlineList) {
+            if (onlineQ.number && !localNumbers.has(onlineQ.number) && !addedLocalNumbers.has(onlineQ.number)) {
               const { id, ...cleanedQ } = onlineQ;
               await db.questions.add(cleanedQ);
-              addedNumbers.add(onlineQ.number);
-              updatedNeeded = true;
+              addedLocalNumbers.add(onlineQ.number);
+              updatedLocalNeeded = true;
             }
           }
           
-          if (updatedNeeded) {
+          // B. Sync: Lokal -> Cloud (Jika di cloud tidak ada, unggah dari lokal)
+          const onlineNumbers = new Set(onlineList.map(q => q.number));
+          const toUploadToCloud = [];
+          
+          for (const localQ of filtered) {
+            if (localQ.number && !onlineNumbers.has(localQ.number)) {
+              const { id, ...cleanedQ } = localQ;
+              toUploadToCloud.push(cleanedQ);
+            }
+          }
+          
+          if (toUploadToCloud.length > 0) {
+            console.log(`Mengunggah ${toUploadToCloud.length} soal lokal yang hilang ke Supabase Cloud...`);
+            const { error: uploadError } = await supabase.from('questions').insert(toUploadToCloud);
+            if (uploadError) {
+              console.error('Gagal upload soal lokal ke cloud:', uploadError.message);
+            } else {
+              toast.info(`Sinkronisasi: Berhasil mengunggah ${toUploadToCloud.length} soal lokal ke Supabase Cloud!`);
+            }
+          }
+          
+          if (updatedLocalNeeded) {
             const freshQs = await db.questions.toArray();
             filtered = freshQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
+            toast.info(`Sinkronisasi: Berhasil mengunduh soal dari Supabase Cloud ke lokal!`);
           }
         }
       } catch (err) {
