@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync, execFileSync } = require('child_process');
+const { execSync, execFileSync, exec, execFile } = require('child_process');
+const util = require('util');
+const execPromise = util.promisify(exec);
+const execFilePromise = util.promisify(execFile);
 const { createClient } = require('@supabase/supabase-js');
 
 // Load env variables
@@ -738,24 +741,24 @@ Format JSON output harus persis seperti struktur berikut:
 
         let output = '';
         if (selectedCli === 'agy') {
-          output = execFileSync('agy', [
+          const res = await execFilePromise('agy', [
             '--dangerously-skip-permissions',
             '--print',
             fullPrompt
           ], {
-            encoding: 'utf8',
             maxBuffer: 10 * 1024 * 1024,
             timeout: 45000 // 45 seconds for agy
           });
+          output = res.stdout;
         } else {
           fs.writeFileSync(tempPath, fullPrompt, 'utf8');
           const cmd = `opencode run --auto "Process the following input:" < "${tempPath}"`;
-          output = execSync(cmd, { 
-            encoding: 'utf8', 
+          const res = await execPromise(cmd, { 
             maxBuffer: 10 * 1024 * 1024, 
             shell: 'cmd.exe',
             timeout: 90000 // 90 seconds for opencode
           });
+          output = res.stdout;
         }
         
         const cleaned = cleanJsonResponse(output);
