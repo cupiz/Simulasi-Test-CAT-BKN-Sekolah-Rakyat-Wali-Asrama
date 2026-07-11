@@ -46,7 +46,7 @@ export function DashboardView() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [activeTab]);
 
   // Live simulation of other competitors taking exams in background (silent updates)
   useEffect(() => {
