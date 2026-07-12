@@ -1,7 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { db } from '../../lib/db';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { syncQuestions } from '../../lib/sync';
+import { isCloudEnabled } from '../../lib/supabase';
 import { ExamHistoryItem, ExamMode } from '../../types';
 import { useExamStore, useAuthStore, useLeaderboardStore } from '../../store';
 import { StatsOverview } from './StatsOverview';
@@ -31,6 +34,10 @@ export function DashboardView() {
   const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
   const [adminPasswordInput, setAdminPasswordInput] = useState('');
   const [adminPasswordError, setAdminPasswordError] = useState('');
+  
+  // Reactively track questions from Dexie IndexedDB
+  const allQs = useLiveQuery(() => db.questions.toArray());
+  const maxDbDateRef = useRef<string>('');
   
   const startExam = useExamStore((state) => state.startExam);
   const auth = useAuthStore();
@@ -69,13 +76,29 @@ export function DashboardView() {
     const hist = await db.examHistory.toArray();
     setHistory(hist.sort((a, b) => b.date - a.date));
 
-    const allQs = await db.questions.toArray();
+    // Background sync questions from Supabase if cloud is enabled
+    if (isCloudEnabled) {
+      syncQuestions().catch((err) => console.error('Background sync error:', err));
+    }
+  };
+
+  // Reactively update available dates and select the latest date if DB updates
+  useEffect(() => {
+    if (!allQs) return;
     const dates = [...new Set(allQs.map(q => q.dateStr).filter((d): d is string => !!d))].sort();
     if (dates.length > 0) {
       setAvailableDates(dates);
-      setLatestDate(dates[dates.length - 1]);
+      const newMaxDate = dates[dates.length - 1];
+      
+      const isNewDateAdded = newMaxDate > maxDbDateRef.current;
+      const isCurrentDateInvalid = !dates.includes(latestDate);
+
+      if (isNewDateAdded || isCurrentDateInvalid) {
+        setLatestDate(newMaxDate);
+      }
+      maxDbDateRef.current = newMaxDate;
     }
-  };
+  }, [allQs, latestDate]);
 
   const handleStartExam = async (mode: ExamMode, date: string) => {
     toast.success(`Memulai sesi ujian Baru (${mode}) untuk set tanggal ${date}...`);
