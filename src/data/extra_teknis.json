@@ -1,0 +1,1172 @@
+[
+  {
+    "number": 61,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Sebagai Penata Layanan Operasional di asrama Sekolah Rakyat, Anda mendeteksi adanya kerusakan pada engsel pintu gerbang utama yang membuat pintu sulit ditutup rapat pada malam hari. Hal ini berpotensi membahayakan keselamatan siswa karena akses masuk asrama menjadi terbuka. Tindakan kajian awal yang paling tepat untuk mengidentifikasi akar permasalahan tersebut adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Mengunci gerbang menggunakan rantai dan gembok tambahan tanpa memeriksa kerusakan fisik engsel secara mendalam.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Melakukan inspeksi visual langsung pada engsel gerbang, mengukur tingkat kemiringan pintu, mengidentifikasi keausan logam, dan mencatatnya dalam formulir pemeriksaan kerusakan.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Membiarkan gerbang tetap terbuka dan meminta petugas keamanan untuk memperketat penjagaan di sekitar pos depan.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Memanggil tukang las eksternal secara langsung tanpa melakukan pengecekan mandiri terlebih dahulu agar masalah cepat selesai.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menyalahkan petugas piket malam karena tidak merawat gerbang dengan baik dan meminta mereka memperbaikinya sendiri.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Kajian awal terhadap permasalahan fisik asrama harus diawali dengan inspeksi visual secara detail dan pencatatan kondisi kerusakan (kondisi engsel, kemiringan, keausan logam) untuk merumuskan perbaikan yang tepat dan akuntabel. Opsi B merupakan langkah investigasi mandiri yang komprehensif sebelum mengambil keputusan perbaikan.",
+    "competency": "Melakukan kajian awal terhadap permasalahan layanan operasional",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "Root Cause Analysis (RCA)",
+    "catTips": "Kajian awal menuntut pemeriksaan fisik secara langsung dan pendokumentasian bukti kerusakan sebelum mengambil tindakan."
+  },
+  {
+    "number": 62,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Beberapa siswa di blok B melaporkan bahwa air bersih yang keluar dari keran kamar mandi berbau besi dan berwarna kecokelatan. Hal ini mengganggu kegiatan mandi dan cuci pakaian mereka. Langkah pertama yang harus Anda lakukan sebagai pengelola operasional untuk mengkaji masalah ini adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Membeli filter air instan dan memasangnya di seluruh keran kamar mandi tanpa menyelidiki sumber air utama.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Meminta siswa untuk tidak menggunakan air kamar mandi tersebut dan mandi di masjid terdekat sampai bau air hilang dengan sendirinya.",
+        "score": 0
+      },
+      {
+        "key": "C",
+        "text": "Melakukan pemeriksaan langsung ke bak penampungan utama (toren), memeriksa pipa penyalur dari sumur bor, mengambil sampel air, dan mendokumentasikan kondisi fisik sumber air.",
+        "score": 5
+      },
+      {
+        "key": "D",
+        "text": "Melaporkan langsung kerusakan kualitas air ke dinas kesehatan daerah tanpa memeriksa sistem penyaluran air internal asrama.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menyuruh siswa membersihkan sendiri bak mandi mereka karena menduga bau besi berasal dari endapan kotoran dasar bak.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": "Pemeriksaan kualitas air yang menurun harus dimulai dari melacak hulu sistem air (toren dan pipa penyaluran) untuk memastikan apakah kontaminasi terjadi di sumber air atau di saluran pipa distribusi. Opsi C adalah prosedur kajian operasional yang runut.",
+    "competency": "Melakukan kajian awal terhadap permasalahan layanan operasional",
+    "berakhlak": "Kompeten",
+    "psychologyBasis": "SOP Sanitasi dan Higiene Lingkungan",
+    "catTips": "Penyelidikan masalah sanitasi harus dirunut dari sumber penampungan utama ke saluran pipa."
+  },
+  {
+    "number": 63,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Anda mengamati adanya tren pemborosan konsumsi energi listrik di asrama Sekolah Rakyat, di mana lampu kamar dan kipas angin sering dibiarkan menyala di siang hari saat siswa berada di sekolah. Sebelum menerapkan sanksi, langkah kajian awal apa yang harus Anda lakukan untuk merumuskan kebijakan efisiensi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Memutus aliran listrik ke seluruh kamar siswa pada siang hari secara paksa untuk menghemat energi secara instan.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Melakukan survei konsumsi energi, mencatat waktu operasional alat elektronik di setiap blok, membandingkan tagihan listrik bulanan, dan memetakan area kamar yang paling boros.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Mengumumkan nama-nama kamar yang dicurigai boros listrik pada saat apel pagi untuk memberikan efek jera sosial.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Memasang meteran listrik prabayar di setiap kamar siswa dan membebankan biaya pembelian token kepada orang tua siswa.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Meminta ketua OSIS asrama untuk mengawasi penggunaan listrik di siang hari tanpa memberikan panduan pemantauan yang jelas.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Kajian konsumsi energi memerlukan data riil penggunaan listrik bulanan, waktu pemakaian, dan pemetaan perilaku siswa untuk menyusun rencana kampanye efisiensi yang tepat sasaran. Opsi B merupakan pendekatan manajemen energi berbasis data.",
+    "competency": "Melakukan kajian awal terhadap permasalahan layanan operasional",
+    "berakhlak": "Harmonis",
+    "psychologyBasis": "Energy Auditing & Behavior Modification",
+    "catTips": "Langkah awal kajian manajemen energi membutuhkan audit penggunaan daya listrik riil."
+  },
+  {
+    "number": 64,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Siswa asrama banyak mengeluhkan rasa masakan menu makan siang yang hambar dan porsinya yang tidak konsisten selama satu minggu terakhir. Hal ini membuat minat makan siswa menurun. Tindakan kajian awal yang harus Anda ambil sebagai Penata Layanan Operasional adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Mengganti vendor penyedia katering secara sepihak tanpa memberikan surat peringatan atau klarifikasi terlebih dahulu.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Mengabaikan keluhan siswa dan meminta mereka bersyukur atas makanan gratis yang disediakan oleh lembaga.",
+        "score": 0
+      },
+      {
+        "key": "C",
+        "text": "Mendatangi dapur asrama saat proses masak, menimbang porsi makanan secara acak, mewawancarai juru masak tentang ketersediaan bahan, serta mencocokkannya dengan kontrak SOP porsi makan.",
+        "score": 5
+      },
+      {
+        "key": "D",
+        "text": "Menyarankan siswa untuk membeli lauk tambahan di kantin luar asrama menggunakan uang jajan pribadi mereka.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Melakukan sidak ke tempat pembuangan sampah makanan untuk melihat seberapa banyak makanan yang terbuang tanpa memeriksa proses memasak.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": "Untuk mengkaji penurunan kualitas katering asrama, pengelola harus memeriksa langsung ke tempat pengolahan masakan (dapur), mengukur konsistensi porsi (timbang sampel), dan membandingkan fakta di lapangan dengan kontrak perjanjian standar makanan. Opsi C adalah langkah investigasi hulu katering yang objektif.",
+    "competency": "Melakukan kajian awal terhadap permasalahan layanan operasional",
+    "berakhlak": "Berorientasi Pelayanan",
+    "psychologyBasis": "Quality Assurance & Service Standards",
+    "catTips": "Pemeriksaan masalah pangan asrama harus dilakukan langsung ke area dapur pengolahan dan pengukuran porsi riil."
+  },
+  {
+    "number": 65,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Saat jam belajar mandiri malam hari, koneksi Wi-Fi di ruang belajar bersama sering mengalami kelambatan ekstrem sehingga menghambat siswa dalam mengerjakan tugas sekolah digital. Tindakan kajian awal yang tepat untuk mengidentifikasi penyebab masalah ini adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Mematikan pemancar Wi-Fi di asrama secara permanen dan meminta siswa belajar menggunakan buku paket fisik saja.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Membuat analisis statistik bandwidth, mencatat jumlah perangkat yang terhubung, mendeteksi aplikasi non-akademik yang sedang diakses, dan mengecek kekuatan sinyal router di ruang belajar.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Membeli router tambahan yang lebih mahal tanpa memeriksa konfigurasi jaringan Wi-Fi saat ini.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menuduh beberapa siswa melakukan unduhan ilegal dan menyita semua laptop mereka selama jam belajar mandiri.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Meminta penyedia layanan internet (ISP) meningkatkan paket bandwidth bulanan asrama tanpa memeriksa beban pemakaian internal asrama.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Kajian jaringan komputer yang lambat membutuhkan pemantauan beban pemakaian (bandwidth analysis), jumlah perangkat terhubung (device density), dan analisis lalu lintas data untuk merumuskan pembatasan akses non-akademik. Opsi B adalah langkah analisis teknis IT yang tepat.",
+    "competency": "Melakukan kajian awal terhadap permasalahan layanan operasional",
+    "berakhlak": "Adaptif",
+    "psychologyBasis": "Network Capacity Planning & Data Monitoring",
+    "catTips": "Masalah konektivitas digital memerlukan analisis beban perangkat dan lalu lintas data internet asrama."
+  },
+  {
+    "number": 66,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Anda menemukan data absensi bahwa tingkat ketidakhadiran siswa dalam sesi belajar mandiri terprogram di ruang asrama meningkat dari 5% menjadi 20% dalam dua minggu terakhir. Sebagai Penata Layanan Operasional, langkah awal kajian Anda untuk mengusut masalah ini adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menerapkan hukuman skorsing bagi seluruh siswa yang tidak hadir belajar tanpa menanyakan alasan ketidakhadiran mereka.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Mengumpulkan data kehadiran harian, mewawancarai guru pendamping asrama, serta mengedarkan survei tertutup kepada siswa mengenai faktor kelelahan fisik atau kebosanan materi belajar.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Meniadakan sesi belajar mandiri malam hari dan menggantinya dengan waktu istirahat tidur yang lebih cepat.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Meminta orang tua siswa datang ke asrama untuk mendampingi anak mereka belajar setiap malam hari secara bergiliran.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Mengunci pintu kamar tidur siswa sejak sore hari agar mereka terpaksa menuju ruang belajar mandiri bersama.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Mengusut peningkatan absensi belajar mandiri memerlukan pengumpulan data runut, survei persepsi siswa untuk mengetahui akar penyebabnya (misal kelelahan fisik akibat jadwal padat, suasana belajar kaku), dan koordinasi dengan pendamping. Opsi B memadukan data kuantitatif dan kualitatif.",
+    "competency": "Melakukan kajian awal terhadap permasalahan layanan operasional",
+    "berakhlak": "Loyal",
+    "psychologyBasis": "Educational Absenteeism & Diagnostics",
+    "catTips": "Pilihlah langkah investigasi persuasif berbasis survei faktor internal dan eksternal penyebab siswa membolos."
+  },
+  {
+    "number": 67,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Suhu udara di dalam blok asrama sangat panas karena beberapa unit AC kamar mengalami penurunan performa (kurang dingin) dan berisik akibat akumulasi debu tebal pada filter luar. Untuk menjaga kenyamanan tidur siswa, dokumen perencanaan layanan operasional pemeliharaan AC yang paling sistematis adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Membuat jadwal pembersihan filter AC mandiri oleh siswa setiap akhir pekan tanpa panduan teknis keselamatan kelistrikan.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menyusun draf rencana pemeliharaan preventif AC mencakup daftar inventaris unit, jadwal servis cuci berkala 3 bulanan oleh teknisi, anggaran biaya tahunan, dan lembar cek kontrol performa.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Membeli kipas angin tambahan untuk diletakkan di setiap kamar sebagai solusi darurat tanpa memperbaiki AC yang kotor.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Mengusulkan penggantian unit AC baru untuk seluruh gedung asrama guna menghindari kerumitan servis rutin berkala.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Mematikan AC yang bermasalah dan meminta siswa untuk tidur dengan jendela terbuka lebar di malam hari.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Pemeliharaan AC asrama komunal memerlukan dokumen rencana pemeliharaan preventif (preventive maintenance) terstruktur yang mendetailkan jadwal perawatan, alokasi anggaran, daftar aset, dan lembar kontrol untuk menjaga masa pakai barang. Opsi B mencerminkan administrasi operasional sarpras yang profesional.",
+    "competency": "Menyusun rencana layanan operasional",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "Preventive Maintenance Management",
+    "catTips": "Rencana pemeliharaan sarana prasarana asrama yang baik harus bersifat preventif, terjadwal, dan beranggaran jelas."
+  },
+  {
+    "number": 68,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Untuk memitigasi risiko bencana di asrama Sekolah Rakyat yang dihuni ratusan siswa prasejahtera, Anda ditugaskan menyusun rencana tanggap darurat bencana kebakaran gedung. Langkah perencanaan operasional taktis yang paling lengkap dan aman meliputi...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menyediakan nomor telepon dinas pemadam kebakaran di papan pengumuman lobi depan asrama tanpa merancang jalur evakuasi.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Merancang peta jalur evakuasi darurat, menetapkan titik kumpul aman, menyusun tim peran tanggap darurat di antara pengelola/siswa senior, menjadwalkan simulasi (dril) evakuasi berkala, dan meletakkan petunjuk arah evakuasi menyala dalam gelap (fosfor).",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Membeli alat pemadam api ringan (APAR) sebanyak-banyaknya dan meletakkannya di dalam kamar tidur siswa yang dikunci dari luar.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Mengadakan seminar teori mitigasi bencana kebakaran di aula asrama tanpa melakukan praktik simulasi evakuasi fisik di lapangan.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menginstruksikan siswa senior untuk mengevakuasi junior secara mandiri tanpa adanya komando terpusat dari pengelola asrama.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Perencanaan mitigasi kebakaran di asrama komunal harus mencakup peta evakuasi, penentuan titik kumpul yang aman, pembagian peran tim tanggap darurat, dan latihan simulasi fisik berkala agar seluruh penghuni tanggap saat krisis. Opsi B mencakup seluruh indikator perencanaan mitigasi bencana yang aman dan legal.",
+    "competency": "Menyusun rencana layanan operasional",
+    "berakhlak": "Kompeten",
+    "psychologyBasis": "Emergency Preparedness and Response (EPR)",
+    "catTips": "Mitigasi bencana wajib menggabungkan sarana fisik (peta/jalur evakuasi) dengan pelatihan tanggap darurat berkala (simulasi)."
+  },
+  {
+    "number": 69,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Kebersihan lingkungan luar asrama (halaman, selokan, tempat sampah) mulai menurun karena tidak ada pembagian tugas kebersihan yang adil di antara siswa. Langkah perencanaan operasional jadwal piket yang paling efektif untuk menanamkan gotong royong tanpa menimbulkan gesekan antarsiswa adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menunjuk secara acak siswa yang terlihat tidak disiplin untuk membersihkan halaman luar asrama setiap hari.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menyusun matriks jadwal piket mingguan yang membagi siswa ke dalam tim lintas kamar secara adil, mendefinisikan batas area tugas kebersihan secara spesifik, menyiapkan form checklist penilaian, serta mendiskusikan mekanisme evaluasinya bersama perwakilan siswa.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Menyewa tenaga kebersihan eksternal harian agar siswa fokus belajar saja tanpa perlu membersihkan lingkungan asrama.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Membuat pengumuman umum agar semua siswa bergotong royong secara sukarela setiap sore tanpa membagi tugas dalam jadwal terstruktur.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Mewajibkan siswa junior membersihkan seluruh area luar, sementara siswa senior mengawasi dan memberikan penilaian saja.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Penyusunan jadwal piket kebersihan lingkungan di asrama harus adil, transparan, terstruktur (matriks pembagian area kerja), didukung instrumen kontrol (checklist), dan disepakati bersama agar melatih kedisiplinan dan gotong royong secara harmonis. Opsi B merinci langkah penyusunan instrumen jadwal piket yang demokratis dan fungsional.",
+    "competency": "Menyusun rencana layanan operasional",
+    "berakhlak": "Kolaboratif",
+    "psychologyBasis": "Shared Governance & Responsibility",
+    "catTips": "Jadwal piket harus adil (tanpa senioritas/tunjuk acak), terstruktur dengan area spesifik, dan disepakati bersama."
+  },
+  {
+    "number": 70,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Untuk meminimalkan potensi konflik senioritas dan perundungan di kamar tidur asrama, pihak manajemen meminta Anda menyusun rencana rotasi kamar berkala untuk semester baru. Prinsip perencanaan tata letak penempatan kamar yang paling bijaksana adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menempatkan seluruh siswa senior di satu blok lantai atas secara terisolasi tanpa pengawasan pengasuh di sekitarnya.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Merancang skema pencampuran kamar heterogen (kombinasi asal daerah/kelas yang seimbang), menempatkan kamar pengasuh asrama di antara blok siswa, menetapkan tata tertib privasi kamar, serta mensosialisasikan jadwal perpindahan secara transparan.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Mewajibkan siswa junior untuk tinggal di kamar mana saja yang tersisa setelah siswa senior memilih kamar terbaik mereka.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Meniadakan kebijakan rotasi kamar dan membiarkan posisi kamar tetap sama sejak tahun pertama masuk sekolah asrama.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Memindahkan siswa ke kamar baru berdasarkan undian acak semata tanpa mempertimbangkan aspek keragaman budaya daerah atau tingkat usia kelas.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Rotasi kamar asrama harus direncanakan secara strategis (heterogen untuk membaurkan keberagaman, menempatkan pengawas di titik strategis di tengah blok siswa untuk memitigasi kekerasan) demi menciptakan lingkungan inklusif dan memotong mata rantai senioritas. Opsi B menerapkan manajemen tata ruang asrama yang aman dan berkeadilan.",
+    "competency": "Menyusun rencana layanan operasional",
+    "berakhlak": "Harmonis",
+    "psychologyBasis": "Environmental Psychology & Conflict Mitigation",
+    "catTips": "Rencana penempatan kamar harus meminimalkan segregasi daerah/senioritas dan memastikan kamar pengawas berdekatan dengan siswa."
+  },
+  {
+    "number": 71,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Dalam rangka meningkatkan status kesehatan fisik siswa asrama Sekolah Rakyat yang berasal dari keluarga prasejahtera, Anda ditugaskan menyusun rencana siklus menu gizi seimbang harian untuk satu bulan. Aspek perencanaan menu yang wajib dipenuhi dalam dokumen rencana tersebut adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menyusun daftar masakan berdasarkan harga bahan baku termurah di pasar tanpa menghitung kecukupan kalori dan protein harian siswa.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Merancang tabel siklus menu 10 hari yang bervariasi, menghitung nilai kecukupan gizi (karbohidrat, serat, protein), menyesuaikan dengan anggaran bahan pokok, serta menyusun SOP standar kebersihan pengolahan masakan.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Mewajibkan menu makanan instan kemasan kaleng setiap hari agar praktis dalam penyajian dan menghemat tenaga juru masak.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menyerahkan sepenuhnya penyusunan menu harian kepada keinginan siswa secara bergantian tanpa pengawasan kandungan nutrisi.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Membuat menu yang sama persis setiap hari (misal telur dadar dan sayur kol) agar mempermudah proses belanja bahan pokok.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Penyusunan menu asrama komunal memerlukan rencana siklus menu yang teratur (siklus 10 hari mencegah kebosanan), perhitungan nilai gizi yang mencukupi untuk pertumbuhan anak, keselarasan anggaran belanja, dan SOP higiene sanitasi pangan yang baik. Opsi B memenuhi kaidah manajemen nutrisi asrama.",
+    "competency": "Menyusun rencana layanan operasional",
+    "berakhlak": "Berorientasi Pelayanan",
+    "psychologyBasis": "Dietary Management & Nutrition Economics",
+    "catTips": "Perencanaan menu harus mempertimbangkan variasi masakan (siklus menu), nilai gizi gizi seimbang, dan kelayakan anggaran."
+  },
+  {
+    "number": 72,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Untuk memastikan keamanan maksimal seluruh siswa asrama selama jam tidur malam hari, Anda perlu menyusun rencana kerja sistem patroli keliling berkala oleh staf asrama. Rencana operasional patroli malam yang paling efektif mencegah celah kerawanan keamanan asrama adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Mewajibkan patroli satu kali pada tengah malam pukul 00.00 di sepanjang lorong utama saja tanpa memeriksa pintu darurat.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menyusun jadwal piket ronda malam per jam (sistem log bergantian), menentukan rute inspeksi (pintu gerbang, jendela blok, toilet, instalasi listrik), menyediakan alat senter/walkie-talkie, dan lembar checklist log patroli pos.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Mengandalkan pemantauan melalui kamera CCTV asrama saja dari ruang pos depan tanpa perlu melakukan patroli fisik keliling asrama.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menugaskan petugas keamanan luar untuk meronda area luar saja, sementara area dalam asrama dibiarkan tanpa patroli malam.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Membiarkan gerbang dan pintu asrama tidak terkunci agar memudahkan evakuasi jika terjadi kebakaran malam hari.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Patroli keamanan malam di asrama harus terencana secara operasional dengan pembagian shift ronda yang konstan, rute keliling yang mencakup seluruh titik buta (pintu, jendela, kelistrikan), kelengkapan perlengkapan darurat, dan pencatatan fisik (checklist log). Opsi B adalah SOP pengamanan lingkungan asrama yang sistematis.",
+    "competency": "Menyusun rencana layanan operasional",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "Loss Prevention and Physical Security Management",
+    "catTips": "Ronda malam asrama wajib terstruktur dengan rute spesifik, pergantian jam konstan, dan logbook fisik."
+  },
+  {
+    "number": 73,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Memasuki musim hujan, terdeteksi penularan penyakit flu dan ISPA yang meluas di antara siswa asrama blok A. Sebagai penata operasional, tindakan penyiapan bahan sanitasi dan peralatan kebersihan untuk memutus rantai penularan di lingkungan asrama adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menyiapkan sapu dan pel biasa dengan air sumur murni tanpa cairan sterilisasi untuk membersihkan lantai kamar tidur.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menyiapkan cairan disinfektan klorin, botol sprayer, masker medis cadangan untuk siswa sehat/sakit, sabun antiseptik di setiap wastafel, serta alat pel khusus disinfeksi permukaan meja/pegangan pintu.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Meminta siswa membeli masker dan hand sanitizer secara mandiri ke apotek di luar kompleks asrama.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menyemprotkan pengharum ruangan aerosol biasa di seluruh sudut kamar tidur siswa untuk membunuh kuman.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menutup seluruh ventilasi udara kamar asrama agar udara dingin pembawa virus flu tidak masuk ke dalam kamar tidur.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Mitigasi penyebaran penyakit menular (flu/ISPA) secara sarana prasarana mewajibkan penyiapan bahan pembersih kimia pembunuh patogen (cairan disinfektan/klorin), alat pelindung diri primer (masker), dan sarana cuci tangan steril di area publik asrama. Opsi B merinci logistik pemutus rantai kuman secara klinis.",
+    "competency": "Menyiapkan bahan dan peralatan layanan operasional",
+    "berakhlak": "Kompeten",
+    "psychologyBasis": "Infection Control & Environmental Sanitation",
+    "catTips": "Untuk memutus rantai penularan penyakit di asrama, siapkan disinfektan kimia, masker, dan sabun antiseptik di wastafel."
+  },
+  {
+    "number": 74,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Saat melakukan audit stok kotak pertolongan pertama (P3K) di ruang pos asrama, Anda menemukan sebagian besar obat-obatan antiseptik, perban kasa, dan plester luka sudah kedaluwarsa atau habis terpakai. Langkah penyiapan bahan logistik medis cadangan yang tepat adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Mengisi kembali kotak P3K hanya dengan obat-obatan oral keras seperti antibiotik tanpa resep dokter.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Mendata barang habis pakai medis, menyusun daftar belanja logistik P3K standar (cairan antiseptik, kasa steril, gunting medis, obat penurun demam, plester), membeli dari distributor resmi, dan menempelkan kartu kontrol masa kedaluwarsa di dalam kotak.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Membiarkan kotak P3K kosong dan menyuruh siswa langsung pergi ke puskesmas kecamatan jika mengalami luka ringan.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menyimpan sisa perban kasa yang lama karena dianggap masih layak pakai meskipun pembungkusnya sudah robek dan kotor.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Meminta donasi obat-obatan sisa dari rumah tangga orang tua siswa untuk mengisi kotak P3K darurat asrama.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Penyiapan logistik darurat medis (P3K) asrama harus memprioritaskan peralatan pertolongan pertama standar, dibeli dari jalur legal (distributor farmasi resmi), dan memiliki kartu kontrol inventaris yang mencantumkan masa kedaluwarsa produk secara transparan. Opsi B menerapkan manajemen logistik medis asrama yang aman.",
+    "competency": "Menyiapkan bahan dan peralatan layanan operasional",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "First Aid Materials Management & Safety Compliance",
+    "catTips": "Logistik P3K harus diisi bahan steril dasar, obat penurun panas umum, serta wajib dilengkapi kartu kontrol kedaluwarsa."
+  },
+  {
+    "number": 75,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Asrama Sekolah Rakyat terletak di daerah rawan banjir luapan sungai saat puncak musim hujan. Untuk mengantisipasi kondisi darurat di mana akses jalan keluar asrama terputus genangan air tinggi selama beberapa hari, penyiapan bahan logistik makanan cadangan yang paling tepat adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menyimpan sayuran segar dan daging mentah dalam jumlah besar di dalam lemari es pendingin asrama.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menyiapkan stok bahan makanan kering tahan lama (beras, kornet/sarden kaleng, mie kering, biskuit), tabung gas cadangan, air mineral galon dalam jumlah cukup di gudang logistik lantai dua yang aman dari jangkauan air.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Meminta siswa menghemat makanan dengan mengurangi jatah makan harian menjadi satu kali sehari sebelum banjir datang.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Mengandalkan bantuan kiriman logistik darurat dari BPBD setempat setelah banjir benar-benar merendam gedung asrama.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menyimpan bahan makanan cadangan di dapur lantai bawah dekat saluran pembuangan air agar mudah dijangkau juru masak.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Antisipasi bencana banjir menuntut penyiapan logistik pangan yang kering, awet, mudah disajikan tanpa listrik (jika listrik padam, kulkas mati makanya sayur/daging segar opsi A tidak efisien), serta disimpan di tempat tinggi (lantai dua) aman dari air. Opsi B mengamankan rantai pasok pangan darurat asrama.",
+    "competency": "Menyiapkan bahan dan peralatan layanan operasional",
+    "berakhlak": "Adaptif",
+    "psychologyBasis": "Disaster Logistics & Food Security Management",
+    "catTips": "Pilih bahan makanan cadangan banjir yang tahan lama (kering/kaleng), air bersih botolan, dan disimpan di area bebas banjir (lantai atas)."
+  },
+  {
+    "number": 76,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Saat memeriksa kesiapan sarana pemadam api di gedung asrama, Anda menemukan bahwa beberapa tabung Alat Pemadam Api Ringan (APAR) di lorong asrama tekanannya sudah turun (jarum indikator di zona merah) dan medianya menggumpal karena sudah lewat masa kedaluwarsa. Langkah penyiapan peralatan keselamatan ini adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Membiarkan tabung APAR tersebut tetap tergantung di dinding lorong asrama sebagai pajangan formalitas kelengkapan sarana.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Mengirim tabung APAR ke vendor servis resmi untuk pengisian ulang media pemadam (powder/CO2), mengecek kondisi selang dan segel pengaman, menempelkan stiker masa berlaku terbaru, dan meletakkannya kembali pada tinggi instalasi standar.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Mengocok tabung APAR secara mandiri agar media bubuk di dalamnya tidak menggumpal tanpa mengisi ulang tekanannya.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Mengganti tabung APAR dengan ember berisi pasir dan air di sepanjang lorong asrama karena biaya isi ulang tabung mahal.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Memindahkan tabung APAR yang bermasalah ke gudang belakang agar tidak terlihat oleh pengawas saat sidak kelayakan gedung.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Pemeliharaan alat pemadam kebakaran (APAR) yang tidak layak pakai harus diproses melalui pengisian ulang media pemadam, pengecekan segel/tekanan manometer secara profesional di vendor resmi, serta pemenuhan standar instalasi gantung asrama. Opsi B adalah langkah restorasi kelayakan alat pemadam darurat yang aman.",
+    "competency": "Menyiapkan bahan dan peralatan layanan operasional",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "Fire Safety Engineering & Infrastructure Inspection",
+    "catTips": "APAR bermasalah (tekanan turun/lewat masa berlaku) wajib diisi ulang di bengkel resmi dan dipasang kembali sesuai tinggi standar keselamatan."
+  },
+  {
+    "number": 77,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Menjelang tahun ajaran baru, asrama Sekolah Rakyat akan menerima 30 siswa baru penerima beasiswa penuh. Banyak kasur busa di gudang penyimpanan yang sudah kempis, robek sarungnya, dan lembab karena gudang kurang sirkulasi. Langkah penyiapan bahan perlengkapan tidur yang higienis adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Membagikan kasur kempis dan lembab tersebut langsung kepada siswa baru agar mereka belajar hidup mandiri dan prihatin.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menghitung kebutuhan kasur, memilah kasur rusak parah untuk dimusnahkan, memesan kasur busa berdensitas tinggi bersarung anti-air (waterproof), menjemurnya terlebih dahulu, serta memasangkan sprei bersih sebelum siswa baru datang.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Meminta siswa baru membawa kasur dan selimut sendiri dari rumah masing-masing menggunakan biaya pribadi.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menumpuk dua kasur kempis dan robek di setiap ranjang agar permukaannya terasa lebih tebal bagi siswa baru.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menyemprotkan parfum wangi ke kasur lembab di dalam gudang tanpa mencuci atau menjemurnya terlebih dahulu.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Penyiapan sarana istirahat bagi siswa asrama harus memenuhi aspek ergonomis dan kebersihan (sarung anti-air untuk asrama remaja meminimalisir noda air kencing/tumpahan air, pencegahan kuman jamur kulit). Opsi B merinci langkah persiapan kasur yang layak, bersih, dan sesuai standar kesehatan asrama komunal.",
+    "competency": "Menyiapkan bahan dan peralatan layanan operasional",
+    "berakhlak": "Berorientasi Pelayanan",
+    "psychologyBasis": "Sleep Hygiene and Ergonomics in Group Living",
+    "catTips": "Sarana tidur bagi siswa harus layak (tidak kempes/robek), bersih (dijemur/diberi sprei steril), dan siap sebelum siswa tiba."
+  },
+  {
+    "number": 78,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Untuk mendokumentasikan setiap kejadian harian asrama (keluhan kerusakan fasilitas, izin homecoming, log medis siswa) secara tertib, Anda perlu menyiapkan bahan administrasi pencatatan yang mudah diakses dan aman dari risiko hilang. Format administrasi yang paling tepat Anda siapkan adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menulis catatan harian di atas kertas lembaran biasa (kertas bekas) dan menyimpannya di laci meja tanpa folder arsip.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menyiapkan buku jurnal log fisik berhalaman jilid tebal berkunci (untuk data sensitif) dan spreadsheet digital berbasis cloud dengan hak akses berjenjang yang di-backup mingguan.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Meminta petugas piket menghafal setiap keluhan siswa dan menyampaikannya secara lisan saat rapat bulanan asrama.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Membuat grup obrolan percakapan instan di ponsel pintar sebagai satu-satunya wadah penampungan keluhan fasilitas asrama.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menyerahkan sepenuhnya urusan administrasi pencatatan keluhan fasilitas asrama kepada pengurus OSIS siswa.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Administrasi operasional asrama yang baik harus memiliki cadangan ganda (buku log fisik berhalaman jilid kokoh untuk mencatat langsung di lapangan, serta berkas digital awan/cloud dengan backup teratur dan batasan hak akses keamanan data siswa). Opsi B menerapkan tata kelola arsip data asrama yang tepercaya.",
+    "competency": "Menyiapkan bahan dan peralatan layanan operasional",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "Records Management & Data Security Standards",
+    "catTips": "Pencatatan administrasi asrama wajib menggunakan buku log formal (fisik) dan backup digital awan (cloud) yang aman."
+  },
+  {
+    "number": 79,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Saat meninjau area tempat wudhu masjid asrama Sekolah Rakyat, Anda menemukan pipa saluran keran air pecah sehingga air bersih terus mengalir deras terbuang sia-sia dan menggenangi lantai hingga licin. Langkah eksekusi perbaikan operasional instan yang wajib Anda laksanakan adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Memasang papan peringatan lantai licin di dekat area wudhu tanpa menghentikan aliran air bocor.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menutup katup utama (stop kran) sumber air, menguras genangan air di lantai, memotong bagian pipa pecah, menyambung dengan pipa baru menggunakan lem PVC berkualitas, dan menguji kembali alirannya.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Menunggu petugas dinas pekerjaan umum setempat datang memperbaiki pipa wudhu asrama yang bocor.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menambal celah pipa pecah menggunakan plester plastik biasa atau lakban perekat hitam tanpa mematikan stop kran.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menyuruh siswa yang mengantre wudhu untuk menampung air bocoran tersebut menggunakan ember masing-masing.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Tindakan perbaikan kebocoran air yang mengancam keselamatan (lantai wudhu licin berisiko terpeleset) harus dimulai dengan menutup aliran utama (stop kran), membersihkan bahaya genangan, dan mengeksekusi penggantian/perbaikan pipa secara teknis yang kuat (lem PVC dan pipa baru). Opsi B merupakan langkah perbaikan langsung yang solutif.",
+    "competency": "Melaksanakan layanan operasional sesuai hasil kajian",
+    "berakhlak": "Kompeten",
+    "psychologyBasis": "Facilities Maintenance & Safety Enforcement",
+    "catTips": "Masalah air bocor deras wajib diselesaikan dengan menutup katup utama (stop kran) dahulu, lalu eksekusi perbaikan sambungan pipa secara permanen."
+  },
+  {
+    "number": 80,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Berdasarkan kajian geologis, wilayah asrama berada pada lempeng gempa bumi aktif. Anda ditugaskan melaksanakan sosialisasi dan simulasi SOP keselamatan gempa bumi bagi seluruh siswa asrama. Penerapan simulasi fisik lapangan yang paling mendidik karakter ketahanan bencana adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Membagikan pamflet langkah penyelamatan gempa bumi di lorong asrama tanpa adanya latihan simulasi fisik evakuasi.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Mengumpulkan siswa di aula, memaparkan materi penyelamatan (drop, cover, hold on), membunyikan sirine simulasi gempa, melatih siswa keluar kamar melindungi kepala menuju titik kumpul aman, dan melakukan evaluasi catatan waktu evakuasi.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Meminta siswa langsung berlari kencang berebutan keluar pintu kamar tidur tanpa instruksi pelindung kepala saat sirine menyala.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Mewajibkan siswa paruh baya ke atas saja yang mengikuti simulasi penyelamatan diri gempa bumi.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menonton film dokumenter tentang dampak gempa bumi dunia tanpa melatih prosedur aksi penyelamatan diri riil.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Pelaksanaan mitigasi gempa harus bersifat praktis dan partisipatif (mengikuti konsep berteduh bawah meja, melindungi kepala, berjalan tertib menyusuri jalur evakuasi ke titik kumpul aman, serta evaluasi catatan waktu evakuasi kelompok). Opsi B melatih kesiapsiagaan refleks darurat siswa secara utuh.",
+    "competency": "Melaksanakan layanan operasional sesuai hasil kajian",
+    "berakhlak": "Adaptif",
+    "psychologyBasis": "Behavioral Emergency Drill & Mitigative Learning",
+    "catTips": "Pelaksanaan sosialisasi gempa harus diiringi praktik simulasi bertahap (berlindung -> evakuasi tertib -> evaluasi titik kumpul)."
+  },
+  {
+    "number": 81,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Saat patroli sore, Anda mendapati lorong darurat dan tangga evakuasi blok B asrama dipenuhi tumpukan barang pribadi siswa (sepatu, jemuran pakaian dalam, kardus buku kosong) yang melanggar aturan tata ruang. Langkah penertiban operasional yang paling mendidik kedisiplinan siswa adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Membuang langsung semua barang berharga milik siswa tersebut ke tempat sampah luar tanpa peringatan tertulis.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Mengumpulkan para ketua kamar di blok B, menjelaskan bahaya tumpukan barang yang menghambat evakuasi darurat, memberi batas waktu 2 jam untuk merapikan, dan melakukan inspeksi ulang bersama.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Menyita barang-barang tersebut dan meminta tebusan uang kas asrama jika siswa ingin mengambilnya kembali.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Membiarkan barang tersebut menumpuk di lorong karena merasa tidak tega menegur siswa yang sedang sibuk belajar.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Mengunci pintu tangga evakuasi darurat agar siswa tidak bisa menaruh barang-barang mereka di area tangga lagi.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Penertiban fasilitas asrama wajib mengedepankan edukasi kepatuhan aturan keselamatan (tangga darurat bersih dari sumbatan/hazards) melalui koordinasi ketua kamar, pemberian toleransi waktu merapikan mandiri, dan pengawasan bersama. Opsi B mendidik karakter asertif-disiplin siswa tanpa tindakan destruktif.",
+    "competency": "Melaksanakan layanan operasional sesuai hasil kajian",
+    "berakhlak": "Harmonis",
+    "psychologyBasis": "Restorative Discipline & Safety Hazard Mitigation",
+    "catTips": "Pilih tindakan penertiban sarana yang persuasif-edukatif (beri peringatan dan waktu merapikan) bukan penyitaan destruktif."
+  },
+  {
+    "number": 82,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Seorang siswa asrama terkonfirmasi menderita penyakit cacar air (varisela) yang sangat mudah menular melalui kontak udara dan sentuhan fisik di kamar tidur komunal. Tindakan operasional isolasi medis darurat yang harus Anda laksanakan segera adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Membiarkan siswa tersebut tetap tidur di kasur kamarnya seperti biasa dan hanya melarangnya masuk sekolah.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Memindahkan siswa sakit ke ruang karantina/isolasi UKS asrama, memisahkan alat makan/tidur, memberikan obat pereda gejala sesuai saran dokter, melaporkan ke puskesmas, dan memantau perkembangannya.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Mengantar siswa cacar air tersebut pulang ke rumah orang tuanya menggunakan transportasi umum angkutan kota di malam hari.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Mengunci siswa tersebut di dalam ruang gudang belakang asrama yang kosong sendirian agar tidak menulari penghuni lain.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Meminta seluruh teman satu kamar siswa tersebut untuk pindah tidur di koridor asrama tanpa selimut.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Penanganan penyakit menular cacar air di asrama harus mengikuti SOP karantina kesehatan (pemisahan fisik ke ruang UKS khusus, sterilisasi peralatan pribadi, rujukan penanganan medis dokter/puskesmas, dan pengawasan berkala). Opsi B melindungi hak kesehatan korban dan mencegah epidemi asrama.",
+    "competency": "Melaksanakan layanan operasional sesuai hasil kajian",
+    "berakhlak": "Berorientasi Pelayanan",
+    "psychologyBasis": "Epidemiological Isolation & Patient Care Management",
+    "catTips": "Eksekusi isolasi medis di asrama harus dilakukan di ruang karantina UKS, didukung obat standar, sanitasi alat makan, dan koordinasi puskesmas."
+  },
+  {
+    "number": 83,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Berdasarkan jadwal berkala sarpras, hari ini adalah jadwal pembersihan tangki penampung air utama (toren) asrama lantai atas untuk mencegah lumut dan endapan lumpur menyumbat pipa keran. Prosedur pelaksanaan pembersihan toren yang paling aman bagi kebersihan air asrama adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menaburkan bubuk kaporit dosis tinggi langsung ke dalam toren saat air penuh tanpa menguras endapan lumpur terlebih dahulu.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Mematikan pompa listrik, mengosongkan air toren, menyikat dinding bagian dalam tanpa deterjen beracun, membilas hingga bersih, membuang air kurasan melalui lubang pembuangan bawah, dan mengisi kembali air bersih.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Menyuruh siswa junior asrama untuk naik ke atap gedung dan membersihkan toren air tanpa tali pengaman kerja.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menggosok bagian luar toren saja yang terlihat kotor karena membersihkan bagian dalam memerlukan terlalu banyak waktu.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Membiarkan tangki air kotor dan menyarankan siswa menyaring sendiri air wudhu menggunakan kain baju mereka.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Pembersihan tangki penampung air (toren) wajib mengikuti SOP sanitasi fisik (matikan arus listrik pompa, kuras lumpur dasar, sikat mekanis tanpa kontaminasi kimia racun deterjen pada air konsumsi, bilas bersih, dan buang limbah kurasan keluar jalur keran rumah). Opsi B mematuhi aspek kesehatan kerja dan sanitasi.",
+    "competency": "Melaksanakan layanan operasional sesuai hasil kajian",
+    "berakhlak": "Kompeten",
+    "psychologyBasis": "Facility Sanitation & Water Quality Control",
+    "catTips": "Pembersihan toren air yang benar melibatkan pengurasan endapan dasar, penyikatan dinding tangki secara fisik, pembilasan menyeluruh, baru pengisian ulang air."
+  },
+  {
+    "number": 84,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Untuk menjaga iklim belajar yang kondusif di asrama Sekolah Rakyat, diberlakukan pembatasan ketat terhadap izin keluar asrama pada hari sekolah (Senin-Jumat). Jika ada siswa yang mendesak izin keluar asrama karena keperluan keluarga di hari Kamis, eksekusi layanan perizinan yang paling sesuai SOP adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Melarang mutlak siswa keluar gerbang asrama tanpa mendengarkan alasan atau kondisi kedaruratan keluarganya.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Memeriksa surat permohonan tertulis dari orang tua/sekolah, memverifikasi kebenaran alasan izin melalui telepon dengan wali murid, menerbitkan kartu izin keluar pos gerbang, dan mencatat jam kembali siswa.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Mengizinkan siswa keluar langsung secara lisan tanpa perlu mencatat jam keberangkatan atau kepulangannya.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Mengarahkan siswa untuk menyelinap keluar lewat pagar belakang agar tidak melanggar aturan pos pemeriksaan depan.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Mengizinkan siswa keluar asrama dengan syarat siswa harus membayarkan denda uang perizinan kepada pengawas piket.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Pelaksanaan perizinan keluar asrama (homecoming/izin keluar hari kerja) wajib bersifat administratif, akuntabel, dan aman (verifikasi wali, surat izin tertulis, pencatatan log masuk-keluar gerbang oleh satpam). Opsi B melatih disiplin formal dan menjamin akuntabilitas pengawasan siswa asrama.",
+    "competency": "Melaksanakan layanan operasional sesuai hasil kajian",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "Student Accountability and Custodial Care Standards",
+    "catTips": "Proses izin keluar asrama harus tercatat resmi secara tertulis (surat permohonan) dan diverifikasi ke wali murid."
+  },
+  {
+    "number": 85,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Setiap hari Anda mendapati tumpukan sisa makanan yang terbuang (food waste) di ruang makan asrama mencapai 15 kg. Hal ini mengindikasikan adanya inefisiensi anggaran pangan asrama. Langkah evaluasi operasional yang paling solutif untuk mengatasi pemborosan masakan ini adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Mewajibkan siswa menghabiskan seluruh makanan di piring mereka secara paksa dengan ancaman hukuman push-up.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Mengukur sisa makanan per jenis menu (analisis sisa piring), mengidentifikasi menu masakan yang paling sering dibuang siswa, mengevaluasi cita rasa masakan bersama koki, dan menyesuaikan volume porsi saji.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Mengurangi porsi makan siang siswa secara drastis untuk semua jenis menu tanpa menganalisis tingkat konsumsi riil mereka.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Membuang sisa makanan langsung ke tempat pembuangan akhir tanpa mencatat tren menu yang tidak disukai siswa.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Menyalahkan asisten dapur karena dianggap tidak pandai menghidangkan tata letak wadah lauk makan siang.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Evaluasi sisa makanan (food waste) di asrama harus dilakukan secara kuantitatif per menu (plate waste measurement) untuk mendeteksi rasa/menu yang tidak disukai siswa, merevisi porsi standar, dan melakukan perbaikan resep bersama juru masak demi efisiensi biaya. Opsi B menerapkan siklus PDCA dalam tata kelola konsumsi pangan asrama.",
+    "competency": "Mengevaluasi pelaksanaan layanan operasional",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "Plate Waste Analysis & Resource Efficiency (PDCA)",
+    "catTips": "Evaluasi limbah makanan asrama memerlukan analisis sisa piring per jenis menu untuk perbaikan cita rasa koki."
+  },
+  {
+    "number": 86,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Tagihan listrik operasional asrama Sekolah Rakyat bulan ini melonjak drastis sebesar 40% dibandingkan rata-rata bulan sebelumnya. Sebagai Penata Layanan Operasional, langkah evaluasi sistematis Anda untuk mengusut pembengkakan tagihan ini adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Memotong jatah pemakaian setrika listrik kamar siswa menjadi satu minggu sekali tanpa memeriksa kebocoran arus listrik.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Membandingkan data meteran listrik harian, memeriksa kemungkinan kebocoran arus instalasi kabel tua, melacak area pemakaian daya terbesar (AC/pompa air), dan mengevaluasi kedisiplinan saklar otomatis.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Langsung membayar tagihan listrik tersebut menggunakan dana kas darurat asrama tanpa melakukan penyelidikan internal.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menuduh pihak PLN melakukan salah pencatatan angka meteran tanpa memiliki bukti pembanding data internal asrama.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Mencopot semua stop kontak di dalam kamar siswa agar mereka tidak bisa menggunakan alat elektronik pribadi.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Evaluasi pembengkakan tagihan daya listrik asrama komunal memerlukan investigasi teknis (pemeriksaan kebocoran arus instalasi/kabel, analisis konsumsi area daya tinggi seperti pompa/AC, dan pencocokan data KWH meteran bulanan). Opsi B mengidentifikasi masalah sarpras kelistrikan secara komprehensif.",
+    "competency": "Mengevaluasi pelaksanaan layanan operasional",
+    "berakhlak": "Kompeten",
+    "psychologyBasis": "Utility Cost Audit & Systems Engineering",
+    "catTips": "Pembengkakan utilitas (listrik/air) dievaluasi dengan membandingkan data konsumsi alat berdaya tinggi dan inspeksi fisik instalasi."
+  },
+  {
+    "number": 87,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Untuk mengetahui tingkat efisiensi pemanfaatan fasilitas ruang belajar asrama yang baru direnovasi, Anda ditugaskan melakukan evaluasi kepuasan pengguna. Metode evaluasi sarana belajar yang paling akurat menghasilkan rekomendasi perbaikan sarana adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menilai kelayakan ruang belajar berdasarkan opini pribadi Anda sendiri sebagai pengelola operasional tanpa meminta masukan siswa.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menyebarkan kuesioner terstruktur ke seluruh siswa (mengukur tingkat cahaya, kenyamanan meja, kestabilan kursi, suhu AC), menganalisis persentase kepuasan, mengadakan FGD kecil perwakilan kelas, dan menyusun draf rekomendasi perbaikan sarana.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Memasang kotak saran di sudut ruang belajar yang tidak pernah dibuka atau direkap keluhannya oleh pengelola.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Menutup ruang belajar jika ada satu keluhan minor dari siswa mengenai kondisi kebersihan ruangan.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Meminta guru pendamping asrama menulis laporan kelayakan ruang belajar berdasarkan pengamatan selintas saat jam kunjungan.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Evaluasi tingkat kelayakan sarana prasarana asrama yang akuntabel harus mengandalkan instrumen kuesioner terukur (aspek fisik ergonomis), analisis data persepsi pengguna (siswa), diskusi kelompok terarah (FGD), serta perumusan rekomendasi perbaikan sarpras yang konkret. Opsi B menerapkan metode penilaian kepuasan sarpras yang ilmiah.",
+    "competency": "Mengevaluasi pelaksanaan layanan operasional",
+    "berakhlak": "Berorientasi Pelayanan",
+    "psychologyBasis": "Post-Occupancy Evaluation (POE) & Ergonomic Assessment",
+    "catTips": "Evaluasi sarpras asrama terbaik memanfaatkan kuesioner kepuasan terstruktur pengguna (siswa) dikombinasikan dengan FGD."
+  },
+  {
+    "number": 88,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Dalam rangka mengevaluasi kedisiplinan dan kinerja penjagaan malam oleh petugas keamanan (security) pos gerbang depan asrama Sekolah Rakyat, dokumen evaluasi operasional yang paling akurat Anda gunakan sebagai rujukan adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Laporan lisan dari petugas keamanan saat serah terima shift pagi hari tanpa bukti tertulis.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Rekap logbook kunjungan tamu fisik, log jam patroli titik kontrol (sistem checkpoint RFID/patrol guard), rekaman arsip video CCTV gerbang, dan laporan kejadian darurat bulanan.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Survei opini acak kepada siswa tentang seberapa sering mereka melihat petugas keamanan berjaga di pos depan.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Daftar hadir (absensi) datang-pulang petugas keamanan yang tercatat di mesin sidik jari tata usaha sekolah.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Buku catatan pengeluaran operasional pos satpam bulanan untuk pembelian konsumsi malam.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Evaluasi kinerja layanan pengamanan fisik asrama harus didasarkan pada dokumen audit operasional yang otentik, meliputi pencatatan tamu masuk, log checkpoint ronda keliling (RFID patrol), dan rekaman CCTV sebagai bukti fisik pengawasan pos. Opsi B memberikan data evaluasi keamanan yang valid dan objektif.",
+    "competency": "Mengevaluasi pelaksanaan layanan operasional",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "Security Auditing & Performance Evaluation",
+    "catTips": "Evaluasi kinerja satpam asrama memerlukan bukti fisik operasional seperti logbook tamu, rekaman CCTV, dan RFID checkpoints patroli."
+  },
+  {
+    "number": 89,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Asrama menyediakan 3 unit mesin cuci bersama untuk melayani kebutuhan laundry mandiri siswa. Namun, sering terjadi antrean panjang yang mengganggu jadwal belajar, dan mesin sering mengalami kerusakan dinamo akibat kelebihan beban pakaian. Tindakan evaluasi untuk mengoptimalkan layanan laundry adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Melarang siswa menggunakan mesin cuci asrama dan mewajibkan mereka mencuci pakaian secara manual di ember.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Menganalisis frekuensi pemakaian mesin harian, mengevaluasi kepatuhan timbangan beban pakaian per cuci, merumuskan jadwal giliran cuci per blok kamar, dan menunjuk penanggung jawab pengawas ruang laundry.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Menjual mesin cuci yang ada dan menyerahkan urusan laundry siswa ke jasa binatu komersial luar asrama.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Membiarkan mesin cuci rusak tanpa perbaikan untuk memberi pelajaran kedisiplinan merawat barang bersama kepada siswa.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Mengunci ruang laundry asrama dan hanya membukanya pada hari libur nasional saja tanpa pembagian shift.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Evaluasi operasional utilitas mesin cuci bersama asrama harus menyasar pola kapasitas penggunaan (kapasitas beban pakaian, frekuensi dinamo hidup), perbaikan manajemen antrean (jadwal blok), dan penugasan pengawas sarana. Opsi B menstabilkan masa pakai mesin dan ketertiban waktu belajar siswa.",
+    "competency": "Mengevaluasi pelaksanaan layanan operasional",
+    "berakhlak": "Kompeten",
+    "psychologyBasis": "Capacity Management & Queueing Theory",
+    "catTips": "Evaluasi fasilitas umum (laundry) asrama harus memetakan beban alat, jadwal giliran berkala, dan penunjukan petugas kontrol sarana."
+  },
+  {
+    "number": 90,
+    "category": "teknis",
+    "topic": "KOMPETENSI TEKNIS - PENATA LAYANAN OPERASIONAL",
+    "questionText": "Dalam sebulan terakhir, tercatat 3 insiden siswa asrama mengalami cidera fisik tergelincir atau terbentur akibat menggunakan peralatan olahraga yang rusak (matras robek, tiang gawang longgar) di lapangan asrama. Evaluasi penataan layanan operasional keselamatan sarana olahraga yang harus Anda lakukan segera adalah...",
+    "options": [
+      {
+        "key": "A",
+        "text": "Menutup lapangan olahraga asrama secara permanen dan melarang siswa melakukan kegiatan fisik olahraga.",
+        "score": 0
+      },
+      {
+        "key": "B",
+        "text": "Mengaudit seluruh kelayakan fisik alat olahraga, menarik peralatan yang tidak aman dari lapangan, menyusun SOP kelayakan sarana olahraga, dan membuat formulir pelaporan kerusakan instan sebelum sarana digunakan.",
+        "score": 5
+      },
+      {
+        "key": "C",
+        "text": "Meminta siswa yang terluka menandatangani surat pernyataan tidak menuntut pengelola asrama atas cidera yang mereka alami.",
+        "score": 0
+      },
+      {
+        "key": "D",
+        "text": "Memindahkan tanggung jawab pengawasan kelayakan sarana olahraga sepenuhnya kepada guru olahraga sekolah.",
+        "score": 0
+      },
+      {
+        "key": "E",
+        "text": "Membeli peralatan olahraga baru secara instan tanpa mengidentifikasi penyebab kerusakan alat yang lama.",
+        "score": 0
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "Evaluasi kelayakan fasilitas olahraga asrama yang menyebabkan cidera (risiko keselamatan tinggi/negligence) harus segera dilakukan melalui penarikan alat rusak (hazard isolation), audit menyeluruh sarana lapangan, penyusunan SOP kelayakan pakai, dan sistem lapor cepat kerusakan. Opsi B menerapkan manajemen keselamatan fisik sarpras asrama ramah anak.",
+    "competency": "Mengevaluasi pelaksanaan layanan operasional",
+    "berakhlak": "Akuntabel",
+    "psychologyBasis": "Occupational Health and Safety (OHS) & Hazard Control",
+    "catTips": "Insiden keselamatan sarana dievaluasi dengan mengisolasi alat bahaya, audit menyeluruh kelayakan fisik, dan penataan SOP pelaporan cepat."
+  }
+]

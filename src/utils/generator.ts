@@ -1,5 +1,6 @@
 import { Question } from '../types';
 import parsedQuestions from '../../PDF/parsed_questions.json';
+import extraTechnicalQuestions from '../data/extra_teknis.json';
 
 // Seeded random helper
 function getSeededRandom(seedStr: string) {
@@ -22,11 +23,13 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   const sosialRefs = parsedQuestions.filter(q => q.category === 'sosial');
   const wawancaraRefs = parsedQuestions.filter(q => q.category === 'wawancara');
 
+  // Combine the 60 parsed technical questions with the 30 extra ones to make exactly 90 unique questions
+  const allTeknisRefs = [...teknisRefs, ...extraTechnicalQuestions];
+
   // 1. Technical: 90 Questions (1 to 90)
   for (let num = 1; num <= 90; num++) {
     const qRand = getSeededRandom(`${dateStr}-teknis-v5-${num}`);
-    const refIdx = (num - 1) % teknisRefs.length;
-    const ref = teknisRefs[refIdx];
+    const ref = allTeknisRefs[num - 1];
 
     // Shuffle options based on daily seeded random to randomize answer order
     const optionOrder = [0, 1, 2, 3, 4].sort(() => qRand() - 0.5);
@@ -63,8 +66,7 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   // 2. Managerial: 25 Questions (91 to 115)
   for (let num = 91; num <= 115; num++) {
     const qRand = getSeededRandom(`${dateStr}-manajerial-v5-${num}`);
-    const refIdx = (num - 91) % manajerialRefs.length;
-    const ref = manajerialRefs[refIdx];
+    const ref = manajerialRefs[num - 91];
 
     const optionOrder = [0, 1, 2, 3].sort(() => qRand() - 0.5);
     const keys: ('A' | 'B' | 'C' | 'D')[] = ['A', 'B', 'C', 'D'];
@@ -100,8 +102,7 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   // 3. Sosial: 20 Questions (116 to 135)
   for (let num = 116; num <= 135; num++) {
     const qRand = getSeededRandom(`${dateStr}-sosial-v5-${num}`);
-    const refIdx = (num - 116) % sosialRefs.length;
-    const ref = sosialRefs[refIdx];
+    const ref = sosialRefs[num - 116];
 
     const optionOrder = [0, 1, 2, 3, 4].sort(() => qRand() - 0.5);
     const keys: ('A' | 'B' | 'C' | 'D' | 'E')[] = ['A', 'B', 'C', 'D', 'E'];
@@ -137,8 +138,7 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   // 4. Wawancara: 10 Questions (136 to 145)
   for (let num = 136; num <= 145; num++) {
     const qRand = getSeededRandom(`${dateStr}-wawancara-v5-${num}`);
-    const refIdx = (num - 136) % wawancaraRefs.length;
-    const ref = wawancaraRefs[refIdx];
+    const ref = wawancaraRefs[num - 136];
 
     const optionOrder = [0, 1, 2, 3].sort(() => qRand() - 0.5);
     const keys: ('A' | 'B' | 'C' | 'D')[] = ['A', 'B', 'C', 'D'];
