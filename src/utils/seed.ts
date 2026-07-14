@@ -1,5 +1,4 @@
 import { db } from '../lib/db';
-import { getInitialQuestions } from '../data/questions';
 import { generateDailyQuestions } from './generator';
 import { Achievement } from '../types';
 
@@ -77,8 +76,8 @@ export async function seedDatabase() {
 
         let questions;
         if (dateStr === '2026-07-06') {
-          // Keep 2026-07-06 as the reference/default question set
-          questions = getInitialQuestions('2026-07-06');
+          // All dates now use the same high-quality parsed questions (no more dummy templates)
+          questions = generateDailyQuestions('2026-07-06');
         } else {
           // Generate procedural set of 145 questions
           questions = generateDailyQuestions(dateStr);

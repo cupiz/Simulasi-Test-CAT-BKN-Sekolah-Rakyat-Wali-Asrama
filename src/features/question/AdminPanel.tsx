@@ -7,7 +7,7 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Trash2, Edit, Plus, Download, Upload, RefreshCw, Search, X, Sparkles, CalendarDays } from 'lucide-react';
 import { toast } from 'sonner';
-import { getInitialQuestions } from '../../data/questions';
+import { generateDailyQuestions } from '../../utils/generator';
 import { supabase, isCloudEnabled } from '../../lib/supabase';
 
 export function AdminPanel() {
@@ -318,7 +318,7 @@ export function AdminPanel() {
   const handleRestoreDefaults = async () => {
     if (confirm('Apakah Anda yakin ingin mengembalikan bank soal ke kondisi semula? Perubahan Anda akan hilang.')) {
       await db.questions.clear();
-      const defaults = getInitialQuestions();
+      const defaults = generateDailyQuestions('2026-07-06');
       await db.questions.bulkAdd(defaults);
       toast.success('Bank soal default berhasil dipulihkan!');
       loadDatesAndQuestions();
