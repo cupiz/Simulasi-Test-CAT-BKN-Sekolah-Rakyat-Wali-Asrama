@@ -53,12 +53,15 @@ export async function seedDatabase() {
       '2026-07-06'
     ];
 
-    // Migration: If we do not have the new format questions, clear the table to force a clean seed
-    const sample = await db.questions.limit(50).toArray();
-    const hasNewFormat = sample.some(q => q.questionText.includes('[SKB CAT BKN Wali Asrama]'));
-    if (sample.length > 0 && !hasNewFormat) {
-      console.log('Old style questions detected (missing new prefix). Clearing table for clean seed...');
-      await db.questions.clear();
+    // Migration: Clear old style questions once to force a clean seed with stable IDs
+    if (typeof window !== 'undefined') {
+      const MIGRATION_VERSION = 'v2_clean_seed_fixed';
+      const migrated = localStorage.getItem('sr_db_migrated');
+      if (migrated !== MIGRATION_VERSION) {
+        console.log('Running database migration to clean old style questions...');
+        await db.questions.clear();
+        localStorage.setItem('sr_db_migrated', MIGRATION_VERSION);
+      }
     }
 
     for (const dateStr of targetDates) {
