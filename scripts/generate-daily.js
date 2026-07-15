@@ -251,7 +251,7 @@ function cleanJsonResponse(text) {
   return cleaned.trim();
 }
 
-async function generateQuestionWithAI(category, topic, dateStr, num, baseTemplate) {
+async function generateQuestionWithAI(category, topic, dateStr, num, baseTemplate, defaultModel = null) {
   const student = STUDENT_NAMES[(num + dateStr.charCodeAt(1)) % STUDENT_NAMES.length];
   const room = ROOMS[(num + dateStr.charCodeAt(2)) % ROOMS.length];
   const dorm = DORM_NAMES[(num + dateStr.charCodeAt(3)) % DORM_NAMES.length];
@@ -282,16 +282,20 @@ Setiap pemecahan kasus harus berlandaskan kerangka hukum:
 - UU RI No. 35 Tahun 2014 tentang Perlindungan Anak (jaminan keselamatan fisik/psikis 24 jam).
 - Parameter KemenPPPA tentang Standardisasi Asrama/Pesantren Ramah Anak.
 
-SOP EKSEKUSI TINDAKAN (SJT BKN):
-- Hindari Hukuman Fisik/Sosial: Pilihan yang mengandung unsur kekerasan fisik, menjemur di terik matahari, push-up berlebih, atau sanksi sosial yang mempermalukan (melabrak balik) wajib diberi skor rendah/0.
-- Respons Krisis Cepat: Untuk bullying/darurat malam, amankan korban & pisahkan pelaku segera, catat kronologi, laporkan ke TPPK sekolah esok hari, dan hubungi kedua belah orang tua.
-- Darurat Medis: Lakukan tindakan P3K primer, segera rujuk ke faskes dengan ambulans asrama, lalu kabari orang tua dengan santun.
-- Penegakan Edukatif: Sanksi pelanggaran tata tertib berat (seperti merokok/barang terlarang) harus bersifat edukatif, reflektif-konsekuensi, dan dikoordinasikan bersama Guru BK.
+SOP EKSEKUSI TINDAKAN & STANDARD HOTS JAWABAN (MANDATORI):
+- SEMUA PILIHAN JAWABAN HARUS BERNADA POSITIF, PROFESIONAL, DAN LAYAK (PLAUSIBLE). Tidak boleh ada pilihan jawaban yang bersifat menghukum secara fisik/sosial (seperti push-up berlebih, menjemur di terik matahari, mempermalukan di depan umum), bersikap pasrah/mengabaikan masalah (negligent), melanggar aturan hukum/SOP, atau melakukan penyuapan. Semua opsi harus berupa tindakan profesional Wali Asrama yang berniat baik.
+- TINGKAT KESULITAN TINGGI (HOTS): Pilihan jawaban dipersulit dengan membuat semua opsi bernilai positif, namun memiliki derajat keefektifan, kolaborasi, dan kedalaman solusi yang berbeda-beda. Penentuan skor didasarkan pada hal ini:
+  * Skor Tertinggi (5 untuk Teknis/Sosial, 4 untuk Manajerial/Wawancara): Tindakan restoratif mendalam, penyelesaian dua arah (dialog/coaching/peer-support), bersifat solutif-sistemik (mencegah terulang), dan memberdayakan ekosistem asrama.
+  * Skor 4 (Teknis/Sosial) / 3 (Manajerial/Wawancara): Tindakan bimbingan personal atau prosedural standar yang profesional langsung, namun kurang melibatkan kolaborasi aktif dengan siswa lain atau belum menyentuh aspek pencegahan sistemik jangka panjang.
+  * Skor 3 (Teknis/Sosial) / 2 (Manajerial/Wawancara): Tindakan formal/administratif (seperti rapat koordinasi umum, merujuk langsung ke BK/pihak lain, atau mengadakan kelas umum) yang baik dan profesional, namun kurang fokus pada penyelesaian personal/spesifik untuk individu yang bermasalah.
+  * Skor 2 (Teknis/Sosial) / 1 (Manajerial/Wawancara): Tindakan penegakan aturan secara sepihak/kaku atau solusi jangka pendek (seperti memindahkan kamar, memodifikasi shift sepihak, memberikan dispensasi sepihak) yang secara prosedural aman tetapi tidak membangun karakter atau empati.
+  * Skor 1 (Teknis/Sosial) - Khusus Teknis bernilai 0: Tindakan minimal/reaktif yang hanya meredakan masalah sesaat, atau langsung menyerahkan tanggung jawab sepenuhnya ke pimpinan/pihak luar tanpa upaya penanganan mandiri terlebih dahulu, yang meskipun tampak profesional tetapi menghindari peran in-loco-parentis Wali Asrama.
+- PANJANG & GAYA BAHASA SEIMBANG: Seluruh opsi pilihan harus ditulis dengan panjang kata yang relatif seimbang (sekitar 25-40 kata per opsi) dan gaya bahasa profesional yang serupa, sehingga kunci jawaban terbaik tidak mudah ditebak hanya dari panjangnya teks.
 
 ATURAN FORMULASI SOAL & PENILAIAN BERDASARKAN KATEGORI:
 1. KATEGORI TEKNIS:
    - Wajib memiliki 5 pilihan jawaban (A, B, C, D, E).
-   - Menggunakan skema biner: satu opsi terbaik bernilai 5. Empat opsi lainnya harus memiliki nilai 0 (BKN PPPK Teknis standard).
+   - Menggunakan skema biner: satu opsi terbaik bernilai 5. Empat opsi lainnya harus memiliki nilai 0 (BKN PPPK Teknis standard, namun distraktor berbobot 0 harus tetap ditulis sebagai tindakan profesional yang plausible/positif-sounding seperti definisi tier skor di atas).
 2. KATEGORI MANAJERIAL:
    - Wajib memiliki 4 pilihan jawaban (A, B, C, D).
    - Menggunakan bobot skor bertingkat dari 1 s/d 4 (tidak boleh ada skor 0).
@@ -325,14 +329,15 @@ CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT wri
   Draf Opsi Acuan:
   ${formattedDraftOptions}
   
-  ATURAN CRITICAL DIVERSIFIKASI (ANTI-REPETISI):
-  1. Anda WAJIB membuat studi kasus (questionText) baru yang SEPENUHNYA BERBEDA skenario ceritanya, konflik permasalahannya, nama tokohnya, dan detail ruang/kamar asrama dari Draf Cerita Acuan.
-  2. Jangan pernah menyalin alur cerita dari Draf Cerita Acuan. Karanglah skenario masalah baru yang realistis terjadi di asrama Sekolah Rakyat. Contoh variasi masalah: perkelahian fisik akibat ejekan SARA, perusakan fasilitas bersama (vandalisme), masalah kecanduan rokok/vape, siswa depresi/menangis histeris di malam hari, kecurangan saat ujian sekolah, pelanggaran jam malam untuk pacaran/pergi ke warnet, pertengkaran piket kebersihan, pencurian barang berharga (jam tangan/uang), dsb.
-  3. Tulis studi kasus (questionText) tersebut minimal 150-250 kata, menggunakan nama tokoh lokal Indonesia (misal: Tegar, Yusuf, Arif, Bagus, Danis, Galih, Panji, Satria, Rian, Bayu, Fajar, Bintang, dll.).
-  4. Buat persis ${optionCount} opsi pilihan jawaban (A s/d ${optionsKeys[optionsKeys.length - 1]}) yang spesifik untuk skenario cerita baru Anda tersebut. Jangan gunakan opsi dari Draf Opsi Acuan.
-  5. Tentukan bobot skor opsi jawaban sesuai aturan kategori:
-     - Kategori ${category}: ${category === 'teknis' ? 'Hanya satu opsi terbaik bernilai 5, opsi lainnya bernilai 0.' : `Gunakan skor bertingkat dari 1 s/d ${maxScore}.`}
-  6. Tulis pembahasan (explanation) minimal 80-120 kata yang membedah keunggulan opsi terbaik dibanding opsi lainnya.
+  ATURAN CRITICAL DIVERSIFIKASI (ANTI-REPETISI & TEMA SEARAH):
+  1. Anda WAJIB mempertahankan topik/permasalahan inti yang diuji oleh Draf Cerita Acuan (misalnya: jika draf membahas tentang darurat medis, buatlah skenario medis baru; jika draf membahas sanitasi/sumber air, buatlah skenario sirkulasi air/kebersihan baru; jika draf membahas bullying/intimidasi, buatlah kasus bullying baru). Jangan membuang tema asli draf acuan dan jangan mengalihkan semua soal ke tema pencurian/uang hilang.
+  2. Buatlah alur cerita (skenario kasus) yang sepenuhnya baru dengan narasi segar, nama tokoh lokal Indonesia yang berbeda (misal: Tegar, Yusuf, Arif, Bagus, Danis, Galih, dll.), dan detail kejadian yang lebih panjang, mendalam, dan realistis (minimal 150-250 kata). Jangan meniru kalimat kata-per-kata dari Draf Cerita Acuan.
+  3. Buat persis ${optionCount} opsi pilihan jawaban (A s/d ${optionsKeys[optionsKeys.length - 1]}) yang relevan dan spesifik untuk skenario cerita baru Anda tersebut. Jangan gunakan kalimat pilihan dari Draf Opsi Acuan.
+  4. WAJIB menerapkan prinsip HOTS: Pastikan SEMUA opsi pilihan jawaban terdengar logis, positif, dan profesional. Hindari opsi yang mengandung unsur kekerasan, hukuman fisik/sosial kasar, pasif membiarkan, atau melanggar aturan secara mencolok.
+  5. Seluruh pilihan jawaban wajib memiliki panjang kalimat yang setara dan seimbang (kisaran 25-40 kata per opsi).
+  6. Tentukan bobot skor opsi jawaban sesuai aturan kategori:
+     - Kategori ${category}: ${category === 'teknis' ? 'Hanya satu opsi terbaik bernilai 5, opsi lainnya bernilai 0 (namun opsi bernilai 0 harus tetap ditulis sebagai tindakan profesional yang plausible/layak).' : `Gunakan skor bertingkat dari 1 s/d ${maxScore}.`}
+  7. Tulis pembahasan (explanation) minimal 80-120 kata yang membedah keunggulan opsi terbaik dibanding opsi lainnya.
 
 {
   "dateStr": "${dateStr}",
@@ -341,7 +346,7 @@ CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT wri
   "topic": "${topic}",
   "questionText": "[SKB CAT BKN Wali Asrama] (Tulis kasus hasil pengembangan Anda di sini, minimal 150 kata)",
   "options": [
-    ${optionsKeys.map(key => `{ "key": "${key}", "text": "(Tulis pilihan jawaban ${key} hasil pengembangan Anda)", "score": (skor) }`).join(',\n    ')}
+    ${optionsKeys.map(key => `{ "key": "${key}", "text": "(Tulis pilihan jawaban ${key} hasil pengembangan Anda, buat panjangnya seimbang 25-40 kata)", "score": (skor) }`).join(',\n    ')}
   ],
   "correctAnswer": "(Key yang memiliki skor ${maxScore})",
   "explanation": "(Tulis pembahasan hasil analisis Anda, minimal 80 kata)",
@@ -366,6 +371,7 @@ CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT wri
       }
     }
 
+    let currentModel = defaultModel;
     let attempt = 0;
     const maxRetries = 4;
     let lastError = null;
@@ -375,22 +381,24 @@ CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT wri
       try {
         const fullPrompt = `${systemInstruction}\n\n${prompt}`;
         const promptLength = fullPrompt.length;
-        console.log(`🤖 [Soal #${num}] Mengirim prompt (${promptLength} karakter) via CLI: ${selectedCli} (Attempt ${attempt + 1}/${maxRetries})...`);
+        console.log(`🤖 [Soal #${num}] Mengirim prompt (${promptLength} karakter) via CLI: ${selectedCli}${currentModel ? ` (${currentModel})` : ''} (Attempt ${attempt + 1}/${maxRetries})...`);
 
         let output = '';
         if (selectedCli === 'agy') {
-          const res = await execFilePromise('agy', [
-            '--dangerously-skip-permissions',
-            '--print',
-            fullPrompt
-          ], {
+          const agyArgs = ['--dangerously-skip-permissions'];
+          if (currentModel) {
+            agyArgs.push('--model', currentModel);
+          }
+          agyArgs.push('--print', fullPrompt);
+
+          const res = await execFilePromise('agy', agyArgs, {
             maxBuffer: 10 * 1024 * 1024,
             timeout: 45000 // 45 seconds for agy
           });
           output = res.stdout;
         } else {
           fs.writeFileSync(tempPath, fullPrompt, 'utf8');
-          const cmd = `opencode run --auto "Process the following input:" < "${tempPath}"`;
+          const cmd = `opencode run --auto "Process the following input file and generate the requested JSON question:" -f "${tempPath}"`;
           const res = await execPromise(cmd, { 
             maxBuffer: 10 * 1024 * 1024, 
             shell: 'cmd.exe',
@@ -409,26 +417,33 @@ CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT wri
         questionObj = JSON.parse(cleanedTrimmed);
         break; // Success
       } catch (err) {
-        // If we were using agy and it failed, switch to opencode fallback
+        const errMsg = ((err.message || '') + ' ' + (err.stderr || '')).toLowerCase();
+        const isQuotaLimit = errMsg.includes('quota reached') || errMsg.includes('quota limit exceeded') || errMsg.includes('quota exceeded');
+
+        // If we were using agy and it failed with a quota error, switch to Claude Sonnet fallback
         if (selectedCli === 'agy') {
-          console.warn(`[Wali Asrama] agy CLI failed on question #${num}, trying opencode fallback...`);
-          selectedCli = 'opencode';
-          // Retry immediately using opencode without incrementing attempt count
-          continue;
+          if (isQuotaLimit && currentModel !== 'Claude Sonnet 4.6 (Thinking)') {
+            console.warn(`⚠️ [Wali Asrama] Terdeteksi kuota model habis. Beralih ke model fallback Claude Sonnet 4.6 (Thinking)...`);
+            currentModel = 'Claude Sonnet 4.6 (Thinking)';
+            // Retry immediately without incrementing attempt count
+            continue;
+          } else {
+            console.warn(`[Wali Asrama] agy CLI failed on question #${num}, trying opencode fallback...`);
+            selectedCli = 'opencode';
+            // Retry immediately using opencode without incrementing attempt count
+            continue;
+          }
         }
 
         attempt++;
         lastError = err;
 
-        const errMsg = ((err.message || '') + ' ' + (err.stderr || '')).toLowerCase();
         const isRateLimit = errMsg.includes('429') || 
                             errMsg.includes('rate limit') || 
                             errMsg.includes('resourceexhausted') || 
                             errMsg.includes('resource has been exhausted') ||
                             errMsg.includes('queries per minute') ||
-                            errMsg.includes('quota limit exceeded') ||
-                            errMsg.includes('quota exceeded') ||
-                            errMsg.includes('quota reached');
+                            isQuotaLimit;
 
         // Detect permanent errors to fail-fast (billing, invalid api key, etc.)
         const isPermanent = errMsg.includes('billing disabled') || 
@@ -441,7 +456,7 @@ CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT wri
 
         if (attempt < maxRetries) {
           if (isRateLimit) {
-            console.warn(`⚠️ [Wali Asrama] Terdeteksi rate limit. Menunggu 15 detik sebelum mencoba kembali...`);
+            console.warn(`⚠️ [Wali Asrama] Terdeteksi rate limit atau kuota habis. Menunggu 15 detik sebelum mencoba kembali...`);
             await new Promise(resolve => setTimeout(resolve, 15000));
           } else {
             const delay = attempt * 3000 + Math.random() * 1000;
@@ -516,10 +531,13 @@ async function main() {
   const args = process.argv.slice(2);
   let dateStr = new Date().toISOString().split('T')[0];
   let useAI = true;
+  let defaultModel = null;
 
   args.forEach(arg => {
     if (arg.startsWith('--date=')) {
       dateStr = arg.split('=')[1];
+    } else if (arg.startsWith('--model=')) {
+      defaultModel = arg.split('=')[1];
     } else if (arg === '--local' || arg === '--no-ai') {
       useAI = false;
     }
@@ -619,7 +637,7 @@ async function main() {
     if (tasksToRun.length > 0) {
       await mapLimit(tasksToRun, concurrencyLimit, async (task) => {
         const baseTemplate = task.ref;
-        const q = await generateQuestionWithAI(task.category, baseTemplate.topic, dateStr, task.num, baseTemplate);
+        const q = await generateQuestionWithAI(task.category, baseTemplate.topic, dateStr, task.num, baseTemplate, defaultModel);
         
         // Push to master list and increment
         finalQuestions.push(q);

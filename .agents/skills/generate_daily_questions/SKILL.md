@@ -58,12 +58,12 @@ You must generate a JSON array of exactly **145 Questions** with this layout:
 For **every single question**, write a fresh, unique, and long case study. Avoid repetitiveness. Do not use generic option templates.
 
 *   **Question Text (80–150 words)**: Write a detailed, realistic situational case study of boarding school life (Wali Asrama) at Sekolah Rakyat. Include specific student names (e.g. Tegar, Yusuf, Arif, Bagus, Danis, Galih), room numbers, and specific triggers/complications.
-*   **Options (20–40 words each)**: Write 5 distinct options (keys: A, B, C, D, E) specific to the case.
-    *   **Score 5**: Highly empathetic, restorative, dialog-based resolution (dialog two-way, coaching, peer-support, or official anti-corruption report).
-    *   **Score 4**: Guided bimbingan personal or standard procedural resolution.
-    *   **Score 3**: Formal/administrative meeting or generic rule warning.
-    *   **Score 2**: Reactive/punitive warning, public naming, or mild punishment.
-    *   **Score 1**: Passive negligence, avoidance of issue, or accepting the bribe.
+*   **Options (25–40 words each)**: Write 5 distinct options (keys: A, B, C, D, E) specific to the case. All options must be written in a professional, positive-sounding, and plausible manner (HOTS standard). Avoid caricature options such as physical/social punishment, complete avoidance, negligence, or accepting bribes.
+    *   **Score 5**: Highly restorative, dual-dialogue/coaching/peer-support/systemic action that perfectly addresses both the individual root cause and the overall dorm harmony/rules.
+    *   **Score 4**: A constructive, professional, and standard procedural action or structured personal guidance, but slightly lacking the deeper collaborative/restorative/systemic elements of the highest score.
+    *   **Score 3**: A formal, structured, or administrative action (like holding general training, standard meeting, general rule reminder) that is professional but doesn't resolve the specific individual/interpersonal root cause.
+    *   **Score 2**: A direct/assertive enforcement of rules, a rigid bureaucratic approach, or a short-term workaround (like changing shifts without dialogue, separating students temporarily) that is professional but fails to build character or resolve conflict constructively.
+    *   **Score 1**: An action that focuses purely on rule enforcement without any dialogue/mentoring, or delegating the entire issue immediately to the principal/school board without taking any initial responsibility (professional but passive/avoidant).
 *   **Permute Option Keys**: For each question, shuffle which option gets which key (A-E) so the correct answer (Score 5) is not always the same key. Set `correctAnswer` to the key that has `score: 5`.
 *   **Explanation (80–120 words)**: Explain why the Score 5 option is correct and why other options are less effective.
 *   **Reference Fields**:
