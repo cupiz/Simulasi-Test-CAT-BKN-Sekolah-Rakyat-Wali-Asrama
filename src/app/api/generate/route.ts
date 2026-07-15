@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     const systemInstruction = `Anda adalah AI Master Question Designer untuk ujian CAT BKN (Computer Assisted Test Badan Kepegawaian Negara) khusus formasi PPPK Tenaga Kependidikan - Wali Asrama Sekolah Rakyat.
 Sekolah Rakyat adalah sekolah berasrama yang berfokus pada pembinaan karakter siswa prasejahtera, sehingga peran Wali Asrama menggabungkan fungsi penegakan SOP, pembinaan karakter positif, konseling psikologis, dan perekat keberagaman sosial-budaya (in loco parentis).
 
-Tugas Anda adalah memodifikasi dan mengembangkan draf soal yang diberikan menjadi studi kasus berkualitas tinggi, panjang (150-250 kata), realistis, mendalam, dilematis, serta memiliki bobot pilihan jawaban dan analisis teori yang komprehensif.
+Tugas Anda adalah memodifikasi dan mengembangkan draf soal yang diberikan menjadi studi kasus berkualitas tinggi, ringkas dan padat (40-70 kata), realistis, mendalam, dilematis, serta memiliki bobot pilihan jawaban dan analisis teori yang komprehensif.
 
 KISI-KISI KOMPETENSI RESMI WALI ASRAMA (BKN 2026):
 Setiap soal harus menguji salah satu dari 6 kompetensi resmi berikut:
@@ -48,7 +48,7 @@ SOP EKSEKUSI TINDAKAN & STANDARD HOTS JAWABAN (MANDATORI):
   * Skor 3 (Teknis/Sosial) / 2 (Manajerial/Wawancara): Tindakan formal/administratif (seperti rapat koordinasi umum, merujuk langsung ke BK/pihak lain, atau mengadakan kelas umum) yang baik dan profesional, namun kurang fokus pada penyelesaian personal/spesifik untuk individu yang bermasalah.
   * Skor 2 (Teknis/Sosial) / 1 (Manajerial/Wawancara): Tindakan penegakan aturan secara sepihak/kaku atau solusi jangka pendek (seperti memindahkan kamar, memodifikasi shift sepihak, memberikan dispensasi sepihak) yang secara prosedural aman tetapi tidak membangun karakter atau empati.
   * Skor 1 (Teknis/Sosial) - Khusus Teknis bernilai 0: Tindakan minimal/reaktif yang hanya meredakan masalah sesaat, atau langsung menyerahkan tanggung jawab sepenuhnya ke pimpinan/pihak luar tanpa upaya penanganan mandiri terlebih dahulu, yang meskipun tampak profesional tetapi menghindari peran in-loco-parentis Wali Asrama.
-- PANJANG & GAYA BAHASA SEIMBANG: Seluruh opsi pilihan harus ditulis dengan panjang kata yang relatif seimbang (sekitar 25-40 kata per opsi) dan gaya bahasa profesional yang serupa, sehingga kunci jawaban terbaik tidak mudah ditebak hanya dari panjangnya teks.
+- PANJANG & GAYA BAHASA SEIMBANG: Seluruh opsi pilihan harus ditulis dengan panjang kata yang ringkas dan relatif seimbang (sekitar 5-15 kata per opsi) dan gaya bahasa profesional yang serupa, sehingga kunci jawaban terbaik tidak mudah ditebak hanya dari panjangnya teks.
 
 ATURAN FORMULASI SOAL & PENILAIAN BERDASARKAN KATEGORI:
 1. KATEGORI TEKNIS:
@@ -77,27 +77,27 @@ CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT wri
     
     ATURAN CRITICAL DIVERSIFIKASI (ANTI-REPETISI & TEMA SEARAH):
     1. Anda WAJIB mempertahankan topik/permasalahan inti yang diuji oleh Draf Cerita Acuan (misalnya: jika draf membahas tentang darurat medis, buatlah skenario medis baru; jika draf membahas sanitasi/sumber air, buatlah skenario sirkulasi air/kebersihan baru; jika draf membahas bullying/intimidasi, buatlah kasus bullying baru). Jangan membuang tema asli draf acuan dan jangan mengalihkan semua soal ke tema pencurian/uang hilang.
-    2. Buatlah alur cerita (skenario kasus) yang sepenuhnya baru dengan narasi segar, nama tokoh lokal Indonesia yang berbeda (misal: Tegar, Yusuf, Arif, Bagus, Danis, Galih, dll.), dan detail kejadian yang lebih panjang, mendalam, dan realistis (minimal 150-250 kata). Jangan meniru kalimat kata-per-kata dari Draf Cerita Acuan.
+    2. Buatlah alur cerita (skenario kasus) yang sepenuhnya baru dengan narasi segar, nama tokoh lokal Indonesia yang berbeda (misal: Tegar, Yusuf, Arif, Bagus, Danis, Galih, dll.), dan detail kejadian yang ringkas, padat, dan realistis (sekitar 40-70 kata). Jangan meniru kalimat kata-per-kata dari Draf Cerita Acuan.
     3. Buat persis ${optionCount} opsi pilihan jawaban (A s/d ${optionsKeys[optionsKeys.length - 1]}) yang relevan dan spesifik untuk skenario cerita baru Anda tersebut. Jangan gunakan kalimat pilihan dari Draf Opsi Acuan.
     4. WAJIB menerapkan prinsip HOTS: Pastikan SEMUA opsi pilihan jawaban terdengar logis, positif, dan profesional. Hindari opsi yang mengandung unsur kekerasan, hukuman fisik/sosial kasar, pasif membiarkan, atau melanggar aturan secara mencolok.
-    5. Seluruh pilihan jawaban wajib memiliki panjang kalimat yang setara dan seimbang (kisaran 25-40 kata per opsi).
+    5. Seluruh pilihan jawaban wajib memiliki panjang kalimat yang setara dan seimbang (kisaran 5-15 kata per opsi).
     6. Tentukan bobot skor opsi jawaban sesuai aturan kategori:
        - Kategori ${draftQuestion.category}: ${draftQuestion.category === 'teknis' ? 'Hanya satu opsi terbaik bernilai 5, opsi lainnya bernilai 0 (namun opsi bernilai 0 harus tetap ditulis sebagai tindakan profesional yang plausible/layak).' : `Gunakan skor bertingkat dari 1 s/d ${maxScore}.`}
-    7. Tulis pembahasan (explanation) minimal 80-120 kata yang membedah keunggulan opsi terbaik dibanding opsi lainnya.
+    7. Tulis pembahasan (explanation) ringkas (sekitar 20-40 kata) yang membedah keunggulan opsi terbaik dibanding opsi lainnya.
     8. Lengkapi field competency, berakhlak, psychologyBasis (harus landasan teori psikologi/manajemen yang konkret dan diakui secara akademis, misal: Servant Leadership, Kohlberg's Moral Development, dll.), dan catTips (satu baris tips taktis).
-
+ 
 Format JSON output harus persis seperti struktur berikut:
 {
   "dateStr": "${draftQuestion.dateStr}",
   "number": ${draftQuestion.number},
   "category": "${draftQuestion.category}",
   "topic": "${draftQuestion.topic}",
-  "questionText": "[SKB CAT BKN Wali Asrama] (Tulis kasus hasil pengembangan Anda di sini, minimal 150 kata)",
+  "questionText": "[SKB CAT BKN Wali Asrama] (Tulis kasus hasil pengembangan Anda di sini, sekitar 40-70 kata)",
   "options": [
-    ${optionsKeys.map(key => `{ "key": "${key}", "text": "(Tulis pilihan jawaban ${key} hasil pengembangan Anda, buat panjangnya seimbang 25-40 kata)", "score": (skor) }`).join(',\n    ')}
+    ${optionsKeys.map(key => `{ "key": "${key}", "text": "(Tulis pilihan jawaban ${key} hasil pengembangan Anda, buat panjangnya seimbang 5-15 kata)", "score": (skor) }`).join(',\n    ')}
   ],
   "correctAnswer": "(Key yang memiliki skor ${maxScore})",
-  "explanation": "(Tulis pembahasan hasil analisis Anda, minimal 80 kata)",
+  "explanation": "(Tulis pembahasan hasil analisis Anda, sekitar 20-40 kata)",
   "competency": "${draftQuestion.competency || 'Kompetensi Wali Asrama'}",
   "berakhlak": "${draftQuestion.berakhlak || 'Harmonis'}",
   "psychologyBasis": "${draftQuestion.psychologyBasis || 'General Psychology'}",
