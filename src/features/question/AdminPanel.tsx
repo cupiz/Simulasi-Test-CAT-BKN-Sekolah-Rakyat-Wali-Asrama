@@ -343,15 +343,57 @@ export function AdminPanel() {
       fileReader.readAsText(e.target.files[0], "UTF-8");
       fileReader.onload = async (event) => {
         try {
-          const parsed = JSON.parse(event.target?.result as string);
+          const parsed = JSON.parse(event.target?.result as string) as Question[];
           if (Array.isArray(parsed)) {
             const isValid = parsed.every(q => q.category && q.questionText && Array.isArray(q.options));
             if (!isValid) {
               toast.error('Format JSON tidak valid. Pastikan struktur data sesuai skema.');
               return;
             }
-            await db.questions.bulkAdd(parsed);
-            toast.success(`Berhasil mengimpor ${parsed.length} soal ke database!`);
+
+            const uniqueDates = Array.from(new Set(parsed.map(q => q.dateStr).filter((d): d is string => !!d)));
+            if (uniqueDates.length === 0) {
+              toast.error('Tidak ada tanggal valid (dateStr) ditemukan dalam data.');
+              return;
+            }
+
+            // Clean existing local questions for these dates to avoid duplicates
+            await db.questions.where('dateStr').anyOf(uniqueDates).delete();
+
+            // Strip id property to let IndexedDB generate auto-incrementing key
+            const cleaned = parsed.map(({ id, ...rest }) => rest);
+            await db.questions.bulkAdd(cleaned);
+
+            toast.success(`Lokal: Berhasil mengimpor ${parsed.length} soal ke database lokal!`);
+
+            if (isCloudEnabled) {
+              toast.info('Cloud: Sinkronisasi ke Supabase Cloud sedang berjalan...');
+              try {
+                // Delete existing cloud questions for these dates
+                await supabase.from('questions').delete().in('dateStr', uniqueDates);
+
+                // Upload in chunks of 50
+                const chunkSize = 50;
+                let uploadSuccess = true;
+                for (let i = 0; i < cleaned.length; i += chunkSize) {
+                  const chunk = cleaned.slice(i, i + chunkSize);
+                  const { error } = await supabase.from('questions').insert(chunk);
+                  if (error) {
+                    uploadSuccess = false;
+                    console.error('Error uploading chunk:', error.message);
+                  }
+                }
+
+                if (uploadSuccess) {
+                  toast.success(`Cloud: Berhasil mengunggah ${parsed.length} soal ke Supabase Cloud!`);
+                } else {
+                  toast.error('Cloud: Sebagian atau seluruh soal gagal diunggah ke Supabase.');
+                }
+              } catch (cloudErr: any) {
+                toast.error(`Cloud: Gagal mengunggah ke Supabase (${cloudErr.message || cloudErr})`);
+              }
+            }
+
             loadDatesAndQuestions();
           } else {
             toast.error('Data JSON harus berupa array objek.');
