@@ -125,6 +125,7 @@ export function AdminPanel() {
         
         if (onlineError) {
           console.error('Gagal sinkronisasi dari cloud:', onlineError.message);
+          toast.error(`Gagal sinkronisasi otomatis dari cloud: ${onlineError.message}`);
         } else {
           const onlineList = onlineQs || [];
           let updatedLocalNeeded = false;
@@ -189,12 +190,91 @@ export function AdminPanel() {
             toast.info(`Sinkronisasi: Berhasil mengunduh soal dari Supabase Cloud ke lokal!`);
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Gagal sinkronisasi data online:', err);
+        toast.error(`Gagal sinkronisasi otomatis ke cloud: ${err.message || err}`);
       }
     }
     
     setQuestions(filtered);
+  };
+
+  const handleForceSyncCloud = async (dateStr: string) => {
+    if (!dateStr) {
+      toast.error('Pilih tanggal terlebih dahulu.');
+      return;
+    }
+    
+    if (!isCloudEnabled) {
+      toast.error('Koneksi Supabase Cloud belum aktif! Periksa .env.local dan restart server NPM Anda.');
+      return;
+    }
+
+    toast.info(`Memulai sinkronisasi manual untuk tanggal ${dateStr}...`);
+
+    try {
+      const localQs = await db.questions.where('dateStr').equals(dateStr).toArray();
+      
+      const { data: onlineQs, error: onlineError } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('dateStr', dateStr);
+        
+      if (onlineError) {
+        toast.error(`Gagal mengambil data online: ${onlineError.message}`);
+        return;
+      }
+      
+      const onlineList = onlineQs || [];
+      const localNumbers = new Set(localQs.map(q => q.number));
+      const onlineNumbers = new Set(onlineList.map(q => q.number));
+      
+      // A. Sync: Cloud -> Lokal
+      let localAddedCount = 0;
+      for (const onlineQ of onlineList) {
+        if (onlineQ.number && !localNumbers.has(onlineQ.number)) {
+          const { id, ...cleanedQ } = onlineQ;
+          await db.questions.add(cleanedQ);
+          localAddedCount++;
+        }
+      }
+      
+      // B. Sync: Lokal -> Cloud
+      const toUpload = [];
+      for (const localQ of localQs) {
+        if (localQ.number && !onlineNumbers.has(localQ.number)) {
+          const { id, ...cleanedQ } = localQ;
+          toUpload.push(cleanedQ);
+        }
+      }
+      
+      let uploadSuccessCount = 0;
+      if (toUpload.length > 0) {
+        const chunkSize = 50;
+        for (let i = 0; i < toUpload.length; i += chunkSize) {
+          const chunk = toUpload.slice(i, i + chunkSize);
+          const { error } = await supabase.from('questions').insert(chunk);
+          if (error) {
+            toast.error(`Gagal mengunggah sebagian soal: ${error.message}`);
+            return;
+          }
+          uploadSuccessCount += chunk.length;
+        }
+      }
+      
+      if (localAddedCount > 0 || uploadSuccessCount > 0) {
+        toast.success(`Sinkronisasi Selesai: Berhasil mengunggah ${uploadSuccessCount} soal ke Cloud, mengunduh ${localAddedCount} soal ke Lokal.`);
+      } else {
+        toast.success('Semua data soal lokal dan cloud untuk tanggal ini sudah sinkron (100% sama).');
+      }
+      
+      // reload
+      const freshQs = await db.questions.toArray();
+      const filtered = freshQs.filter(q => q.dateStr === dateStr).sort((a, b) => (a.number || a.id || 0) - (b.number || b.id || 0));
+      setQuestions(filtered);
+    } catch (err: any) {
+      toast.error(`Gagal melakukan sinkronisasi: ${err.message || err}`);
+    }
   };
 
   const handleEditClick = (q: Question) => {
@@ -724,9 +804,13 @@ export function AdminPanel() {
               className="hidden"
             />
           </label>
-          <Button onClick={handleGenerateDaily} variant="outline" size="sm" className="h-9 border-primary/30 text-primary hover:bg-primary/5 flex items-center gap-1.5 cursor-pointer">
+           <Button onClick={handleGenerateDaily} variant="outline" size="sm" className="h-9 border-primary/30 text-primary hover:bg-primary/5 flex items-center gap-1.5 cursor-pointer">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Generate Soal Harian</span>
+          </Button>
+          <Button onClick={() => handleForceSyncCloud(selectedDate)} variant="outline" size="sm" className="h-9 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/5 flex items-center gap-1.5 cursor-pointer">
+            <RefreshCw className="h-3.5 w-3.5" />
+            <span>Sinkronisasi Cloud</span>
           </Button>
         </div>
         <div className="flex items-center gap-2">
