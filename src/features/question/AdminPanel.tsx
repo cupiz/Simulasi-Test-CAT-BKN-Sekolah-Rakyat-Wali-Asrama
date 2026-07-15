@@ -154,13 +154,33 @@ export function AdminPanel() {
           }
           
           if (toUploadToCloud.length > 0) {
-            console.log(`Mengunggah ${toUploadToCloud.length} soal lokal yang hilang ke Supabase Cloud...`);
-            const { error: uploadError } = await supabase.from('questions').insert(toUploadToCloud);
-            if (uploadError) {
-              console.error('Gagal upload soal lokal ke cloud:', uploadError.message);
-            } else {
-              toast.info(`Sinkronisasi: Berhasil mengunggah ${toUploadToCloud.length} soal lokal ke Supabase Cloud!`);
-            }
+             console.log(`Mengunggah ${toUploadToCloud.length} soal lokal yang hilang ke Supabase Cloud...`);
+             toast.info(`Sinkronisasi: Mengunggah ${toUploadToCloud.length} soal lokal ke Supabase Cloud...`);
+             
+             try {
+               const chunkSize = 50;
+               let uploadSuccess = true;
+               let lastErrorMessage = '';
+               
+               for (let i = 0; i < toUploadToCloud.length; i += chunkSize) {
+                 const chunk = toUploadToCloud.slice(i, i + chunkSize);
+                 const { error } = await supabase.from('questions').insert(chunk);
+                 if (error) {
+                   uploadSuccess = false;
+                   lastErrorMessage = error.message;
+                   console.error('Gagal upload chunk ke cloud:', error.message);
+                 }
+               }
+               
+               if (uploadSuccess) {
+                 toast.success(`Sinkronisasi: Berhasil mengunggah ${toUploadToCloud.length} soal lokal ke Supabase Cloud!`);
+               } else {
+                 toast.error(`Sinkronisasi: Gagal mengunggah sebagian soal ke cloud (${lastErrorMessage})`);
+               }
+             } catch (uploadErr: any) {
+               console.error('Error saat upload soal ke cloud:', uploadErr);
+               toast.error(`Sinkronisasi: Gagal mengunggah ke Supabase (${uploadErr.message || uploadErr})`);
+             }
           }
           
           if (updatedLocalNeeded) {
