@@ -618,7 +618,7 @@ async function main() {
     const tasks = [];
     // Teknis: 1-90
     for (let num = 1; num <= 90; num++) {
-      tasks.push({ category: 'teknis', num, ref: allTeknisRefs[num - 1] });
+      tasks.push({ category: 'teknis', num, ref: allTeknisRefs[(num - 1) % allTeknisRefs.length] });
     }
     // Manajerial: 91-115
     for (let num = 91; num <= 115; num++) {

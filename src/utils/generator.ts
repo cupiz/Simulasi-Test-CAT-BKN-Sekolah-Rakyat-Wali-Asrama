@@ -29,7 +29,7 @@ export function generateDailyQuestions(dateStr: string): Question[] {
   // 1. Technical: 90 Questions (1 to 90)
   for (let num = 1; num <= 90; num++) {
     const qRand = getSeededRandom(`${dateStr}-teknis-v5-${num}`);
-    const ref = allTeknisRefs[num - 1];
+    const ref = allTeknisRefs[(num - 1) % allTeknisRefs.length];
 
     // Shuffle options based on daily seeded random to randomize answer order
     const optionOrder = [0, 1, 2, 3, 4].sort(() => qRand() - 0.5);
