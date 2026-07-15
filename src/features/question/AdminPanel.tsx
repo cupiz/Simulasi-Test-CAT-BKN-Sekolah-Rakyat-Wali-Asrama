@@ -318,8 +318,9 @@ export function AdminPanel() {
   const handleRestoreDefaults = async () => {
     if (confirm('Apakah Anda yakin ingin mengembalikan bank soal ke kondisi semula? Perubahan Anda akan hilang.')) {
       await db.questions.clear();
-      const defaults = generateDailyQuestions('2026-07-06');
-      await db.questions.bulkAdd(defaults);
+      localStorage.removeItem('sr_db_initial_seeded');
+      const { seedDatabase } = await import('../../utils/seed');
+      await seedDatabase();
       toast.success('Bank soal default berhasil dipulihkan!');
       loadDatesAndQuestions();
     }

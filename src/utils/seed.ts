@@ -59,31 +59,45 @@ export async function seedDatabase() {
       if (migrated !== MIGRATION_VERSION) {
         console.log('Running database migration to clean old style questions...');
         await db.questions.clear();
+        localStorage.removeItem('sr_db_initial_seeded');
         localStorage.setItem('sr_db_migrated', MIGRATION_VERSION);
       }
     }
 
-    for (const dateStr of targetDates) {
-      const count = await db.questions.where('dateStr').equals(dateStr).count();
-      if (count < 145) {
-        console.log(`Seeding 145 questions for date ${dateStr} (current count: ${count})...`);
-        // Clear any existing partial questions for this date to avoid duplicates
-        const existingForDate = await db.questions.where('dateStr').equals(dateStr).toArray();
-        const existingIds = existingForDate.map(q => q.id).filter((id): id is number => !!id);
-        if (existingIds.length > 0) {
-          await db.questions.bulkDelete(existingIds);
-        }
+    let shouldSeedQuestions = true;
+    if (typeof window !== 'undefined') {
+      if (localStorage.getItem('sr_db_initial_seeded') === 'true') {
+        shouldSeedQuestions = false;
+      }
+    }
 
-        let questions;
-        if (dateStr === '2026-07-06') {
-          // All dates now use the same high-quality parsed questions (no more dummy templates)
-          questions = generateDailyQuestions('2026-07-06');
-        } else {
-          // Generate procedural set of 145 questions
-          questions = generateDailyQuestions(dateStr);
+    if (shouldSeedQuestions) {
+      for (const dateStr of targetDates) {
+        const count = await db.questions.where('dateStr').equals(dateStr).count();
+        if (count < 145) {
+          console.log(`Seeding 145 questions for date ${dateStr} (current count: ${count})...`);
+          // Clear any existing partial questions for this date to avoid duplicates
+          const existingForDate = await db.questions.where('dateStr').equals(dateStr).toArray();
+          const existingIds = existingForDate.map(q => q.id).filter((id): id is number => !!id);
+          if (existingIds.length > 0) {
+            await db.questions.bulkDelete(existingIds);
+          }
+
+          let questions;
+          if (dateStr === '2026-07-06') {
+            // All dates now use the same high-quality parsed questions (no more dummy templates)
+            questions = generateDailyQuestions('2026-07-06');
+          } else {
+            // Generate procedural set of 145 questions
+            questions = generateDailyQuestions(dateStr);
+          }
+          await db.questions.bulkAdd(questions);
+          console.log(`Seeded ${questions.length} questions successfully for ${dateStr}.`);
         }
-        await db.questions.bulkAdd(questions);
-        console.log(`Seeded ${questions.length} questions successfully for ${dateStr}.`);
+      }
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sr_db_initial_seeded', 'true');
       }
     }
 
