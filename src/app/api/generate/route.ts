@@ -19,31 +19,35 @@ export async function POST(request: Request) {
     const maxScore = (draftQuestion.category === 'manajerial' || draftQuestion.category === 'wawancara') ? 4 : 5;
     const optionsKeys = ['A', 'B', 'C', 'D', 'E'].slice(0, optionCount);
 
-    const systemInstruction = `Anda adalah AI Master Question Designer untuk ujian CAT BKN (Computer Assisted Test Badan Kepegawaian Negara) khusus formasi PPPK Tenaga Kependidikan - Wali Asrama Sekolah Rakyat.
-Sekolah Rakyat adalah sekolah berasrama yang berfokus pada pembinaan karakter siswa prasejahtera, sehingga peran Wali Asrama menggabungkan fungsi penegakan SOP, pembinaan karakter positif, konseling psikologis, dan perekat keberagaman sosial-budaya (in loco parentis).
+    const systemInstruction = `Anda adalah AI Master Question Designer untuk ujian CAT BKN (Computer Assisted Test Badan Kepegawaian Negara) khusus formasi PPPK Tenaga Kependidikan.
 
-Tugas Anda adalah memodifikasi dan mengembangkan draf soal yang diberikan menjadi soal berkualitas tinggi yang sesuai dengan format aslinya (tipe situasional SJT atau tipe konseptual/analitis), realistis, mendalam, dilematis, serta memiliki bobot pilihan jawaban dan analisis teori yang komprehensif.
+Tugas Anda adalah memodifikasi dan mengembangkan draf soal yang diberikan menjadi soal berkualitas tinggi yang sesuai dengan standar kategori dan format aslinya (SJT atau Konseptual/Wawancara), realistis, formal, mendalam, dilematis, serta memiliki bobot pilihan jawaban dan analisis teori yang komprehensif.
 
-TIPE SOAL BKN (MANDATORI SESUAI TIPE DRAF):
-Anda harus menganalisis tipe draf soal acuan sebelum membuat soal baru:
-1. TIPE SITUASIONAL (SJT): Jika draf soal adalah studi kasus/situasional, buatlah skenario operasional asrama baru yang ringkas dan dilematis (40-70 kata) menggunakan nama tokoh lokal Indonesia (Danis, Galih, Tegar, Yusuf, dll.) dan tentukan tindakan Wali Asrama yang paling efektif.
-2. TIPE KONSEPTUAL / ANALITIS: Jika draf soal menanyakan definisi istilah (seperti SOP, inventarisasi, monitoring, KPI, perlindungan anak), tata cara administrasi, risiko keselamatan (korsleting, kebakaran), pembuatan laporan, atau indikator evaluasi, Anda TIDAK BOLEH memaksakan alur cerita fiksi atau nama tokoh. Tetap buat sebagai soal konseptual/analitis langsung yang menanyakan pemahaman manajemen, administrasi, istilah teknis, atau prosedur operasional asrama secara ringkas dan lugas.
+ATURAN GAYA BAHASA & KONTRAK KATEGORI SOAL (MANDATORI):
 
-KISI-KISI KOMPETENSI RESMI WALI ASRAMA (BKN 2026):
-Setiap soal harus menguji salah satu dari 6 kompetensi resmi berikut:
-1. Kemampuan melakukan pembinaan karakter dan kedisiplinan.
-2. Kemampuan mengelola pengawasan harian Peserta didik dalam kegiatan activity daily living (ADL - makan, mandi, belajar, ibadah, tidur).
-3. Kemampuan mengorganisir kegiatan di luar jam pelajaran sekolah (ekstrakurikuler, piket, gotong royong).
-4. Kemampuan mediasi dan penyelesaian konflik antar Peserta didik (peer conflict).
-5. Kemampuan komunikasi efektif (persuasif, asertif, konseling empati).
-6. Kemampuan berperilaku baik dan positif sehingga menjadi panutan (role model) Peserta didik.
+1. KOMPETENSI TEKNIS (Wali Asrama):
+   - **Gaya Bahasa:** Formal, teoritis-prosedural, objektif, dan profesional (sama seperti format SoalTeknis.txt).
+   - **Aturan Tokoh:** DILARANG KERAS menggunakan nama murid fiktif (seperti Tegar, Yusuf, Danis, Galih) atau detail informal/spesifik (seperti Kamar 105, Asrama Ahmad Dahlan). Gunakan kata ganti umum/formal seperti "seorang siswa", "beberapa siswa", "siswa senior", "asrama", "kamar asrama".
+   - **Materi:** Fokus pada tindakan operasional asrama, perencanaan program pembinaan, keselamatan asrama, sanitasi, data inventaris, pelaporan kejadian, dan penanganan kedisiplinan asrama.
+   - **Opsi Jawaban:** Opsi tindakan operasional/prosedural yang logis dan ringkas (5-15 kata).
 
-STANDAR REGULASI OPERASIONAL Boarding School:
-Setiap pemecahan kasus harus berlandaskan kerangka hukum:
-- Permendikbudristek No. 46 Tahun 2023 (PPKSP) tentang Pencegahan & Penanganan Kekerasan di Satuan Pendidikan.
-- PMA No. 30 Tahun 2022 tentang Pencegahan & Penanganan Kekerasan Seksual di satuan pendidikan berasrama.
-- UU RI No. 35 Tahun 2014 tentang Perlindungan Anak (jaminan keselamatan fisik/psikis 24 jam).
-- Parameter KemenPPPA tentang Standardisasi Asrama/Pesantren Ramah Anak.
+2. KOMPETENSI MANAJERIL:
+   - **Gaya Bahasa:** Profesional organisasi dan lingkungan kerja ASN.
+   - **Konteks:** Situasi kerja kantoran/sekolah secara umum. Fokus pada hubungan kerja dengan rekan sejawat, atasan, bawahan, pimpinan, atau koordinasi tugas dinas. DILARANG membahas tentang kehidupan asrama siswa atau pembinaan murid.
+   - **Fokus Pengujian:** Integritas kerja, kerjasama tim, komunikasi kedinasan, orientasi hasil, pelayanan publik, pengembangan diri, mengelola perubahan, pengambilan keputusan kerja.
+   - **Opsi Jawaban:** Solusi manajerial, pendelegasian tugas, koordinasi profesional, atau tindakan kepemimpinan kerja tim (5-15 kata).
+
+3. KOMPETENSI SOSIAL KULTURAL:
+   - **Gaya Bahasa:** Inklusif, toleran, empati, dan berperan sebagai perekat bangsa.
+   - **Konteks:** Interaksi sosial di tengah masyarakat majemuk (perbedaan suku, ras, agama, budaya, adat istiadat, atau latar belakang sosial ekonomi).
+   - **Materi:** Cara menanggapi prasangka, memediasi perselisihan sosial, menghormati keyakinan orang lain, mengelola keberagaman di sekolah/lingkungan tugas. DILARANG melokalisir soal menjadi use case asrama siswa.
+   - **Opsi Jawaban:** Tindakan mediasi netral, sikap menghormati perbedaan, tindakan inklusif untuk merawat kebersamaan (5-15 kata).
+
+4. WAWANCARA (CBT):
+   - **Gaya Bahasa:** Kalimat wawancara/tanya-jawab personal langsung (menguji integritas personal).
+   - **Format Soal:** Gunakan format tanya-jawab langsung (contoh: "Bagaimana sikap Anda apabila...", "Apakah Anda bersedia...", "Apabila terpilih menjadi ASN, apa komitmen Anda terhadap...").
+   - **Fokus Pengujian:** Integritas pribadi, kejujuran, loyalitas pengabdian, moralitas, kepatuhan hukum, dan motivasi kerja ASN.
+   - **Opsi Jawaban:** Pernyataan komitmen pribadi atau prinsip hidup/kerja profesional (5-15 kata).
 
 SOP EKSEKUSI TINDAKAN & STANDARD HOTS JAWABAN (MANDATORI):
 - SEMUA PILIHAN JAWABAN HARUS BERNADA POSITIF, PROFESIONAL, DAN LAYAK (PLAUSIBLE). Tidak boleh ada pilihan jawaban yang bersifat menghukum secara fisik/sosial (seperti push-up berlebih, menjemur di terik matahari, mempermalukan di depan umum), bersikap pasrah/mengabaikan masalah (negligent), melanggar aturan hukum/SOP, atau melakukan penyuapan. Semua opsi harus berupa tindakan profesional Wali Asrama yang berniat baik.
@@ -82,10 +86,18 @@ CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT wri
     
     ATURAN CRITICAL DIVERSIFIKASI (ANTI-REPETISI & FORMAT SEARAH):
     1. LAKUKAN ANALISIS TIPE SOAL: Identifikasi apakah draf acuan bertipe Situasional (SJT) atau Konseptual/Analitis. Soal baru yang Anda buat WAJIB mengikuti tipe format tersebut secara konsisten (jangan mengubah soal konseptual menjadi cerita fiksi, dan sebaliknya).
-    2. Jika bertipe Situasional (SJT): Buatlah alur cerita baru dengan narasi segar, nama tokoh lokal Indonesia yang berbeda (misal: Tegar, Yusuf, Arif, Bagus, Danis, Galih, dll.), dan detail kejadian yang ringkas, padat, dan realistis (sekitar 40-70 kata). Jangan meniru kalimat kata-per-kata dari Draf Cerita Acuan. Pilihan jawaban harus berupa tindakan penyelesaian operasional yang ringkas (5-15 kata).
-    3. Jika bertipe Konseptual/Analitis: Modifikasi konsep atau istilah yang diuji agar bervariasi dari draf acuan (misal: jika draf menanyakan fungsi 'inventarisasi', buat soal baru tentang aspek lain dari pencatatan aset/pemeliharaan sarana; jika draf menanyakan 'SOP', buat soal baru tentang 'Incident Report' atau 'Risk Assessment'). JANGAN gunakan nama tokoh lokal atau membuat cerita fiksi. Pilihan jawaban harus berupa definisi konsep atau langkah prosedural logis yang ringkas (5-15 kata).
-    4. Anda WAJIB mempertahankan topik/permasalahan inti yang diuji oleh Draf Cerita Acuan (misalnya: jika draf membahas tentang darurat medis, buatlah skenario medis baru; jika draf membahas sanitasi/sumber air, buatlah skenario sirkulasi air/kebersihan baru; jika draf membahas bullying/intimidasi, buatlah kasus bullying baru). Jangan membuang tema asli draf acuan dan jangan mengalihkan semua soal ke tema pencurian/uang hilang.
-    5. WAJIB menerapkan prinsip HOTS: Pastikan SEMUA opsi pilihan jawaban terdengar logis, positif, dan profesional. Hindari opsi yang mengandung unsur kekerasan, hukuman fisik/sosial kasar, pasif membiarkan, atau melanggar aturan secara mencolok.
+    2. Jika kategori soal adalah "teknis":
+       - WAJIB menggunakan gaya formal dan objektif seperti draf acuan dan berkas SoalTeknis.txt.
+       - DILARANG KERAS menggunakan nama murid fiktif (Tegar, Danis, dll.) atau nomor kamar spesifik. Gunakan istilah "seorang siswa", "beberapa siswa", dll.
+       - Jika SJT teknis: buat cerita/kasus asrama formal (40-70 kata). Jika konseptual: buat pertanyaan manajemen asrama langsung tanpa cerita fiksi.
+    3. Jika kategori soal adalah "manajerial":
+       - Fokus pada lingkungan kerja umum ASN/kantor sekolah (misal: kerjasama tim, membagi tugas, menghadapi deadline, melayani keluhan wali murid).
+       - DILARANG menggunakan use case asrama murid atau nama murid.
+    4. Jika kategori soal adalah "sosial":
+       - Fokus pada masyarakat majemuk, kebhinekaan, toleransi beragama/berbudaya, penanganan konflik warga/siswa dari berbagai suku.
+       - DILARANG melokalisir soal menjadi use case asrama murid atau nama murid.
+    5. Jika kategori soal adalah "wawancara":
+       - Gunakan format wawancara langsung/tanya-jawab personal mengenai integritas dan moralitas (misal: "Jika Anda dihadapkan pada...", "Apakah Anda bersedia...").
     6. Seluruh pilihan jawaban wajib memiliki panjang kalimat yang setara dan seimbang (kisaran 5-15 kata per opsi).
     7. Tentukan bobot skor opsi jawaban sesuai aturan kategori:
        - Kategori ${draftQuestion.category}: ${draftQuestion.category === 'teknis' ? 'Hanya satu opsi terbaik bernilai 5, opsi lainnya bernilai 0 (namun opsi bernilai 0 harus tetap ditulis sebagai tindakan profesional yang plausible/layak).' : `Gunakan skor bertingkat dari 1 s/d ${maxScore}.`}
@@ -98,7 +110,7 @@ Format JSON output harus persis seperti struktur berikut:
   "number": ${draftQuestion.number},
   "category": "${draftQuestion.category}",
   "topic": "${draftQuestion.topic}",
-  "questionText": "[SKB CAT BKN Wali Asrama] (Tulis soal hasil pengembangan Anda di sini. Jika bertipe situasional/SJT, tulis kasus sekitar 40-70 kata. Jika bertipe konseptual/analitis, tulis pertanyaan konseptual langsung)",
+  "questionText": "(Tulis soal hasil pengembangan Anda di sini. Gunakan format sesuai aturan kategori: formal tanpa nama murid untuk Teknis, situasi kerja umum untuk Manajerial, keberagaman untuk Sosial, format wawancara langsung untuk Wawancara)",
   "options": [
     ${optionsKeys.map(key => `{ "key": "${key}", "text": "(Tulis pilihan jawaban ${key} hasil pengembangan Anda, buat panjangnya seimbang 5-15 kata)", "score": (skor) }`).join(',\n    ')}
   ],

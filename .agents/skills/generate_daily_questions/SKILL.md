@@ -55,22 +55,27 @@ You must generate a JSON array of exactly **145 Questions** with this layout:
 - **Wawancara (Interview)**: Numbers 136 to 145 (10 questions)
 
 ### 3. Detailed Content Writing Guidelines (High-Fidelity)
-For **every single question**, write a fresh, unique, and long case study. Avoid repetitiveness. Do not use generic option templates.
+For **every single question**, analyze the category first (Technical vs. Managerial vs. Social Cultural vs. Wawancara) and strictly apply the corresponding style:
 
-*   **Question Text (40–70 words)**: Write a concise, realistic situational case study of boarding school life (Wali Asrama) at Sekolah Rakyat. Include specific student names, room numbers, and specific triggers/complications without being verbose.
-*   **Options (5–15 words each)**: Write 5 distinct options (keys: A, B, C, D, E) specific to the case. Keep them short, clear, and direct. All options must be written in a professional, positive-sounding, and plausible manner (HOTS standard). Avoid caricature options such as physical/social punishment, complete avoidance, negligence, or accepting bribes.
-    *   **Score 5**: Highly restorative, dual-dialogue/coaching/peer-support/systemic action that perfectly addresses both the individual root cause and the overall dorm harmony/rules.
-    *   **Score 4**: A constructive, professional, and standard procedural action or structured personal guidance, but slightly lacking the deeper collaborative/restorative/systemic elements of the highest score.
-    *   **Score 3**: A formal, structured, or administrative action (like holding general training, standard meeting, general rule reminder) that is professional but doesn't resolve the specific individual/interpersonal root cause.
-    *   **Score 2**: A direct/assertive enforcement of rules, a rigid bureaucratic approach, or a short-term workaround (like changing shifts without dialogue, separating students temporarily) that is professional but fails to build character or resolve conflict constructively.
-    *   **Score 1**: An action that focuses purely on rule enforcement without any dialogue/mentoring, or delegating the entire issue immediately to the principal/school board without taking any initial responsibility (professional but passive/avoidant).
-*   **Permute Option Keys**: For each question, shuffle which option gets which key (A-E) so the correct answer (Score 5) is not always the same key. Set `correctAnswer` to the key that has `score: 5`.
-*   **Explanation (20–45 words)**: Briefly explain why the Score 5 option is correct and why other options are less effective.
+*   **1. Kompetensi Teknis (Wali Asrama)**:
+    - **Question Text (40–70 words)**: Write in a formal, theoretical-prosedural, objective, and professional BKN tone. **DO NOT** use fictional student names (like Tegar, Yusuf, Danis) or specific room numbers. Use general terms: "seorang siswa", "beberapa siswa", "siswa senior", "asrama".
+    - **Options (5–15 words each)**: Write 5 options (A-E) focusing on technical actions (program planning, safety, sanitation, logging, student guidance). Set exactly one best option to Score 5 and the rest to Score 0 (biner).
+*   **2. Kompetensi Manajerial**:
+    - **Question Text (40–70 words)**: Write in a professional organizational and office environment tone. Focus on cooperation, communication, integrity, public service, results, or changes as an employee/leader working with colleagues, supervisors, or public service users. **DO NOT** use dormitory settings or student pembinaan cases.
+    - **Options (5–15 words each)**: Write 4 options (A-D) with tiered scores (1-4) representing tiered organizational leadership/collaboration competence.
+*   **3. Kompetensi Sosial Kultural**:
+    - **Question Text (40–70 words)**: Write about diversity, tolerance, and intercultural relations in a pluralistic society. Focus on respect for different ethnicities, religions, and backgrounds. **DO NOT** localize questions to dormitory student use cases.
+    - **Options (5–15 words each)**: Write 5 options (A-E) with tiered scores (1-5) representing tiered empathy, neutrality, and inclusivity.
+*   **4. Wawancara (CBT)**:
+    - **Question Text (40–70 words)**: Write in a direct first-person/second-person interview/dialogue format (e.g., "Bagaimana sikap Anda jika...", "Apakah Anda bersedia..."). Focus on personal integrity, ethics, work commitment, and willingness to be deployed.
+    - **Options (5–15 words each)**: Write 4 options (A-D) with tiered scores (1-4) representing tiered personal morals, loyalty, and commitment.
+*   **Permute Option Keys**: For each question, shuffle which option gets which key so the correct answer (Score 5 or 4) is not always the same key. Set `correctAnswer` to the key that has `score: maxScore`.
+*   **Explanation (20–45 words)**: Briefly explain why the best option is correct.
 *   **Reference Fields**:
-    *   `competency`: Specific professional competence (e.g., "Konseling Krisis Psikologis, Manajemen Keselamatan").
+    *   `competency`: Specific competency (e.g., "Kerjasama", "Toleransi dan Kebinekaan", "Integritas & Moralitas").
     *   `berakhlak`: ASN values (e.g. "Harmonis & Kolaboratif").
-    *   `psychologyBasis`: Name-drop a real psychological theory (e.g., Carl Rogers Client-Centered Therapy, Kohlberg Moral Stages, Allport Contact Hypothesis, Skinner Operant Conditioning).
-    *   `catTips`: Practical tip for solving SJT questions.
+    *   `psychologyBasis`: Real psychological theory or management concept (e.g., Servant Leadership, Carl Rogers, Kohlberg Moral Stages, Root Cause Analysis).
+    *   `catTips`: Practical tip for solving questions in this category.
 
 ### 4. Output JSON Format
 Compile the questions into a single valid JSON array. Each object in the array must match this schema:
