@@ -62,7 +62,9 @@ export function AdminPanel() {
       try {
         const { data: onlineQs, error: onlineError } = await supabase
           .from('questions')
-          .select('dateStr');
+          .select('dateStr')
+          .eq('number', 1)
+          .limit(1000);
         
         if (onlineError) {
           console.error('Gagal mengambil daftar tanggal online:', onlineError.message);

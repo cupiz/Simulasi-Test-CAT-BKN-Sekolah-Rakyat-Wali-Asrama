@@ -265,8 +265,26 @@ export const useExamStore = create<ExamState>((set, get) => ({
   startExam: async (mode, durationMinutes, dateStr) => {
     set({ isLoading: true });
     
-    // Fetch only questions for the selected dateStr
-    const dbQuestions = await db.questions.where('dateStr').equals(dateStr).toArray();
+    // Fetch questions for the selected dateStr
+    let dbQuestions = await db.questions.where('dateStr').equals(dateStr).toArray();
+    
+    if (dbQuestions.length === 0 && isCloudEnabled) {
+      try {
+        console.log(`Questions for date ${dateStr} not found locally. Fetching from Supabase...`);
+        const { data: cloudQs, error } = await supabase
+          .from('questions')
+          .select('*')
+          .eq('dateStr', dateStr);
+        if (!error && cloudQs && cloudQs.length > 0) {
+          const cleaned = cloudQs.map(({ id, ...rest }) => rest);
+          await db.questions.bulkAdd(cleaned);
+          dbQuestions = await db.questions.where('dateStr').equals(dateStr).toArray();
+        }
+      } catch (err) {
+        console.error('Error fetching questions from Supabase for exam:', err);
+      }
+    }
+    
     const sortedQuestions = dbQuestions.sort((a, b) => (a.number || 0) - (b.number || 0));
     
     const startTime = Date.now();
