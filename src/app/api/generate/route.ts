@@ -22,7 +22,12 @@ export async function POST(request: Request) {
     const systemInstruction = `Anda adalah AI Master Question Designer untuk ujian CAT BKN (Computer Assisted Test Badan Kepegawaian Negara) khusus formasi PPPK Tenaga Kependidikan - Wali Asrama Sekolah Rakyat.
 Sekolah Rakyat adalah sekolah berasrama yang berfokus pada pembinaan karakter siswa prasejahtera, sehingga peran Wali Asrama menggabungkan fungsi penegakan SOP, pembinaan karakter positif, konseling psikologis, dan perekat keberagaman sosial-budaya (in loco parentis).
 
-Tugas Anda adalah memodifikasi dan mengembangkan draf soal yang diberikan menjadi studi kasus berkualitas tinggi, ringkas dan padat (40-70 kata), realistis, mendalam, dilematis, serta memiliki bobot pilihan jawaban dan analisis teori yang komprehensif.
+Tugas Anda adalah memodifikasi dan mengembangkan draf soal yang diberikan menjadi soal berkualitas tinggi yang sesuai dengan format aslinya (tipe situasional SJT atau tipe konseptual/analitis), realistis, mendalam, dilematis, serta memiliki bobot pilihan jawaban dan analisis teori yang komprehensif.
+
+TIPE SOAL BKN (MANDATORI SESUAI TIPE DRAF):
+Anda harus menganalisis tipe draf soal acuan sebelum membuat soal baru:
+1. TIPE SITUASIONAL (SJT): Jika draf soal adalah studi kasus/situasional, buatlah skenario operasional asrama baru yang ringkas dan dilematis (40-70 kata) menggunakan nama tokoh lokal Indonesia (Danis, Galih, Tegar, Yusuf, dll.) dan tentukan tindakan Wali Asrama yang paling efektif.
+2. TIPE KONSEPTUAL / ANALITIS: Jika draf soal menanyakan definisi istilah (seperti SOP, inventarisasi, monitoring, KPI, perlindungan anak), tata cara administrasi, risiko keselamatan (korsleting, kebakaran), pembuatan laporan, atau indikator evaluasi, Anda TIDAK BOLEH memaksakan alur cerita fiksi atau nama tokoh. Tetap buat sebagai soal konseptual/analitis langsung yang menanyakan pemahaman manajemen, administrasi, istilah teknis, atau prosedur operasional asrama secara ringkas dan lugas.
 
 KISI-KISI KOMPETENSI RESMI WALI ASRAMA (BKN 2026):
 Setiap soal harus menguji salah satu dari 6 kompetensi resmi berikut:
@@ -75,16 +80,17 @@ CRITICAL INSTRUCTION: You are running in a restricted API mode. You MUST NOT wri
     Draf Opsi Acuan:
     ${draftQuestion.options.slice(0, optionCount).map((o: any) => `- [Skor ${o.score}]: ${o.text}`).join('\n')}
     
-    ATURAN CRITICAL DIVERSIFIKASI (ANTI-REPETISI & TEMA SEARAH):
-    1. Anda WAJIB mempertahankan topik/permasalahan inti yang diuji oleh Draf Cerita Acuan (misalnya: jika draf membahas tentang darurat medis, buatlah skenario medis baru; jika draf membahas sanitasi/sumber air, buatlah skenario sirkulasi air/kebersihan baru; jika draf membahas bullying/intimidasi, buatlah kasus bullying baru). Jangan membuang tema asli draf acuan dan jangan mengalihkan semua soal ke tema pencurian/uang hilang.
-    2. Buatlah alur cerita (skenario kasus) yang sepenuhnya baru dengan narasi segar, nama tokoh lokal Indonesia yang berbeda (misal: Tegar, Yusuf, Arif, Bagus, Danis, Galih, dll.), dan detail kejadian yang ringkas, padat, dan realistis (sekitar 40-70 kata). Jangan meniru kalimat kata-per-kata dari Draf Cerita Acuan.
-    3. Buat persis ${optionCount} opsi pilihan jawaban (A s/d ${optionsKeys[optionsKeys.length - 1]}) yang relevan dan spesifik untuk skenario cerita baru Anda tersebut. Jangan gunakan kalimat pilihan dari Draf Opsi Acuan.
-    4. WAJIB menerapkan prinsip HOTS: Pastikan SEMUA opsi pilihan jawaban terdengar logis, positif, dan profesional. Hindari opsi yang mengandung unsur kekerasan, hukuman fisik/sosial kasar, pasif membiarkan, atau melanggar aturan secara mencolok.
-    5. Seluruh pilihan jawaban wajib memiliki panjang kalimat yang setara dan seimbang (kisaran 5-15 kata per opsi).
-    6. Tentukan bobot skor opsi jawaban sesuai aturan kategori:
+    ATURAN CRITICAL DIVERSIFIKASI (ANTI-REPETISI & FORMAT SEARAH):
+    1. LAKUKAN ANALISIS TIPE SOAL: Identifikasi apakah draf acuan bertipe Situasional (SJT) atau Konseptual/Analitis. Soal baru yang Anda buat WAJIB mengikuti tipe format tersebut secara konsisten (jangan mengubah soal konseptual menjadi cerita fiksi, dan sebaliknya).
+    2. Jika bertipe Situasional (SJT): Buatlah alur cerita baru dengan narasi segar, nama tokoh lokal Indonesia yang berbeda (misal: Tegar, Yusuf, Arif, Bagus, Danis, Galih, dll.), dan detail kejadian yang ringkas, padat, dan realistis (sekitar 40-70 kata). Jangan meniru kalimat kata-per-kata dari Draf Cerita Acuan. Pilihan jawaban harus berupa tindakan penyelesaian operasional yang ringkas (5-15 kata).
+    3. Jika bertipe Konseptual/Analitis: Modifikasi konsep atau istilah yang diuji agar bervariasi dari draf acuan (misal: jika draf menanyakan fungsi 'inventarisasi', buat soal baru tentang aspek lain dari pencatatan aset/pemeliharaan sarana; jika draf menanyakan 'SOP', buat soal baru tentang 'Incident Report' atau 'Risk Assessment'). JANGAN gunakan nama tokoh lokal atau membuat cerita fiksi. Pilihan jawaban harus berupa definisi konsep atau langkah prosedural logis yang ringkas (5-15 kata).
+    4. Anda WAJIB mempertahankan topik/permasalahan inti yang diuji oleh Draf Cerita Acuan (misalnya: jika draf membahas tentang darurat medis, buatlah skenario medis baru; jika draf membahas sanitasi/sumber air, buatlah skenario sirkulasi air/kebersihan baru; jika draf membahas bullying/intimidasi, buatlah kasus bullying baru). Jangan membuang tema asli draf acuan dan jangan mengalihkan semua soal ke tema pencurian/uang hilang.
+    5. WAJIB menerapkan prinsip HOTS: Pastikan SEMUA opsi pilihan jawaban terdengar logis, positif, dan profesional. Hindari opsi yang mengandung unsur kekerasan, hukuman fisik/sosial kasar, pasif membiarkan, atau melanggar aturan secara mencolok.
+    6. Seluruh pilihan jawaban wajib memiliki panjang kalimat yang setara dan seimbang (kisaran 5-15 kata per opsi).
+    7. Tentukan bobot skor opsi jawaban sesuai aturan kategori:
        - Kategori ${draftQuestion.category}: ${draftQuestion.category === 'teknis' ? 'Hanya satu opsi terbaik bernilai 5, opsi lainnya bernilai 0 (namun opsi bernilai 0 harus tetap ditulis sebagai tindakan profesional yang plausible/layak).' : `Gunakan skor bertingkat dari 1 s/d ${maxScore}.`}
-    7. Tulis pembahasan (explanation) ringkas (sekitar 20-40 kata) yang membedah keunggulan opsi terbaik dibanding opsi lainnya.
-    8. Lengkapi field competency, berakhlak, psychologyBasis (harus landasan teori psikologi/manajemen yang konkret dan diakui secara akademis, misal: Servant Leadership, Kohlberg's Moral Development, dll.), dan catTips (satu baris tips taktis).
+    8. Tulis pembahasan (explanation) ringkas (sekitar 20-40 kata) yang membedah keunggulan opsi terbaik dibanding opsi lainnya.
+    9. Lengkapi field competency, berakhlak, psychologyBasis (harus landasan teori psikologi/manajemen yang konkret dan diakui secara akademis, misal: Servant Leadership, Kohlberg's Moral Development, dll.), dan catTips (satu baris tips taktis).
  
 Format JSON output harus persis seperti struktur berikut:
 {
@@ -92,7 +98,7 @@ Format JSON output harus persis seperti struktur berikut:
   "number": ${draftQuestion.number},
   "category": "${draftQuestion.category}",
   "topic": "${draftQuestion.topic}",
-  "questionText": "[SKB CAT BKN Wali Asrama] (Tulis kasus hasil pengembangan Anda di sini, sekitar 40-70 kata)",
+  "questionText": "[SKB CAT BKN Wali Asrama] (Tulis soal hasil pengembangan Anda di sini. Jika bertipe situasional/SJT, tulis kasus sekitar 40-70 kata. Jika bertipe konseptual/analitis, tulis pertanyaan konseptual langsung)",
   "options": [
     ${optionsKeys.map(key => `{ "key": "${key}", "text": "(Tulis pilihan jawaban ${key} hasil pengembangan Anda, buat panjangnya seimbang 5-15 kata)", "score": (skor) }`).join(',\n    ')}
   ],
